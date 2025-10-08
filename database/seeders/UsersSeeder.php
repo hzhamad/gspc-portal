@@ -43,18 +43,18 @@ class UsersSeeder extends Seeder
 
         $user->assignRole($adminRole);
 
-        //Agent
+        //Client / Agent
         $agentRole = Role::firstOrCreate(['name' => UserRoles::AGENT->value]);
 
         $user = User::create([
-            'first_name' => "Agent",
+            'first_name' => "Client",
             'last_name' => "User",
-            'email' => 'agent@agent.com',
+            'email' => 'client@client.com',
             'phone' => '0000000002',
             'dob' => now()->subYears(20),
             'residency' => 'Dubai',
             'eid_number' => '12345678903224',
-            'password' => bcrypt('agent'),
+            'password' => bcrypt('client'),
         ]);
 
         $user->assignRole($agentRole);

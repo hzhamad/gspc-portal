@@ -95,11 +95,11 @@ export default function DashboardAside({ currentPath }) {
                 {/* Logo Section with Gold Background */}
                 <div className="bg-gradient-to-br from-gold to-gold/80 rounded-xl p-4 mb-8 shadow-lg">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center border-2 border-white/30">
+                        <div className="w-10 h-10 bg-white backdrop-blur-sm rounded-lg flex items-center justify-center border-2 border-white/30">
                             <img 
                                 src="/images/uae_logo.svg" 
                                 alt="UAE Logo" 
-                                className="w-6 h-6 brightness-0 invert"
+                                className="w-8 h-8"
                             />
                         </div>
                         <div>
