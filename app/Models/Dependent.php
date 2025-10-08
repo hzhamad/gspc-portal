@@ -15,14 +15,14 @@ class Dependent extends Model
         'uid_number',
         'eid_number',
         'marital_status',
-        'date_of_birth',
+        'dob',
         'relationship',
         'profile_picture',
-        'eid_copy',
+        'eid_file',
     ];
 
     protected $casts = [
-        'date_of_birth' => 'date',
+        'dob' => 'date',
     ];
 
     /**

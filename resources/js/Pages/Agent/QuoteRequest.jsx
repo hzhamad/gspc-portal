@@ -14,17 +14,46 @@ export default function QuoteRequest() {
     const [applicationType, setApplicationType] = useState('');
     const [dependents, setDependents] = useState([]);
 
+    const [existingProfilePicture] = useState(user?.profile_image || null);
+    const [existingEidCopy] = useState(user?.eid_file || null);
+
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
         sponsor_name: user?.fullname || '',
-        sponsor_id: '',
-        date_of_birth: '',
-        emirate_of_residency: '',
-        profile_picture: null,
+        sponsor_id: user?.eid_number || '',
+        dob: user?.dob || '',
+        emirate_of_residency: user?.residency || '',
+        profile_picture: user?.profile_picture || null,
+        eid_file: user?.eid_file || null,
         // Dependents
         dependents: [],
     });
+
+    // Format Emirates ID with dashes
+    const formatEmiratesId = (value) => {
+        // Remove all non-digit characters
+        const digits = value.replace(/\D/g, '');
+        
+        // Limit to 15 digits
+        const limitedDigits = digits.substring(0, 15);
+        
+        // Format: 784-YYYY-XXXXXXX-X
+        let formatted = '';
+        if (limitedDigits.length > 0) {
+            formatted = limitedDigits.substring(0, 3);
+            if (limitedDigits.length > 3) {
+                formatted += '-' + limitedDigits.substring(3, 7);
+            }
+            if (limitedDigits.length > 7) {
+                formatted += '-' + limitedDigits.substring(7, 14);
+            }
+            if (limitedDigits.length > 14) {
+                formatted += '-' + limitedDigits.substring(14, 15);
+            }
+        }
+        return formatted;
+    };
 
     // Validate Sponsor Emirates ID
     const validateSponsorId = (value) => {
@@ -40,10 +69,11 @@ export default function QuoteRequest() {
             uid_number: '',
             eid_number: '',
             marital_status: '',
-            date_of_birth: '',
+            dob: '',
             relationship: '',
             emirate_of_residency: '',
-            eid_copy: null,
+            profile_picture: null,
+            eid_file: null,
         };
         setDependents(prev => [...prev, newDependent]);
     };
@@ -75,8 +105,8 @@ export default function QuoteRequest() {
             const eidPattern = /^784-\d{4}-\d{7}-\d{1}$/;
             return eidPattern.test(dependent.eid_number);
         } else {
-            // UID: minimum 10 characters
-            return dependent.uid_number.length >= 10;
+            // UID: minimum 8 characters
+            return dependent.uid_number.length >= 8;
         }
     };
 
@@ -104,11 +134,14 @@ export default function QuoteRequest() {
         if (applicationType === 'self' || applicationType === 'self_dependents') {
             formData.append('sponsor_name', data.sponsor_name);
             formData.append('sponsor_id', data.sponsor_id);
-            formData.append('date_of_birth', data.date_of_birth);
+            formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
             
             if (data.profile_picture) {
                 formData.append('profile_picture', data.profile_picture);
+            }
+            if (data.eid_file) {
+                formData.append('eid_file', data.eid_file);
             }
         }
         
@@ -118,12 +151,15 @@ export default function QuoteRequest() {
                 formData.append(`dependents[${index}][uid_number]`, dep.uid_number || '');
                 formData.append(`dependents[${index}][eid_number]`, dep.eid_number || '');
                 formData.append(`dependents[${index}][marital_status]`, dep.marital_status);
-                formData.append(`dependents[${index}][date_of_birth]`, dep.date_of_birth);
+                formData.append(`dependents[${index}][dob]`, dep.dob);
                 formData.append(`dependents[${index}][relationship]`, dep.relationship);
                 formData.append(`dependents[${index}][emirate_of_residency]`, dep.emirate_of_residency || '');
                 
-                if (dep.eid_copy) {
-                    formData.append(`dependents[${index}][eid_copy]`, dep.eid_copy);
+                if (dep.profile_picture) {
+                    formData.append(`dependents[${index}][profile_picture]`, dep.profile_picture);
+                }
+                if (dep.eid_file) {
+                    formData.append(`dependents[${index}][eid_file]`, dep.eid_file);
                 }
             });
         }
@@ -248,8 +284,9 @@ export default function QuoteRequest() {
                                         <input
                                             type="text"
                                             value={data.sponsor_id}
-                                            onChange={(e) => setData('sponsor_id', e.target.value)}
+                                            onChange={(e) => setData('sponsor_id', formatEmiratesId(e.target.value))}
                                             placeholder="784-YYYY-XXXXXXX-X"
+                                            maxLength="18"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                             required
                                         />
@@ -261,12 +298,12 @@ export default function QuoteRequest() {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                                         <input
                                             type="date"
-                                            value={data.date_of_birth}
-                                            onChange={(e) => setData('date_of_birth', e.target.value)}
+                                            value={data.dob}
+                                            onChange={(e) => setData('dob', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                             required
                                         />
-                                        {errors.date_of_birth && <p className="text-red-600 text-sm mt-1">{errors.date_of_birth}</p>}
+                                        {errors.dob && <p className="text-red-600 text-sm mt-1">{errors.dob}</p>}
                                     </div>
 
                                     <div>
@@ -293,7 +330,41 @@ export default function QuoteRequest() {
                                             fileName={data.profile_picture?.name}
                                             placeholder="Click to upload profile picture"
                                         />
+                                        {existingProfilePicture && !data.profile_picture && (
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-600 mb-2">Current profile picture:</p>
+                                                <img 
+                                                    src={`/storage/${existingProfilePicture}`} 
+                                                    alt="Current profile" 
+                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                                                />
+                                            </div>
+                                        )}
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Emirates ID Copy"
+                                            accept="image/*,.pdf"
+                                            onChange={(e) => handleFileChange('eid_file', e.target.files[0])}
+                                            fileName={data.eid_file?.name}
+                                            placeholder="Click to upload PDF/Image"
+                                        />
+                                        {existingEidCopy && !data.eid_file && (
+                                            <p className="text-sm text-gray-600 mt-1">
+                                                Current file on record: 
+                                                <a 
+                                                    href={`/storage/${existingEidCopy}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline ml-1"
+                                                >
+                                                    View
+                                                </a>
+                                            </p>
+                                        )}
+                                        {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
                                     </div>
                                 </div>
                             </div>
@@ -381,9 +452,10 @@ export default function QuoteRequest() {
                     value={dependent.uid_number}
                     onChange={(e) => updateDependent(dependent.id, 'uid_number', e.target.value)}
                     placeholder="Enter Unified ID"
+                    minLength="8"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                 />
-                <p className="mt-1 text-xs text-gray-500">Minimum 10 characters</p>
+                <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
             </div>
         ) : (
             <div className="mb-4">
@@ -391,8 +463,9 @@ export default function QuoteRequest() {
                 <input
                     type="text"
                     value={dependent.eid_number}
-                    onChange={(e) => updateDependent(dependent.id, 'eid_number', e.target.value)}
+                    onChange={(e) => updateDependent(dependent.id, 'eid_number', formatEmiratesId(e.target.value))}
                     placeholder="784-YYYY-XXXXXXX-X"
+                    maxLength="18"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                 />
                 <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
@@ -419,8 +492,8 @@ export default function QuoteRequest() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                 <input
                     type="date"
-                    value={dependent.date_of_birth}
-                    onChange={(e) => updateDependent(dependent.id, 'date_of_birth', e.target.value)}
+                    value={dependent.dob}
+                    onChange={(e) => updateDependent(dependent.id, 'dob', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                     required
                 />
@@ -458,10 +531,20 @@ export default function QuoteRequest() {
 
             <div className="md:col-span-2">
                 <FileUpload
+                    label="Profile Picture"
+                    accept="image/*"
+                    onChange={(e) => handleDependentFileChange(dependent.id, 'profile_picture', e.target.files[0])}
+                    fileName={dependent.profile_picture?.name}
+                    placeholder="Click to upload profile picture"
+                />
+            </div>
+
+            <div className="md:col-span-2">
+                <FileUpload
                     label="Emirates ID Copy"
                     accept="image/*,.pdf"
-                    onChange={(e) => handleDependentFileChange(dependent.id, 'eid_copy', e.target.files[0])}
-                    fileName={dependent.eid_copy?.name}
+                    onChange={(e) => handleDependentFileChange(dependent.id, 'eid_file', e.target.files[0])}
+                    fileName={dependent.eid_file?.name}
                     placeholder="Click to upload PDF/Image"
                 />
             </div>

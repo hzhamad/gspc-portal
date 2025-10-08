@@ -16,10 +16,10 @@ class QuoteRequest extends Model
         'application_type',
         'sponsor_name',
         'sponsor_id',
-        'date_of_birth',
+        'dob',
         'emirate_of_residency',
         'profile_picture',
-        'eid_copy',
+        'eid_file',
         'status',
         'quote_file',
         'payment_link',
@@ -28,7 +28,7 @@ class QuoteRequest extends Model
     ];
 
     protected $casts = [
-        'date_of_birth' => 'date',
+        'dob' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

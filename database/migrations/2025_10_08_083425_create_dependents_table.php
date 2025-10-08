@@ -19,12 +19,12 @@ return new class extends Migration
             $table->string('uid_number')->nullable();
             $table->string('eid_number')->nullable();
             $table->enum('marital_status', ['single', 'married']);
-            $table->date('date_of_birth');
+            $table->date('dob');
             $table->enum('relationship', ['spouse', 'child', 'parent', 'sibling']);
 
             // Documents
             $table->string('profile_picture')->nullable();
-            $table->string('eid_copy')->nullable();
+            $table->string('eid_file')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

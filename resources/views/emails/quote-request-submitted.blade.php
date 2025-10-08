@@ -33,7 +33,7 @@ Please find the application details below for your review and processing.
 
 - **Full Name:** {{ $quoteRequest->sponsor_name }}
 - **Sponsor ID:** {{ $quoteRequest->sponsor_id }}
-- **Date of Birth:** {{ \Carbon\Carbon::parse($quoteRequest->date_of_birth)->format('F d, Y') }}
+- **Date of Birth:** {{ \Carbon\Carbon::parse($quoteRequest->dob)->format('F d, Y') }}
 - **Emirate of Residency:** {{ $quoteRequest->emirate_of_residency }}
 
 ### 📎 Attached Documents
@@ -43,7 +43,7 @@ Please find the application details below for your review and processing.
 @if($quoteRequest->profile_picture)
 | Profile Picture | ✅ Attached |
 @endif
-@if($quoteRequest->eid_copy)
+@if($quoteRequest->eid_file)
 | Emirates ID Copy | ✅ Attached |
 @endif
 
@@ -62,7 +62,7 @@ Please find the application details below for your review and processing.
 ### Dependent {{ $index + 1 }} of {{ $dependents->count() }}
 
 - **Relationship:** {{ ucfirst($dependent->relationship) }}
-- **Date of Birth:** {{ \Carbon\Carbon::parse($dependent->date_of_birth)->format('F d, Y') }}
+- **Date of Birth:** {{ \Carbon\Carbon::parse($dependent->dob)->format('F d, Y') }}
 - **Marital Status:** {{ ucfirst($dependent->marital_status) }}
 @if($dependent->uid_number)
 - **UID Number:** {{ $dependent->uid_number }}
@@ -71,13 +71,13 @@ Please find the application details below for your review and processing.
 - **Emirates ID Number:** {{ $dependent->eid_number }}
 @endif
 
-@if($dependent->profile_picture || $dependent->eid_copy)
+@if($dependent->profile_picture || $dependent->eid_file)
 
 **📎 Attached Documents:**
 @if($dependent->profile_picture)
 - ✅ Profile Picture
 @endif
-@if($dependent->eid_copy)
+@if($dependent->eid_file)
 - ✅ Emirates ID Copy
 @endif
 @endif

@@ -19,10 +19,10 @@ return new class extends Migration
             // Principal applicant details (nullable for dependents-only applications)
             $table->string('sponsor_name')->nullable();
             $table->string('sponsor_id')->nullable();
-            $table->date('date_of_birth')->nullable();
+            $table->date('dob')->nullable();
             $table->string('emirate_of_residency')->nullable();
             $table->string('profile_picture')->nullable();
-            $table->string('eid_copy')->nullable();
+            $table->string('eid_file')->nullable();
 
             // Status and workflow
             $table->enum('status', ['pending', 'quote_sent', 'payment_pending', 'completed', 'rejected'])->default('pending');

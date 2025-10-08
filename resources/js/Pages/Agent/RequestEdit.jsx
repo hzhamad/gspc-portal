@@ -13,21 +13,21 @@ export default function RequestEdit() {
         application_type: request.application_type || 'self',
         sponsor_name: request.sponsor_name || '',
         sponsor_id: request.sponsor_id || '',
-        date_of_birth: request.date_of_birth || '',
+        dob: request.dob || '',
         emirate_of_residency: request.emirate_of_residency || '',
         profile_picture: null,
-        eid_copy: null,
+        eid_file: null,
         dependents: dependents.map(dep => ({
             id: dep.id,
             uid_number: dep.uid_number || '',
             eid_number: dep.eid_number || '',
             marital_status: dep.marital_status || 'single',
-            date_of_birth: dep.date_of_birth || '',
+            dob: dep.dob || '',
             relationship: dep.relationship || 'spouse',
             profile_picture: null,
-            eid_copy: null,
+            eid_file: null,
             existing_profile_picture: dep.profile_picture,
-            existing_eid_copy: dep.eid_copy,
+            existing_eid_file: dep.eid_file,
         })),
         _method: 'PUT'
     });
@@ -36,8 +36,33 @@ export default function RequestEdit() {
         request.profile_picture ? `/storage/${request.profile_picture}` : null
     );
     const [eidCopyPreview, setEidCopyPreview] = useState(
-        request.eid_copy ? `/storage/${request.eid_copy}` : null
+        request.eid_file ? `/storage/${request.eid_file}` : null
     );
+
+    // Format Emirates ID with dashes
+    const formatEmiratesId = (value) => {
+        // Remove all non-digit characters
+        const digits = value.replace(/\D/g, '');
+        
+        // Limit to 15 digits
+        const limitedDigits = digits.substring(0, 15);
+        
+        // Format: 784-YYYY-XXXXXXX-X
+        let formatted = '';
+        if (limitedDigits.length > 0) {
+            formatted = limitedDigits.substring(0, 3);
+            if (limitedDigits.length > 3) {
+                formatted += '-' + limitedDigits.substring(3, 7);
+            }
+            if (limitedDigits.length > 7) {
+                formatted += '-' + limitedDigits.substring(7, 14);
+            }
+            if (limitedDigits.length > 14) {
+                formatted += '-' + limitedDigits.substring(14, 15);
+            }
+        }
+        return formatted;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -52,14 +77,14 @@ export default function RequestEdit() {
         if (data.application_type === 'self' || data.application_type === 'self_dependents') {
             formData.append('sponsor_name', data.sponsor_name);
             formData.append('sponsor_id', data.sponsor_id);
-            formData.append('date_of_birth', data.date_of_birth);
+            formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
             
             if (data.profile_picture) {
                 formData.append('profile_picture', data.profile_picture);
             }
-            if (data.eid_copy) {
-                formData.append('eid_copy', data.eid_copy);
+            if (data.eid_file) {
+                formData.append('eid_file', data.eid_file);
             }
         }
         
@@ -72,14 +97,14 @@ export default function RequestEdit() {
                 formData.append(`dependents[${index}][uid_number]`, dependent.uid_number || '');
                 formData.append(`dependents[${index}][eid_number]`, dependent.eid_number || '');
                 formData.append(`dependents[${index}][marital_status]`, dependent.marital_status);
-                formData.append(`dependents[${index}][date_of_birth]`, dependent.date_of_birth);
+                formData.append(`dependents[${index}][dob]`, dependent.dob);
                 formData.append(`dependents[${index}][relationship]`, dependent.relationship);
                 
                 if (dependent.profile_picture) {
                     formData.append(`dependents[${index}][profile_picture]`, dependent.profile_picture);
                 }
-                if (dependent.eid_copy) {
-                    formData.append(`dependents[${index}][eid_copy]`, dependent.eid_copy);
+                if (dependent.eid_file) {
+                    formData.append(`dependents[${index}][eid_file]`, dependent.eid_file);
                 }
             });
         }
@@ -103,7 +128,7 @@ export default function RequestEdit() {
             reader.onloadend = () => {
                 if (field === 'profile_picture') {
                     setProfilePicturePreview(reader.result);
-                } else if (field === 'eid_copy') {
+                } else if (field === 'eid_file') {
                     setEidCopyPreview(reader.result);
                 }
             };
@@ -124,10 +149,10 @@ export default function RequestEdit() {
                 uid_number: '',
                 eid_number: '',
                 marital_status: 'single',
-                date_of_birth: '',
+                dob: '',
                 relationship: 'spouse',
                 profile_picture: null,
-                eid_copy: null,
+                eid_file: null,
             }
         ]);
     };
@@ -275,9 +300,10 @@ export default function RequestEdit() {
                                         <input
                                             type="text"
                                             value={data.sponsor_id}
-                                            onChange={(e) => setData('sponsor_id', e.target.value)}
+                                            onChange={(e) => setData('sponsor_id', formatEmiratesId(e.target.value))}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                            placeholder="Emirates ID number"
+                                            placeholder="784-YYYY-XXXXXXX-X"
+                                            maxLength="18"
                                         />
                                         {errors.sponsor_id && (
                                             <p className="text-red-500 text-sm mt-1">{errors.sponsor_id}</p>
@@ -290,12 +316,12 @@ export default function RequestEdit() {
                                         </label>
                                         <input
                                             type="date"
-                                            value={data.date_of_birth}
-                                            onChange={(e) => setData('date_of_birth', e.target.value)}
+                                            value={data.dob}
+                                            onChange={(e) => setData('dob', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                                         />
-                                        {errors.date_of_birth && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.date_of_birth}</p>
+                                        {errors.dob && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
                                         )}
                                     </div>
 
@@ -364,12 +390,12 @@ export default function RequestEdit() {
                                         <input
                                             type="file"
                                             accept="image/jpeg,image/png,image/jpg,application/pdf"
-                                            onChange={(e) => handleFileChange(e, 'eid_copy')}
+                                            onChange={(e) => handleFileChange(e, 'eid_file')}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                                         />
                                         <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
-                                        {errors.eid_copy && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.eid_copy}</p>
+                                        {errors.eid_file && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.eid_file}</p>
                                         )}
                                     </div>
                                 </div>
@@ -456,11 +482,12 @@ export default function RequestEdit() {
                                                             value={dependent.eid_number}
                                                             onChange={(e) => {
                                                                 const newDependents = [...data.dependents];
-                                                                newDependents[index].eid_number = e.target.value;
+                                                                newDependents[index].eid_number = formatEmiratesId(e.target.value);
                                                                 setData('dependents', newDependents);
                                                             }}
                                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                            placeholder="Optional"
+                                                            placeholder="784-YYYY-XXXXXXX-X"
+                                                            maxLength="18"
                                                         />
                                                     </div>
 
@@ -470,10 +497,10 @@ export default function RequestEdit() {
                                                         </label>
                                                         <input
                                                             type="date"
-                                                            value={dependent.date_of_birth}
+                                                            value={dependent.dob}
                                                             onChange={(e) => {
                                                                 const newDependents = [...data.dependents];
-                                                                newDependents[index].date_of_birth = e.target.value;
+                                                                newDependents[index].dob = e.target.value;
                                                                 setData('dependents', newDependents);
                                                             }}
                                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
@@ -544,10 +571,10 @@ export default function RequestEdit() {
                                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                                             Emirates ID Copy
                                                         </label>
-                                                        {dependent.existing_eid_copy && !dependent.eid_copy && (
+                                                        {dependent.existing_eid_file && !dependent.eid_file && (
                                                             <div className="mb-2">
                                                                 <a 
-                                                                    href={`/storage/${dependent.existing_eid_copy}`} 
+                                                                    href={`/storage/${dependent.existing_eid_file}`} 
                                                                     target="_blank" 
                                                                     rel="noopener noreferrer"
                                                                     className="text-blue-600 hover:underline text-sm"
@@ -559,7 +586,7 @@ export default function RequestEdit() {
                                                         <input
                                                             type="file"
                                                             accept="image/jpeg,image/png,image/jpg,application/pdf"
-                                                            onChange={(e) => handleDependentFileChange(index, 'eid_copy', e.target.files[0])}
+                                                            onChange={(e) => handleDependentFileChange(index, 'eid_file', e.target.files[0])}
                                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                                                         />
                                                         <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>

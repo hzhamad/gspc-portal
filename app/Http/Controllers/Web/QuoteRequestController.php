@@ -44,18 +44,18 @@ class QuoteRequestController extends Controller
             'application_type' => 'required|in:self,self_dependents,dependents',
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
             'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'date_of_birth' => 'required_if:application_type,self,self_dependents|date',
+            'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:255',
             'profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'eid_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'dependents' => 'required_if:application_type,dependents,self_dependents|array',
             'dependents.*.uid_number' => 'nullable|string|max:255',
             'dependents.*.eid_number' => 'nullable|string|max:255',
             'dependents.*.marital_status' => 'required|in:single,married',
-            'dependents.*.date_of_birth' => 'required|date',
+            'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
             'dependents.*.profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'dependents.*.eid_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'dependents.*.eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         DB::beginTransaction();
@@ -69,7 +69,7 @@ class QuoteRequestController extends Controller
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
                 $quoteRequest->sponsor_name = $validated['sponsor_name'];
                 $quoteRequest->sponsor_id = $validated['sponsor_id'];
-                $quoteRequest->date_of_birth = $validated['date_of_birth'];
+                $quoteRequest->dob = $validated['dob'];
                 $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
 
                 // Handle file uploads for principal
@@ -78,8 +78,8 @@ class QuoteRequestController extends Controller
                         ->store('quote-requests/profiles', 'public');
                 }
 
-                if ($request->hasFile('eid_copy')) {
-                    $quoteRequest->eid_copy = $request->file('eid_copy')
+                if ($request->hasFile('eid_file')) {
+                    $quoteRequest->eid_file = $request->file('eid_file')
                         ->store('quote-requests/eids', 'public');
                 }
             }
@@ -98,7 +98,7 @@ class QuoteRequestController extends Controller
                     $dependent->uid_number = $dependentData['uid_number'] ?? null;
                     $dependent->eid_number = $dependentData['eid_number'] ?? null;
                     $dependent->marital_status = $dependentData['marital_status'];
-                    $dependent->date_of_birth = $dependentData['date_of_birth'];
+                    $dependent->dob = $dependentData['dob'];
                     $dependent->relationship = $dependentData['relationship'];
 
                     // Handle file uploads for dependent
@@ -107,8 +107,8 @@ class QuoteRequestController extends Controller
                             ->store('dependents/profiles', 'public');
                     }
 
-                    if ($request->hasFile("dependents.{$index}.eid_copy")) {
-                        $dependent->eid_copy = $request->file("dependents.{$index}.eid_copy")
+                    if ($request->hasFile("dependents.{$index}.eid_file")) {
+                        $dependent->eid_file = $request->file("dependents.{$index}.eid_file")
                             ->store('dependents/eids', 'public');
                     }
 
@@ -227,19 +227,19 @@ class QuoteRequestController extends Controller
             'application_type' => 'required|in:self,self_dependents,dependents',
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
             'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'date_of_birth' => 'required_if:application_type,self,self_dependents|date',
+            'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:255',
             'profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'eid_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'dependents' => 'required_if:application_type,dependents,self_dependents|array',
             'dependents.*.id' => 'nullable|exists:dependents,id',
             'dependents.*.uid_number' => 'nullable|string|max:255',
             'dependents.*.eid_number' => 'nullable|string|max:255',
             'dependents.*.marital_status' => 'required|in:single,married',
-            'dependents.*.date_of_birth' => 'required|date',
+            'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
             'dependents.*.profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'dependents.*.eid_copy' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'dependents.*.eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         DB::beginTransaction();
@@ -251,7 +251,7 @@ class QuoteRequestController extends Controller
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
                 $quoteRequest->sponsor_name = $validated['sponsor_name'];
                 $quoteRequest->sponsor_id = $validated['sponsor_id'];
-                $quoteRequest->date_of_birth = $validated['date_of_birth'];
+                $quoteRequest->dob = $validated['dob'];
                 $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
 
                 // Handle file uploads for principal
@@ -264,28 +264,28 @@ class QuoteRequestController extends Controller
                         ->store('quote-requests/profiles', 'public');
                 }
 
-                if ($request->hasFile('eid_copy')) {
+                if ($request->hasFile('eid_file')) {
                     // Delete old file if exists
-                    if ($quoteRequest->eid_copy) {
-                        Storage::disk('public')->delete($quoteRequest->eid_copy);
+                    if ($quoteRequest->eid_file) {
+                        Storage::disk('public')->delete($quoteRequest->eid_file);
                     }
-                    $quoteRequest->eid_copy = $request->file('eid_copy')
+                    $quoteRequest->eid_file = $request->file('eid_file')
                         ->store('quote-requests/eids', 'public');
                 }
             } else {
                 // Clear principal data if not applicable
                 $quoteRequest->sponsor_name = null;
                 $quoteRequest->sponsor_id = null;
-                $quoteRequest->date_of_birth = null;
+                $quoteRequest->dob = null;
                 $quoteRequest->emirate_of_residency = null;
 
                 if ($quoteRequest->profile_picture) {
                     Storage::disk('public')->delete($quoteRequest->profile_picture);
                     $quoteRequest->profile_picture = null;
                 }
-                if ($quoteRequest->eid_copy) {
-                    Storage::disk('public')->delete($quoteRequest->eid_copy);
-                    $quoteRequest->eid_copy = null;
+                if ($quoteRequest->eid_file) {
+                    Storage::disk('public')->delete($quoteRequest->eid_file);
+                    $quoteRequest->eid_file = null;
                 }
             }
 
@@ -306,7 +306,7 @@ class QuoteRequestController extends Controller
                             $dependent->uid_number = $dependentData['uid_number'] ?? null;
                             $dependent->eid_number = $dependentData['eid_number'] ?? null;
                             $dependent->marital_status = $dependentData['marital_status'];
-                            $dependent->date_of_birth = $dependentData['date_of_birth'];
+                            $dependent->dob = $dependentData['dob'];
                             $dependent->relationship = $dependentData['relationship'];
 
                             // Handle file uploads
@@ -318,11 +318,11 @@ class QuoteRequestController extends Controller
                                     ->store('dependents/profiles', 'public');
                             }
 
-                            if ($request->hasFile("dependents.{$index}.eid_copy")) {
-                                if ($dependent->eid_copy) {
-                                    Storage::disk('public')->delete($dependent->eid_copy);
+                            if ($request->hasFile("dependents.{$index}.eid_file")) {
+                                if ($dependent->eid_file) {
+                                    Storage::disk('public')->delete($dependent->eid_file);
                                 }
-                                $dependent->eid_copy = $request->file("dependents.{$index}.eid_copy")
+                                $dependent->eid_file = $request->file("dependents.{$index}.eid_file")
                                     ->store('dependents/eids', 'public');
                             }
 
@@ -336,7 +336,7 @@ class QuoteRequestController extends Controller
                         $dependent->uid_number = $dependentData['uid_number'] ?? null;
                         $dependent->eid_number = $dependentData['eid_number'] ?? null;
                         $dependent->marital_status = $dependentData['marital_status'];
-                        $dependent->date_of_birth = $dependentData['date_of_birth'];
+                        $dependent->dob = $dependentData['dob'];
                         $dependent->relationship = $dependentData['relationship'];
 
                         // Handle file uploads
@@ -345,8 +345,8 @@ class QuoteRequestController extends Controller
                                 ->store('dependents/profiles', 'public');
                         }
 
-                        if ($request->hasFile("dependents.{$index}.eid_copy")) {
-                            $dependent->eid_copy = $request->file("dependents.{$index}.eid_copy")
+                        if ($request->hasFile("dependents.{$index}.eid_file")) {
+                            $dependent->eid_file = $request->file("dependents.{$index}.eid_file")
                                 ->store('dependents/eids', 'public');
                         }
 
@@ -364,8 +364,8 @@ class QuoteRequestController extends Controller
                     if ($dependent->profile_picture) {
                         Storage::disk('public')->delete($dependent->profile_picture);
                     }
-                    if ($dependent->eid_copy) {
-                        Storage::disk('public')->delete($dependent->eid_copy);
+                    if ($dependent->eid_file) {
+                        Storage::disk('public')->delete($dependent->eid_file);
                     }
                     $dependent->delete();
                 }
@@ -376,8 +376,8 @@ class QuoteRequestController extends Controller
                     if ($dependent->profile_picture) {
                         Storage::disk('public')->delete($dependent->profile_picture);
                     }
-                    if ($dependent->eid_copy) {
-                        Storage::disk('public')->delete($dependent->eid_copy);
+                    if ($dependent->eid_file) {
+                        Storage::disk('public')->delete($dependent->eid_file);
                     }
                     $dependent->delete();
                 }

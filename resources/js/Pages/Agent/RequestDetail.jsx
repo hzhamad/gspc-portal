@@ -186,7 +186,7 @@ export default function RequestDetail() {
                                     <div>
                                         <label className="text-sm font-medium text-gray-600 block mb-1">Date of Birth</label>
                                         <p className="text-base font-semibold text-gray-800 p-3 bg-gray-50 rounded-lg">
-                                            {formatDate(request.date_of_birth)}
+                                            {formatDate(request.dob)}
                                         </p>
                                     </div>
                                     <div>
@@ -237,9 +237,9 @@ export default function RequestDetail() {
 
                                     <div>
                                         <label className="text-sm font-medium text-gray-600 block mb-2">Emirates ID Copy</label>
-                                        {request.eid_copy ? (
+                                        {request.eid_file ? (
                                             <a
-                                                href={`/storage/${request.eid_copy}`}
+                                                href={`/storage/${request.eid_file}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors group"
@@ -311,7 +311,7 @@ export default function RequestDetail() {
                                                 <div>
                                                     <label className="text-sm font-medium text-gray-600 block mb-1">Date of Birth</label>
                                                     <p className="text-base font-semibold text-gray-800 p-3 bg-white rounded-lg border border-gray-200">
-                                                        {formatDate(dependent.date_of_birth)}
+                                                        {formatDate(dependent.dob)}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -362,9 +362,9 @@ export default function RequestDetail() {
 
                                                 <div>
                                                     <label className="text-sm font-medium text-gray-600 block mb-2">Emirates ID Copy</label>
-                                                    {dependent.eid_copy ? (
+                                                    {dependent.eid_file ? (
                                                         <a
-                                                            href={`/storage/${dependent.eid_copy}`}
+                                                            href={`/storage/${dependent.eid_file}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="flex items-center justify-between p-3 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors group"
