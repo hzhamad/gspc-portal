@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Web\AgentDashboardController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\QuoteRequestController;
+use App\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -24,6 +27,9 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
+    // Agent Dashboard Route
+    Route::get('/agent/dashboard', [AgentDashboardController::class, 'index'])->name('agent.dashboard');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/email/verify', [AuthController::class, 'showVerifyEmail'])->name('verification.notice');
@@ -33,4 +39,29 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+    // Quote Request Routes (for agents/clients)
+    Route::get('/quote-request', [QuoteRequestController::class, 'create'])->name('quote-request.create');
+    Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
+
+    // My Requests Routes
+    Route::get('/my-requests', [QuoteRequestController::class, 'index'])->name('my-requests.index');
+    Route::get('/my-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])->name('my-requests.show');
+
+    // Profile Routes
+    Route::get('/profile', function () {
+        return \Inertia\Inertia::render('Agent/Profile');
+    })->name('profile.show');
+    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+});
+
+// Admin Routes - Require authentication and admin role
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // User Management Routes
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 });

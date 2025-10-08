@@ -31,7 +31,7 @@ const Home = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => router.visit("/register")}
+                            onClick={() => router.visit("/login")}
                             className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                         >
                             Get Started
@@ -39,12 +39,12 @@ const Home = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                             </svg>
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => router.visit("/login")}
                             className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 border-blue-600 transition-all duration-300"
                         >
                             Sign In
-                        </button>
+                        </button> */}
                     </div>
                 </header>
                 
