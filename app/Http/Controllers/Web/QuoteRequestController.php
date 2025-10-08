@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class QuoteRequestController extends Controller
@@ -76,11 +77,23 @@ class QuoteRequestController extends Controller
                 if ($request->hasFile('profile_picture')) {
                     $quoteRequest->profile_picture = $request->file('profile_picture')
                         ->store('quote-requests/profiles', 'public');
+                } elseif ($request->user()->profile_picture && Storage::disk('public')->exists($request->user()->profile_picture)) {
+                    $source = $request->user()->profile_picture;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/profiles/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->profile_picture = $destination;
                 }
 
                 if ($request->hasFile('eid_file')) {
                     $quoteRequest->eid_file = $request->file('eid_file')
                         ->store('quote-requests/eids', 'public');
+                } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
+                    $source = $request->user()->eid_file;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->eid_file = $destination;
                 }
             }
 
@@ -272,6 +285,12 @@ class QuoteRequestController extends Controller
                     }
                     $quoteRequest->profile_picture = $request->file('profile_picture')
                         ->store('quote-requests/profiles', 'public');
+                } elseif ($request->user()->profile_picture && Storage::disk('public')->exists($request->user()->profile_picture)) {
+                    $source = $request->user()->profile_picture;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/profiles/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->profile_picture = $destination;
                 }
 
                 if ($request->hasFile('eid_file')) {
@@ -281,6 +300,12 @@ class QuoteRequestController extends Controller
                     }
                     $quoteRequest->eid_file = $request->file('eid_file')
                         ->store('quote-requests/eids', 'public');
+                } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
+                    $source = $request->user()->eid_file;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->eid_file = $destination;
                 }
             } else {
                 // Clear principal data if not applicable

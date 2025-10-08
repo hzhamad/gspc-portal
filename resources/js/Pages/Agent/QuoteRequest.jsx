@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import FileUpload from '@/Components/FileUpload';
 import DashboardHeader from '@/Components/DashboardHeader';
@@ -14,8 +14,12 @@ export default function QuoteRequest() {
     const [applicationType, setApplicationType] = useState('');
     const [dependents, setDependents] = useState([]);
 
-    const [existingProfilePicture] = useState(user?.profile_image || null);
-    const [existingEidCopy] = useState(user?.eid_file || null);
+    const existingProfilePicture = user?.profile_picture || null;
+    const existingEidCopy = user?.eid_file || null;
+    const [profilePicturePreview, setProfilePicturePreview] = useState(() => (
+        existingProfilePicture ? `/storage/${existingProfilePicture}` : null
+    ));
+    const [profilePictureObjectUrl, setProfilePictureObjectUrl] = useState(null);
 
     // Format date for input field (extract YYYY-MM-DD from datetime)
     const formatDateForInput = (dateString) => {
@@ -33,8 +37,8 @@ export default function QuoteRequest() {
         sponsor_id: user?.eid_number || '',
         dob: formatDateForInput(user?.dob),
         emirate_of_residency: user?.residency || '',
-        profile_picture: null,
-        eid_file: null,
+        profile_picture: user?.profile_picture || null,
+        eid_file: user?.eid_file || null,
         // Dependents
         dependents: [],
     });
@@ -101,6 +105,46 @@ export default function QuoteRequest() {
 
     const handleFileChange = (field, file) => {
         setData(field, file);
+
+        if (field === 'profile_picture') {
+            if (profilePictureObjectUrl) {
+                URL.revokeObjectURL(profilePictureObjectUrl);
+                setProfilePictureObjectUrl(null);
+            }
+
+            if (file) {
+                const objectUrl = URL.createObjectURL(file);
+                setProfilePicturePreview(objectUrl);
+                setProfilePictureObjectUrl(objectUrl);
+            } else {
+                setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
+            }
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (profilePictureObjectUrl) {
+                URL.revokeObjectURL(profilePictureObjectUrl);
+            }
+        };
+    }, [profilePictureObjectUrl]);
+
+    useEffect(() => {
+        if (!data.profile_picture) {
+            setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
+        }
+    }, [existingProfilePicture, data.profile_picture]);
+
+    const resetProfilePictureSelection = () => {
+        setData('profile_picture', null);
+
+        if (profilePictureObjectUrl) {
+            URL.revokeObjectURL(profilePictureObjectUrl);
+            setProfilePictureObjectUrl(null);
+        }
+
+        setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
     };
 
     const handleDependentFileChange = (id, field, file) => {
@@ -178,6 +222,11 @@ export default function QuoteRequest() {
                 reset();
                 setDependents([]);
                 setApplicationType('');
+                if (profilePictureObjectUrl) {
+                    URL.revokeObjectURL(profilePictureObjectUrl);
+                    setProfilePictureObjectUrl(null);
+                }
+                setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
             }
         });
     };
@@ -271,7 +320,7 @@ export default function QuoteRequest() {
                         </div>
 
                         {/* Principal Details */}
-                        {(applicationType === 'self' || applicationType === 'self_dependents') && (
+                        {(applicationType === 'self' || applicationType === 'self_dependents' || applicationType === 'dependents') && (
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                                 <h2 className="text-xl font-bold text-gray-800 mb-4">Principal Information</h2>
 
@@ -338,25 +387,39 @@ export default function QuoteRequest() {
                                             onChange={(e) => handleFileChange('profile_picture', e.target.files[0])}
                                             fileName={data.profile_picture?.name}
                                             placeholder="Click to upload profile picture"
-                                            required
+                                            required={!existingProfilePicture}
                                         />
-                                        {existingProfilePicture && !data.profile_picture ? (
-                                            <div className="mt-2">
-                                                <p className="text-sm text-gray-600 mb-2">Current profile picture:</p>
-                                                <img 
-                                                    src={`/storage/${existingProfilePicture}`} 
-                                                    alt="Current profile" 
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                                                />
+                                        {profilePicturePreview ? (
+                                            <div className="mt-3 flex items-start gap-4">
+                                                <div>
+                                                    <p className="text-sm text-gray-600 mb-2">
+                                                        {data.profile_picture ? 'New profile picture preview:' : 'Current profile picture on file:'}
+                                                    </p>
+                                                    <img
+                                                        src={profilePicturePreview}
+                                                        alt="Profile preview"
+                                                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                                                    />
+                                                </div>
+                                                {data.profile_picture && existingProfilePicture && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={resetProfilePictureSelection}
+                                                        className="px-3 py-2 h-fit mt-6 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        Keep current photo
+                                                    </button>
+                                                )}
                                             </div>
-                                        ) : !data.profile_picture ? (
+                                        ) : (
                                             <p className="text-sm text-gray-500 mt-1 italic">
-                                                No profile picture on file. Please upload one or update your profile.
+                                                No profile picture on file. Please upload one.
                                             </p>
-                                        ) : null}
+                                        )}
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
                                     </div>
 
+                                    {/*
                                     <div className="md:col-span-2">
                                         <FileUpload
                                             label="Emirates ID Copy"
@@ -385,6 +448,7 @@ export default function QuoteRequest() {
                                         ) : null}
                                         {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
                                     </div>
+                                    */}
                                 </div>
                             </div>
                         )}                        {/* Dependents Section */}

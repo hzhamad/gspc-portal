@@ -144,9 +144,9 @@ export default function DashboardAside({ currentPath }) {
                 {/* User Info at Bottom */}
                 <div className="mt-8 pt-6 border-t border-gray-200">
                     <div className="flex items-center gap-3">
-                        {user?.profile_image ? (
+                        {user?.profile_picture ? (
                             <img 
-                                src={`/storage/${user.profile_image}`} 
+                                src={`/storage/${user.profile_picture}`} 
                                 alt="Profile" 
                                 className="w-10 h-10 rounded-full object-cover border-2 border-gold/20"
                             />

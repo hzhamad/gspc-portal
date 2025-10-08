@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware
                     'residency' => $request->user()->residency ?? null,
                     'dob' => $request->user()->dob ?? null,
                     'eid_number' => $request->user()->eid_number ?? null,
-                    'profile_picture' => $request->user()->profile_picture_url ?? null,
+                    'profile_picture' => $request->user()->profile_picture ?? null,
                     'roles' => $request->user()->roles->pluck('name')->toArray(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name')->toArray(),
                 ] : null,

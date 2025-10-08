@@ -44,7 +44,7 @@ class ProfileController extends Controller
                 'residency' => $user->residency,
                 'eid_number' => $user->eid_number,
                 'eid_file' => $user->eid_file,
-                'profile_image' => $user->profile_image,
+                'profile_picture' => $user->profile_picture,
                 'email_verified_at' => $user->email_verified_at,
                 'roles' => $user->roles->pluck('name')->toArray(),
             ],
@@ -87,12 +87,12 @@ class ProfileController extends Controller
         }
 
         // Handle profile image upload
-        if ($request->hasFile('profile_image')) {
+        if ($request->hasFile('profile_picture')) {
             // Delete old file if exists
-            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
-                Storage::disk('public')->delete($user->profile_image);
+            if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+                Storage::disk('public')->delete($user->profile_picture);
             }
-            $updateData['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
+            $updateData['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
 
         // Update user
@@ -108,9 +108,9 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
-            Storage::disk('public')->delete($user->profile_image);
-            $user->update(['profile_image' => null]);
+        if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+            Storage::disk('public')->delete($user->profile_picture);
+            $user->update(['profile_picture' => null]);
         }
 
         return redirect()->back()->with('success', 'Profile image deleted successfully!');

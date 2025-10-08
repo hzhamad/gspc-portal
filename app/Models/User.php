@@ -24,7 +24,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'residency',
         'eid_number',
         'eid_file',
-        'profile_image',
+        'profile_picture',
         'password',
         'email_verified_at',
     ];

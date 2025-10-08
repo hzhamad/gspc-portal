@@ -10,23 +10,49 @@ export default function Profile() {
     const emirates = props?.emirates || [];
     const flash = props?.flash || {};
 
-    const { data, setData, post, processing, errors } = useForm({
+    const formatPhoneForInput = (phone) => {
+        if (!phone) return '';
+
+        const digitsOnly = phone.replace(/\D/g, '');
+        return digitsOnly.startsWith('971') ? digitsOnly.substring(3) : digitsOnly;
+    };
+
+    const { data, setData, post, processing, errors, transform } = useForm({
         first_name: user?.first_name || '',
         middle_name: user?.middle_name || '',
         last_name: user?.last_name || '',
         email: user?.email || '',
-        phone: user?.phone || '',
+        phone: formatPhoneForInput(user?.phone),
         dob: user?.dob || '',
         residency: user?.residency || '',
         eid_number: user?.eid_number || '',
         eid_file: null,
-        profile_image: null,
+        profile_picture: null,
         _method: 'PUT',
     });
 
+    const handlePhoneChange = (e) => {
+        let value = e.target.value;
+        value = value.replace(/\D/g, '');
+
+        if (value.startsWith('971')) {
+            value = value.substring(3);
+        }
+
+        setData('phone', value);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/profile');
+        transform((formData) => ({
+            ...formData,
+            phone: formData.phone ? `+971${formData.phone}` : null,
+        }));
+
+        post('/profile', {
+            forceFormData: true,
+            onFinish: () => transform((formData) => formData),
+        });
     };
 
     return (
@@ -47,9 +73,9 @@ export default function Profile() {
                         {/* Profile Avatar */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-6">
                             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                                {user?.profile_image ? (
+                                {user?.profile_picture ? (
                                     <img 
-                                        src={`/storage/${user.profile_image}`} 
+                                        src={`/storage/${user.profile_picture}`} 
                                         alt="Profile" 
                                         className="w-24 h-24 rounded-full object-cover border-4 border-gold/20 shrink-0"
                                     />
@@ -126,13 +152,19 @@ export default function Profile() {
 
                                 <div className="sm:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                    <input
-                                        type="tel"
-                                        value={data.phone}
-                                        onChange={(e) => setData('phone', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                        placeholder="+971XXXXXXXXX"
-                                    />
+                                    <div className="relative">
+                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                                            <img src="/images/uae-flag.svg" alt="UAE" className="w-6 h-4 object-contain" />
+                                            <span className="text-gray-700 font-medium">+971-</span>
+                                        </div>
+                                        <input
+                                            type="tel"
+                                            value={data.phone}
+                                            onChange={handlePhoneChange}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all pl-24"
+                                            placeholder="XXXXXXXXX"
+                                        />
+                                    </div>
                                     {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
                                 </div>
 
@@ -171,12 +203,12 @@ export default function Profile() {
                                         <FileUpload
                                             label="Profile Picture"
                                             accept="image/*"
-                                            onChange={(e) => setData('profile_image', e.target.files[0])}
-                                            fileName={data.profile_image?.name}
-                                            placeholder={user?.profile_image ? "Replace current profile picture" : "Upload profile photo (PNG/JPG)"}
-                                            error={errors.profile_image}
+                                            onChange={(e) => setData('profile_picture', e.target.files[0])}
+                                            fileName={data.profile_picture?.name}
+                                            placeholder={user?.profile_picture ? "Replace current profile picture" : "Upload profile photo (PNG/JPG)"}
+                                            error={errors.profile_picture}
                                         />
-                                        {user?.profile_image && !data.profile_image && (
+                                        {user?.profile_picture && !data.profile_picture && (
                                             <div className="mt-2 flex items-center gap-2">
                                                 <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />

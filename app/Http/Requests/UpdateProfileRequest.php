@@ -33,7 +33,7 @@ class UpdateProfileRequest extends FormRequest
             'residency' => ['nullable', 'string', 'max:255'],
             'eid_number' => ['nullable', 'string', 'max:50'],
             'eid_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
-            'profile_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];
     }
 
@@ -54,7 +54,7 @@ class UpdateProfileRequest extends FormRequest
             'residency' => 'emirate of residency',
             'eid_number' => 'Emirates ID number',
             'eid_file' => 'Emirates ID file',
-            'profile_image' => 'profile image',
+            'profile_picture' => 'profile image',
         ];
     }
 
@@ -69,8 +69,8 @@ class UpdateProfileRequest extends FormRequest
             'dob.before' => 'The date of birth must be a date before today.',
             'eid_file.mimes' => 'The Emirates ID file must be a file of type: jpg, jpeg, png, pdf.',
             'eid_file.max' => 'The Emirates ID file must not be larger than 2MB.',
-            'profile_image.mimes' => 'The profile image must be a file of type: jpg, jpeg, png.',
-            'profile_image.max' => 'The profile image must not be larger than 2MB.',
+            'profile_picture.mimes' => 'The profile image must be a file of type: jpg, jpeg, png.',
+            'profile_picture.max' => 'The profile image must not be larger than 2MB.',
         ];
     }
 }
