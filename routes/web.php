@@ -51,6 +51,8 @@ Route::middleware(['auth'])->group(function () {
     // My Requests Routes
     Route::get('/my-requests', [QuoteRequestController::class, 'index'])->name('my-requests.index');
     Route::get('/my-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])->name('my-requests.show');
+    Route::get('/my-requests/{quoteRequest}/edit', [QuoteRequestController::class, 'edit'])->name('my-requests.edit');
+    Route::put('/my-requests/{quoteRequest}', [QuoteRequestController::class, 'update'])->name('my-requests.update');
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
