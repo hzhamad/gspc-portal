@@ -6,7 +6,9 @@ import FileUpload from '@/Components/FileUpload';
 
 export default function Profile() {
     const { props } = usePage();
-    const user = props?.auth?.user;
+    const user = props?.user || props?.auth?.user;
+    const emirates = props?.emirates || [];
+    const flash = props?.flash || {};
 
     const { data, setData, post, processing, errors } = useForm({
         first_name: user?.first_name || '',
@@ -14,6 +16,8 @@ export default function Profile() {
         last_name: user?.last_name || '',
         email: user?.email || '',
         phone: user?.phone || '',
+        dob: user?.dob || '',
+        residency: user?.residency || '',
         eid_number: user?.eid_number || '',
         eid_file: null,
         profile_image: null,
@@ -130,6 +134,32 @@ export default function Profile() {
                                         placeholder="+971XXXXXXXXX"
                                     />
                                     {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                    <input
+                                        type="date"
+                                        value={data.dob}
+                                        onChange={(e) => setData('dob', e.target.value)}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                    />
+                                    {errors.dob && <p className="text-red-600 text-sm mt-1">{errors.dob}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emirate of Residency</label>
+                                    <select
+                                        value={data.residency}
+                                        onChange={(e) => setData('residency', e.target.value)}
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                    >
+                                        <option value="">Select Emirate</option>
+                                        {emirates.map((emirate) => (
+                                            <option key={emirate} value={emirate}>{emirate}</option>
+                                        ))}
+                                    </select>
+                                    {errors.residency && <p className="text-red-600 text-sm mt-1">{errors.residency}</p>}
                                 </div>
                             </div>
 

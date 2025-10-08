@@ -12,12 +12,10 @@ export default function QuoteRequest() {
     ];
 
     const [applicationType, setApplicationType] = useState('');
-    const [idType, setIdType] = useState('eid'); // 'eid' or 'uid'
     const [dependents, setDependents] = useState([]);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
-        id_type: 'eid',
         // Principal Details
         sponsor_name: user?.fullname || '',
         sponsor_id: '',
@@ -27,16 +25,11 @@ export default function QuoteRequest() {
         dependents: [],
     });
 
-    // Validate Sponsor ID based on type
+    // Validate Sponsor Emirates ID
     const validateSponsorId = (value) => {
-        if (idType === 'eid') {
-            // Emirates ID: 784-YYYY-XXXXXXX-X (15 digits with dashes)
-            const eidPattern = /^784-\d{4}-\d{7}-\d{1}$/;
-            return eidPattern.test(value);
-        } else {
-            // Unified ID: simpler format, adjust as needed
-            return value.length >= 10;
-        }
+        // Emirates ID: 784-YYYY-XXXXXXX-X (15 digits with dashes)
+        const eidPattern = /^784-\d{4}-\d{7}-\d{1}$/;
+        return eidPattern.test(value);
     };
 
     const addDependent = () => {
@@ -49,6 +42,7 @@ export default function QuoteRequest() {
             relationship: '',
             emirate_of_residency: '',
             eid_copy: null,
+            uid_loading: false,
         };
         setDependents([...dependents, newDependent]);
     };
@@ -63,6 +57,49 @@ export default function QuoteRequest() {
         ));
     };
 
+    // Fetch dependent data from Unified ID
+    const fetchUnifiedIdData = async (dependentId, uidNumber) => {
+        if (!uidNumber || uidNumber.length < 10) {
+            alert('Please enter a valid Unified ID number');
+            return;
+        }
+
+        // Set loading state
+        updateDependent(dependentId, 'uid_loading', true);
+
+        try {
+            // Simulate API call to fetch Unified ID data
+            // In production, replace this with actual API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Mock data response - replace with actual API response
+            const mockData = {
+                eid_number: '784-2020-1234567-1',
+                date_of_birth: '1995-06-15',
+                emirate_of_residency: 'Dubai',
+            };
+
+            // Update dependent with fetched data
+            setDependents(dependents.map(dep => {
+                if (dep.id === dependentId) {
+                    return {
+                        ...dep,
+                        eid_number: mockData.eid_number,
+                        date_of_birth: mockData.date_of_birth,
+                        emirate_of_residency: mockData.emirate_of_residency,
+                        uid_loading: false,
+                    };
+                }
+                return dep;
+            }));
+
+            alert('Unified ID data loaded successfully');
+        } catch (error) {
+            alert('Failed to fetch Unified ID data. Please try again.');
+            updateDependent(dependentId, 'uid_loading', false);
+        }
+    };
+
     const handleFileChange = (field, file) => {
         setData(field, file);
     };
@@ -73,24 +110,17 @@ export default function QuoteRequest() {
         ));
     };
 
-    const handleIdTypeChange = (type) => {
-        setIdType(type);
-        setData('id_type', type);
-        setData('sponsor_id', ''); // Reset ID when switching
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Validate Sponsor ID if applicable
+        // Validate Sponsor Emirates ID if applicable
         if ((applicationType === 'self' || applicationType === 'self_dependents') && !validateSponsorId(data.sponsor_id)) {
-            alert(`Invalid ${idType === 'eid' ? 'Emirates ID' : 'Unified ID'} format`);
+            alert('Invalid Emirates ID format');
             return;
         }
         
         const formData = new FormData();
         formData.append('application_type', applicationType);
-        formData.append('id_type', idType);
         
         // Add principal data if applying for self
         if (applicationType === 'self' || applicationType === 'self_dependents') {
@@ -121,7 +151,6 @@ export default function QuoteRequest() {
                 reset();
                 setDependents([]);
                 setApplicationType('');
-                setIdType('eid');
             }
         });
     };
@@ -214,39 +243,10 @@ export default function QuoteRequest() {
                             {errors.application_type && <p className="text-red-600 text-sm mt-2">{errors.application_type}</p>}
                         </div>
 
-                        {/* ID Type Selection & Principal Details */}
+                        {/* Principal Details */}
                         {(applicationType === 'self' || applicationType === 'self_dependents') && (
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4">Principal Applicant Details</h2>
-                                
-                                {/* ID Type Toggle */}
-                                <div className="mb-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-3">ID Type</label>
-                                    <div className="flex gap-4">
-                                        <button
-                                            type="button"
-                                            onClick={() => handleIdTypeChange('eid')}
-                                            className={`flex-1 p-3 border-2 rounded-lg transition-all ${
-                                                idType === 'eid' 
-                                                    ? 'border-gold bg-gold/10 text-gold font-semibold' 
-                                                    : 'border-gray-200 hover:border-gold/50'
-                                            }`}
-                                        >
-                                            Emirates ID
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleIdTypeChange('uid')}
-                                            className={`flex-1 p-3 border-2 rounded-lg transition-all ${
-                                                idType === 'uid' 
-                                                    ? 'border-gold bg-gold/10 text-gold font-semibold' 
-                                                    : 'border-gray-200 hover:border-gold/50'
-                                            }`}
-                                        >
-                                            Unified ID
-                                        </button>
-                                    </div>
-                                </div>
+                                <h2 className="text-xl font-bold text-gray-800 mb-4">Sponsor Information</h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
@@ -262,22 +262,16 @@ export default function QuoteRequest() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            {idType === 'eid' ? 'Emirates ID' : 'Unified ID'}
-                                        </label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID</label>
                                         <input
                                             type="text"
                                             value={data.sponsor_id}
                                             onChange={(e) => setData('sponsor_id', e.target.value)}
-                                            placeholder={idType === 'eid' ? '784-YYYY-XXXXXXX-X' : 'Enter Unified ID'}
+                                            placeholder="784-YYYY-XXXXXXX-X"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                             required
                                         />
-                                        <p className="mt-1 text-xs text-gray-500">
-                                            {idType === 'eid' 
-                                                ? 'Format: 784-YYYY-XXXXXXX-X' 
-                                                : 'Enter your Unified ID number'}
-                                        </p>
+                                        <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
                                         {errors.sponsor_id && <p className="text-red-600 text-sm mt-1">{errors.sponsor_id}</p>}
                                     </div>
 
@@ -354,20 +348,52 @@ export default function QuoteRequest() {
                                                 Remove
                                             </button>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">UID Number (Optional)</label>
+                                        
+                                        {/* Unified ID Section */}
+                                        <div className="mb-4 p-4 bg-gradient-to-r from-gold/5 to-gold/10 border border-gold/20 rounded-lg">
+                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                Unified ID Number (Auto-fill)
+                                            </label>
+                                            <div className="flex gap-2">
                                                 <input
                                                     type="text"
                                                     value={dependent.uid_number}
                                                     onChange={(e) => updateDependent(dependent.id, 'uid_number', e.target.value)}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                                    placeholder="Enter UID"
+                                                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                    placeholder="Enter UID to auto-fill details"
                                                 />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fetchUnifiedIdData(dependent.id, dependent.uid_number)}
+                                                    disabled={dependent.uid_loading || !dependent.uid_number}
+                                                    className="px-6 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                                                >
+                                                    {dependent.uid_loading ? (
+                                                        <>
+                                                            <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            Loading...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                            </svg>
+                                                            Load Data
+                                                        </>
+                                                    )}
+                                                </button>
                                             </div>
+                                            <p className="mt-1 text-xs text-gray-600">
+                                                Enter Unified ID and click "Load Data" to automatically fill Emirates ID, Date of Birth, and Emirate
+                                            </p>
+                                        </div>
 
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">EID Number (Optional)</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">EID Number</label>
                                                 <input
                                                     type="text"
                                                     value={dependent.eid_number}

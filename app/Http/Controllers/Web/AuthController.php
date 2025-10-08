@@ -56,7 +56,6 @@ class AuthController extends Controller
             'first_name' => $validated['first_name'],
             'middle_name' => $validated['middle_name'] ?? null,
             'last_name' => $validated['last_name'],
-            'name' => trim("{$validated['first_name']} {$validated['middle_name']} {$validated['last_name']}"),
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'eid_number' => $validated['eid_number'] ?? null,
@@ -139,7 +138,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('dashboard'))->with('success', 'Welcome back! You have successfully logged in.');
     }
 
     public function showForgotPassword(): Response

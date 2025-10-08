@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\AgentDashboardController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\QuoteRequestController;
 use App\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Route;
@@ -52,10 +53,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/my-requests/{quoteRequest}', [QuoteRequestController::class, 'show'])->name('my-requests.show');
 
     // Profile Routes
-    Route::get('/profile', function () {
-        return \Inertia\Inertia::render('Agent/Profile');
-    })->name('profile.show');
-    Route::put('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile/image', [ProfileController::class, 'deleteProfileImage'])->name('profile.deleteImage');
+    Route::delete('/profile/eid', [ProfileController::class, 'deleteEidFile'])->name('profile.deleteEid');
 });
 
 // Admin Routes - Require authentication and admin role

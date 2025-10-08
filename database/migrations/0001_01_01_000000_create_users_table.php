@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
+            $table->date('dob')->nullable();
+            $table->string('residency')->nullable();
             $table->string('eid_number')->nullable();
             $table->string('eid_file')->nullable();
             $table->string('profile_image')->nullable();

@@ -6,18 +6,21 @@ export default function FileUpload({
     onChange, 
     fileName = null,
     placeholder = "Click to upload PNG/JPG/PDF",
-    error = null 
+    error = null,
+    required = false
 }) {
     return (
         <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
                 {label}
+                {required && <span className="text-red-600 ml-1">*</span>}
             </label>
             <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-gold transition-all cursor-pointer">
                 <input
                     type="file"
                     accept={accept}
                     onChange={onChange}
+                    required={required}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
                 <div className="text-center pointer-events-none">

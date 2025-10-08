@@ -20,6 +20,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_name',
         'email',
         'phone',
+        'dob',
+        'residency',
         'eid_number',
         'eid_file',
         'profile_image',
@@ -38,6 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'email_verified_at' => 'datetime',
+            'dob' => 'date',
             'password' => 'hashed',
         ];
     }

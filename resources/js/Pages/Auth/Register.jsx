@@ -10,9 +10,7 @@ export default function Register() {
         last_name: '',
         email: '',
         phone: '',
-        eid_number: '',
         eid_file: null,
-        profile_image: null,
         password: '',
         password_confirmation: '',
     });
@@ -203,36 +201,9 @@ export default function Register() {
 
                                 {/* Emirates ID Section */}
                                 <div className="border-t border-gray-200 pt-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Additional Information (Optional)</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Emirates ID Information</h3>
+                                    <div className="grid grid-cols-1 gap-4">
                                         <div>
-                                            <FileUpload
-                                                label="Profile Picture"
-                                                accept="image/*"
-                                                onChange={(e) => setData('profile_image', e.target.files[0])}
-                                                fileName={data.profile_image?.name}
-                                                placeholder="Upload profile photo (PNG/JPG)"
-                                                error={errors.profile_image}
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Emirates ID Number
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={data.eid_number}
-                                                onChange={(e) => setData('eid_number', e.target.value)}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                                placeholder="784-XXXX-XXXXXXX-X"
-                                            />
-                                            {errors.eid_number && (
-                                                <p className="mt-2 text-sm text-red-600">{errors.eid_number}</p>
-                                            )}
-                                        </div>
-
-                                        <div className="md:col-span-2">
                                             <FileUpload
                                                 label="Emirates ID Copy"
                                                 accept="image/*,.pdf"
@@ -240,6 +211,7 @@ export default function Register() {
                                                 fileName={data.eid_file?.name}
                                                 placeholder="Upload EID copy (PNG/JPG/PDF)"
                                                 error={errors.eid_file}
+                                                required
                                             />
                                         </div>
                                     </div>

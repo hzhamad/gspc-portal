@@ -18,6 +18,10 @@ class UsersSeeder extends Seeder
             'first_name' => 'Super',
             'last_name' => 'Admin',
             'email' => 'superadmin@admin.com',
+            'phone' => '0000000000',
+            'dob' => now()->subYears(30),
+            'residency' => 'Dubai',
+            'eid_number' => '12345672201234',
             'password' => bcrypt('admin'),
         ]);
 
@@ -30,6 +34,10 @@ class UsersSeeder extends Seeder
             'first_name' => "Admin",
             'last_name' => "User",
             'email' => 'admin@admin.com',
+            'phone' => '0000000001',
+            'dob' => now()->subYears(25),
+            'residency' => 'Dubai',
+            'eid_number' => '12345678902234',
             'password' => bcrypt('admin'),
         ]);
 
@@ -42,6 +50,10 @@ class UsersSeeder extends Seeder
             'first_name' => "Agent",
             'last_name' => "User",
             'email' => 'agent@agent.com',
+            'phone' => '0000000002',
+            'dob' => now()->subYears(20),
+            'residency' => 'Dubai',
+            'eid_number' => '12345678903224',
             'password' => bcrypt('agent'),
         ]);
 

@@ -92,35 +92,35 @@ const Home = () => {
                     <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">How It Works</h2>
                     <div className="space-y-6">
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                            <div className="flex-shrink-0 w-10 h-10 bg-gold text-white rounded-full flex items-center justify-center font-bold">1</div>
                             <div>
                                 <h4 className="font-bold text-gray-800 mb-1">Register & Verify</h4>
                                 <p className="text-gray-600">Create your account with Emirates ID and verify your phone number.</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                            <div className="flex-shrink-0 w-10 h-10 bg-gold text-white rounded-full flex items-center justify-center font-bold">2</div>
                             <div>
                                 <h4 className="font-bold text-gray-800 mb-1">Submit Application</h4>
                                 <p className="text-gray-600">Apply for insurance coverage and add dependents if needed.</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+                            <div className="flex-shrink-0 w-10 h-10 bg-gold text-white rounded-full flex items-center justify-center font-bold">3</div>
                             <div>
                                 <h4 className="font-bold text-gray-800 mb-1">Receive Quote</h4>
                                 <p className="text-gray-600">Our team reviews your application and sends you a customized quote.</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
+                            <div className="flex-shrink-0 w-10 h-10 bg-gold text-white rounded-full flex items-center justify-center font-bold">4</div>
                             <div>
                                 <h4 className="font-bold text-gray-800 mb-1">Complete Payment</h4>
                                 <p className="text-gray-600">Pay securely through the payment link sent via WhatsApp.</p>
                             </div>
                         </div>
                         <div className="flex items-start gap-4">
-                            <div className="flex-shrink-0 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">5</div>
+                            <div className="flex-shrink-0 w-10 h-10 bg-gold text-white rounded-full flex items-center justify-center font-bold">5</div>
                             <div>
                                 <h4 className="font-bold text-gray-800 mb-1">Get Your Policy</h4>
                                 <p className="text-gray-600">Access your completed policy documents in your dashboard.</p>
