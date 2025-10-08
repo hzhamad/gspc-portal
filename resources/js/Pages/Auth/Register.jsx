@@ -18,9 +18,34 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // Handle phone number input to maintain +971- prefix
+    const handlePhoneChange = (e) => {
+        let value = e.target.value;
+        
+        // Remove all non-digits
+        value = value.replace(/\D/g, '');
+        
+        // If it starts with 971, format it properly
+        if (value.startsWith('971')) {
+            value = value.substring(3);
+        }
+        
+        setData('phone', value);
+    };
+
     const submit = (e) => {
         e.preventDefault();
-        post('/register');
+        
+        // Prepare data with +971 prefix for phone
+        const submitData = {
+            ...data,
+            phone: `+971${data.phone}`
+        };
+        
+        post('/register', {
+            data: submitData,
+            forceFormData: true,
+        });
     };
 
     return (
@@ -36,6 +61,9 @@ export default function Register() {
                             <div className="text-center mb-8">
                                 <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
                                 <p className="text-gray-600 mt-2">Join us to access health insurance services</p>
+                                <p className="text-sm text-gray-500 mt-3">
+                                    <span className="text-red-600">*</span> Indicates required field
+                                </p>
                             </div>
 
                             <form onSubmit={submit} className="space-y-6">
@@ -43,7 +71,7 @@ export default function Register() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            First Name
+                                            First Name <span className="text-red-600">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -60,7 +88,7 @@ export default function Register() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Middle Name
+                                            Middle Name <span className="text-gray-400 text-xs">(Optional)</span>
                                         </label>
                                         <input
                                             type="text"
@@ -76,7 +104,7 @@ export default function Register() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Last Name
+                                            Last Name <span className="text-red-600">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -96,7 +124,7 @@ export default function Register() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Email Address
+                                            Email Address <span className="text-red-600">*</span>
                                         </label>
                                         <input
                                             type="email"
@@ -113,16 +141,22 @@ export default function Register() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Phone Number
+                                            Phone Number <span className="text-red-600">*</span>
                                         </label>
-                                        <input
-                                            type="tel"
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                            placeholder="+971XXXXXXXXX"
-                                            required
-                                        />
+                                        <div className="relative">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
+                                                <img src="/images/uae-flag.svg" alt="UAE" className="w-6 h-4 object-contain" />
+                                                <span className="text-gray-700 font-medium">+971-</span>
+                                            </div>
+                                            <input
+                                                type="tel"
+                                                value={data.phone}
+                                                onChange={handlePhoneChange}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all pl-24"
+                                                placeholder="XXXXXXXXX"
+                                                required
+                                            />
+                                        </div>
                                         {errors.phone && (
                                             <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
                                         )}
@@ -133,7 +167,7 @@ export default function Register() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Password
+                                            Password <span className="text-red-600">*</span>
                                         </label>
                                         <div className="relative">
                                             <input
@@ -168,7 +202,7 @@ export default function Register() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Confirm Password
+                                            Confirm Password <span className="text-red-600">*</span>
                                         </label>
                                         <div className="relative">
                                             <input
@@ -201,7 +235,9 @@ export default function Register() {
 
                                 {/* Emirates ID Section */}
                                 <div className="border-t border-gray-200 pt-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Emirates ID Information</h3>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                                        Emirates ID Information <span className="text-red-600">*</span>
+                                    </h3>
                                     <div className="grid grid-cols-1 gap-4">
                                         <div>
                                             <FileUpload
