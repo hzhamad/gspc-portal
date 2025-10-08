@@ -78,6 +78,9 @@ export default function QuoteRequest() {
     const addDependent = () => {
         const newDependent = {
             id: Date.now(),
+            first_name: '',
+            middle_name: '',
+            last_name: '',
             id_type: 'eid',
             uid_number: '',
             eid_number: '',
@@ -174,6 +177,10 @@ export default function QuoteRequest() {
         
         // Validate all dependents
         for (const dep of dependents) {
+            if (!dep.first_name?.trim() || !dep.last_name?.trim()) {
+                alert('Please provide first and last name for each dependent.');
+                return;
+            }
             if (!validateDependentId(dep)) {
                 alert(`Invalid ${dep.id_type === 'eid' ? 'Emirates ID' : 'Unified ID'} for dependent`);
                 return;
@@ -207,6 +214,9 @@ export default function QuoteRequest() {
                 formData.append(`dependents[${index}][dob]`, dep.dob);
                 formData.append(`dependents[${index}][relationship]`, dep.relationship);
                 formData.append(`dependents[${index}][emirate_of_residency]`, dep.emirate_of_residency || '');
+                formData.append(`dependents[${index}][first_name]`, dep.first_name);
+                formData.append(`dependents[${index}][middle_name]`, dep.middle_name || '');
+                formData.append(`dependents[${index}][last_name]`, dep.last_name);
                 
                 if (dep.profile_picture) {
                     formData.append(`dependents[${index}][profile_picture]`, dep.profile_picture);
@@ -474,166 +484,211 @@ export default function QuoteRequest() {
                                     </div>
                                 )}
 
-                                {dependents.map((dependent) => (
-    <div key={dependent.id} className="p-6 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-gold/50 transition-all mb-4">
-        <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-800">Dependent #{dependents.indexOf(dependent) + 1}</h3>
-            <button
-                type="button"
-                onClick={() => removeDependent(dependent.id)}
-                className="text-red-600 hover:text-red-700 font-semibold"
-            >
-                Remove
-            </button>
-        </div>
+                                {dependents.map((dependent, index) => {
+                                    const getDependentError = (field) => errors?.[`dependents.${index}.${field}`];
+
+                                    return (
+                                        <div key={dependent.id} className="p-6 bg-gray-50 rounded-xl border-2 border-gray-200 hover:border-gold/50 transition-all mb-4">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h3 className="text-lg font-semibold text-gray-800">Dependent #{index + 1}</h3>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeDependent(dependent.id)}
+                                                    className="text-red-600 hover:text-red-700 font-semibold"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dependent.first_name}
+                                                        onChange={(e) => updateDependent(dependent.id, 'first_name', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                        required
+                                                    />
+                                                    {getDependentError('first_name') && (
+                                                        <p className="text-red-600 text-sm mt-1">{getDependentError('first_name')}</p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Middle Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dependent.middle_name}
+                                                        onChange={(e) => updateDependent(dependent.id, 'middle_name', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                    />
+                                                    {getDependentError('middle_name') && (
+                                                        <p className="text-red-600 text-sm mt-1">{getDependentError('middle_name')}</p>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dependent.last_name}
+                                                        onChange={(e) => updateDependent(dependent.id, 'last_name', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                        required
+                                                    />
+                                                    {getDependentError('last_name') && (
+                                                        <p className="text-red-600 text-sm mt-1">{getDependentError('last_name')}</p>
+                                                    )}
+                                                </div>
+                                            </div>
         
-        {/* ID Type Toggle */}
-        <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">ID Type</label>
-            <div className="grid grid-cols-2 gap-3">
-                <button
-                    type="button"
-                    onClick={() => {
-                        updateDependent(dependent.id, 'id_type', 'eid');
-                        updateDependent(dependent.id, 'uid_number', '');
-                        updateDependent(dependent.id, 'eid_number', '');
-                    }}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                        dependent.id_type === 'eid'
-                            ? 'border-gold bg-gold/10 text-gold font-semibold'
-                            : 'border-gray-200 text-gray-600 hover:border-gold/50'
-                    }`}
-                >
-                    Emirates ID
-                </button>
-                <button
-                    type="button"
-                    onClick={() => {
-                        updateDependent(dependent.id, 'id_type', 'uid');
-                        updateDependent(dependent.id, 'uid_number', '');
-                        updateDependent(dependent.id, 'eid_number', '');
-                    }}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                        dependent.id_type === 'uid'
-                            ? 'border-gold bg-gold/10 text-gold font-semibold'
-                            : 'border-gray-200 text-gray-600 hover:border-gold/50'
-                    }`}
-                >
-                    Unified ID
-                </button>
-            </div>
-        </div>
+                                            {/* ID Type Toggle */}
+                                            <div className="mb-6">
+                                                <label className="block text-sm font-medium text-gray-700 mb-3">ID Type</label>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            updateDependent(dependent.id, 'id_type', 'eid');
+                                                            updateDependent(dependent.id, 'uid_number', '');
+                                                            updateDependent(dependent.id, 'eid_number', '');
+                                                        }}
+                                                        className={`p-3 rounded-lg border-2 transition-all ${
+                                                            dependent.id_type === 'eid'
+                                                                ? 'border-gold bg-gold/10 text-gold font-semibold'
+                                                                : 'border-gray-200 text-gray-600 hover:border-gold/50'
+                                                        }`}
+                                                    >
+                                                        Emirates ID
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            updateDependent(dependent.id, 'id_type', 'uid');
+                                                            updateDependent(dependent.id, 'uid_number', '');
+                                                            updateDependent(dependent.id, 'eid_number', '');
+                                                        }}
+                                                        className={`p-3 rounded-lg border-2 transition-all ${
+                                                            dependent.id_type === 'uid'
+                                                                ? 'border-gold bg-gold/10 text-gold font-semibold'
+                                                                : 'border-gray-200 text-gray-600 hover:border-gold/50'
+                                                        }`}
+                                                    >
+                                                        Unified ID
+                                                    </button>
+                                                </div>
+                                            </div>
 
-        {/* Conditional Input Based on ID Type */}
-        {dependent.id_type === 'uid' ? (
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Unified ID Number
-                </label>
-                <input
-                    type="text"
-                    value={dependent.uid_number}
-                    onChange={(e) => updateDependent(dependent.id, 'uid_number', e.target.value)}
-                    placeholder="Enter Unified ID"
-                    minLength="8"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                />
-                <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
-            </div>
-        ) : (
-            <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
-                <input
-                    type="text"
-                    value={dependent.eid_number}
-                    onChange={(e) => updateDependent(dependent.id, 'eid_number', formatEmiratesId(e.target.value))}
-                    placeholder="784-YYYY-XXXXXXX-X"
-                    maxLength="18"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                />
-                <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
-            </div>
-        )}
+                                            {/* Conditional Input Based on ID Type */}
+                                            {dependent.id_type === 'uid' ? (
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Unified ID Number
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={dependent.uid_number}
+                                                        onChange={(e) => updateDependent(dependent.id, 'uid_number', e.target.value)}
+                                                        placeholder="Enter Unified ID"
+                                                        minLength="8"
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                    />
+                                                    <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                                                </div>
+                                            ) : (
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
+                                                    <input
+                                                        type="text"
+                                                        value={dependent.eid_number}
+                                                        onChange={(e) => updateDependent(dependent.id, 'eid_number', formatEmiratesId(e.target.value))}
+                                                        placeholder="784-YYYY-XXXXXXX-X"
+                                                        maxLength="18"
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                    />
+                                                    <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
+                                                </div>
+                                            )}
 
-        {/* Rest of dependent fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
-                <select
-                    value={dependent.marital_status}
-                    onChange={(e) => updateDependent(dependent.id, 'marital_status', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                    required
-                >
-                    <option value="">Select Status</option>
-                    <option value="single">Single</option>
-                    <option value="married">Married</option>
-                </select>
-            </div>
+                                            {/* Rest of dependent fields */}
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
+                                                    <select
+                                                        value={dependent.marital_status}
+                                                        onChange={(e) => updateDependent(dependent.id, 'marital_status', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                        required
+                                                    >
+                                                        <option value="">Select Status</option>
+                                                        <option value="single">Single</option>
+                                                        <option value="married">Married</option>
+                                                    </select>
+                                                </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                <input
-                    type="date"
-                    value={dependent.dob}
-                    onChange={(e) => updateDependent(dependent.id, 'dob', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                    required
-                />
-            </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                                    <input
+                                                        type="date"
+                                                        value={dependent.dob}
+                                                        onChange={(e) => updateDependent(dependent.id, 'dob', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                        required
+                                                    />
+                                                </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Relationship to Principal</label>
-                <select
-                    value={dependent.relationship}
-                    onChange={(e) => updateDependent(dependent.id, 'relationship', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                    required
-                >
-                    <option value="">Select Relationship</option>
-                    <option value="spouse">Spouse</option>
-                    <option value="child">Child</option>
-                    <option value="parent">Parent</option>
-                    <option value="sibling">Sibling</option>
-                </select>
-            </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Relationship to Principal</label>
+                                                    <select
+                                                        value={dependent.relationship}
+                                                        onChange={(e) => updateDependent(dependent.id, 'relationship', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                        required
+                                                    >
+                                                        <option value="">Select Relationship</option>
+                                                        <option value="spouse">Spouse</option>
+                                                        <option value="child">Child</option>
+                                                        <option value="parent">Parent</option>
+                                                        <option value="sibling">Sibling</option>
+                                                    </select>
+                                                </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Emirate of Residency</label>
-                <select
-                    value={dependent.emirate_of_residency}
-                    onChange={(e) => updateDependent(dependent.id, 'emirate_of_residency', e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                >
-                    <option value="">Select Emirate</option>
-                    {emirates.map(emirate => (
-                        <option key={emirate} value={emirate}>{emirate}</option>
-                    ))}
-                </select>
-            </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emirate of Residency</label>
+                                                    <select
+                                                        value={dependent.emirate_of_residency}
+                                                        onChange={(e) => updateDependent(dependent.id, 'emirate_of_residency', e.target.value)}
+                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                                    >
+                                                        <option value="">Select Emirate</option>
+                                                        {emirates.map(emirate => (
+                                                            <option key={emirate} value={emirate}>{emirate}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
 
-            <div className="md:col-span-2">
-                <FileUpload
-                    label="Profile Picture"
-                    accept="image/*"
-                    onChange={(e) => handleDependentFileChange(dependent.id, 'profile_picture', e.target.files[0])}
-                    fileName={dependent.profile_picture?.name}
-                    placeholder="Click to upload profile picture"
-                />
-            </div>
+                                                <div className="md:col-span-2">
+                                                    <FileUpload
+                                                        label="Profile Picture *"
+                                                        accept="image/*"
+                                                        onChange={(e) => handleDependentFileChange(dependent.id, 'profile_picture', e.target.files[0])}
+                                                        fileName={dependent.profile_picture?.name}
+                                                        placeholder="Upload profile picture"
+                                                    />
+                                                </div>
 
-            <div className="md:col-span-2">
-                <FileUpload
-                    label="Emirates ID Copy"
-                    accept="image/*,.pdf"
-                    onChange={(e) => handleDependentFileChange(dependent.id, 'eid_file', e.target.files[0])}
-                    fileName={dependent.eid_file?.name}
-                    placeholder="Click to upload PDF/Image"
-                />
-            </div>
-        </div>
-    </div>
-))}
+                                                <div className="md:col-span-2">
+                                                    <FileUpload
+                                                        label="Emirates ID Copy *"
+                                                        accept="image/*,.pdf"
+                                                        onChange={(e) => handleDependentFileChange(dependent.id, 'eid_file', e.target.files[0])}
+                                                        fileName={dependent.eid_file?.name}
+                                                        placeholder="Upload Emirates ID copy"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
 

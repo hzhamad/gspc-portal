@@ -61,6 +61,11 @@ Please find the application details below for your review and processing.
 
 ### Dependent {{ $index + 1 }} of {{ $dependents->count() }}
 
+@php
+$dependentFullName = trim($dependent->first_name . ' ' . ($dependent->middle_name ? $dependent->middle_name . ' ' : '') . $dependent->last_name);
+@endphp
+
+- **Full Name:** {{ $dependentFullName ?: 'N/A' }}
 - **Relationship:** {{ ucfirst($dependent->relationship) }}
 - **Date of Birth:** {{ \Carbon\Carbon::parse($dependent->dob)->format('F d, Y') }}
 - **Marital Status:** {{ ucfirst($dependent->marital_status) }}

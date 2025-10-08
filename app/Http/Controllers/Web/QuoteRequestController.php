@@ -55,8 +55,11 @@ class QuoteRequestController extends Controller
             'dependents.*.marital_status' => 'required|in:single,married',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
-            'dependents.*.profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'dependents.*.eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'dependents.*.first_name' => 'required|string|max:255',
+            'dependents.*.middle_name' => 'nullable|string|max:255',
+            'dependents.*.last_name' => 'required|string|max:255',
+            'dependents.*.profile_picture' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+            'dependents.*.eid_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         DB::beginTransaction();
@@ -113,6 +116,9 @@ class QuoteRequestController extends Controller
                     $dependent->marital_status = $dependentData['marital_status'];
                     $dependent->dob = $dependentData['dob'];
                     $dependent->relationship = $dependentData['relationship'];
+                    $dependent->first_name = $dependentData['first_name'];
+                    $dependent->middle_name = $dependentData['middle_name'] ?? null;
+                    $dependent->last_name = $dependentData['last_name'];
 
                     // Handle file uploads for dependent
                     if ($request->hasFile("dependents.{$index}.profile_picture")) {
@@ -261,6 +267,9 @@ class QuoteRequestController extends Controller
             'dependents.*.marital_status' => 'required|in:single,married',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
+            'dependents.*.first_name' => 'required|string|max:255',
+            'dependents.*.middle_name' => 'nullable|string|max:255',
+            'dependents.*.last_name' => 'required|string|max:255',
             'dependents.*.profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
             'dependents.*.eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
@@ -343,6 +352,9 @@ class QuoteRequestController extends Controller
                             $dependent->marital_status = $dependentData['marital_status'];
                             $dependent->dob = $dependentData['dob'];
                             $dependent->relationship = $dependentData['relationship'];
+                            $dependent->first_name = $dependentData['first_name'];
+                            $dependent->middle_name = $dependentData['middle_name'] ?? null;
+                            $dependent->last_name = $dependentData['last_name'];
 
                             // Handle file uploads
                             if ($request->hasFile("dependents.{$index}.profile_picture")) {
@@ -373,6 +385,9 @@ class QuoteRequestController extends Controller
                         $dependent->marital_status = $dependentData['marital_status'];
                         $dependent->dob = $dependentData['dob'];
                         $dependent->relationship = $dependentData['relationship'];
+                        $dependent->first_name = $dependentData['first_name'];
+                        $dependent->middle_name = $dependentData['middle_name'] ?? null;
+                        $dependent->last_name = $dependentData['last_name'];
 
                         // Handle file uploads
                         if ($request->hasFile("dependents.{$index}.profile_picture")) {

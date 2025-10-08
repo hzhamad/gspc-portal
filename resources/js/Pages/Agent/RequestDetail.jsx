@@ -71,6 +71,12 @@ export default function RequestDetail() {
         return status === 'single' ? 'Single' : 'Married';
     };
 
+    const getDependentFullName = (dependent) => {
+        const parts = [dependent.first_name, dependent.middle_name, dependent.last_name]
+            .filter((part) => part && part.trim());
+        return parts.length ? parts.join(' ') : 'N/A';
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Unified Sidebar */}
@@ -296,6 +302,12 @@ export default function RequestDetail() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {/* Basic Info */}
                                             <div className="space-y-4">
+                                                <div>
+                                                    <label className="text-sm font-medium text-gray-600 block mb-1">Full Name</label>
+                                                    <p className="text-base font-semibold text-gray-800 p-3 bg-white rounded-lg border border-gray-200">
+                                                        {getDependentFullName(dependent)}
+                                                    </p>
+                                                </div>
                                                 <div>
                                                     <label className="text-sm font-medium text-gray-600 block mb-1">UID Number</label>
                                                     <p className="text-base font-semibold text-gray-800 p-3 bg-white rounded-lg border border-gray-200">

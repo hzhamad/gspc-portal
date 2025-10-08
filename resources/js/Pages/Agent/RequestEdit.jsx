@@ -19,6 +19,9 @@ export default function RequestEdit() {
         eid_file: null,
         dependents: dependents.map(dep => ({
             id: dep.id,
+            first_name: dep.first_name || '',
+            middle_name: dep.middle_name || '',
+            last_name: dep.last_name || '',
             uid_number: dep.uid_number || '',
             eid_number: dep.eid_number || '',
             marital_status: dep.marital_status || 'single',
@@ -64,9 +67,25 @@ export default function RequestEdit() {
         return formatted;
     };
 
+    const updateDependentField = (index, field, value) => {
+        const updatedDependents = data.dependents.map((dependent, dependentIndex) =>
+            dependentIndex === index ? { ...dependent, [field]: value } : dependent
+        );
+        setData('dependents', updatedDependents);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        if ((data.application_type === 'dependents' || data.application_type === 'self_dependents') && data.dependents.length > 0) {
+            for (const dependent of data.dependents) {
+                if (!dependent.first_name?.trim() || !dependent.last_name?.trim()) {
+                    alert('Please provide first and last name for each dependent.');
+                    return;
+                }
+            }
+        }
+
         const formData = new FormData();
         
         // Add basic fields
@@ -94,6 +113,9 @@ export default function RequestEdit() {
                 if (dependent.id) {
                     formData.append(`dependents[${index}][id]`, dependent.id);
                 }
+                formData.append(`dependents[${index}][first_name]`, dependent.first_name);
+                formData.append(`dependents[${index}][middle_name]`, dependent.middle_name || '');
+                formData.append(`dependents[${index}][last_name]`, dependent.last_name);
                 formData.append(`dependents[${index}][uid_number]`, dependent.uid_number || '');
                 formData.append(`dependents[${index}][eid_number]`, dependent.eid_number || '');
                 formData.append(`dependents[${index}][marital_status]`, dependent.marital_status);
@@ -146,6 +168,9 @@ export default function RequestEdit() {
         setData('dependents', [
             ...data.dependents,
             {
+                first_name: '',
+                middle_name: '',
+                last_name: '',
                 uid_number: '',
                 eid_number: '',
                 marital_status: 'single',
@@ -442,158 +467,206 @@ export default function RequestEdit() {
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
-                                        {data.dependents.map((dependent, index) => (
-                                            <div key={index} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                                                <div className="flex items-center justify-between mb-4">
-                                                    <h4 className="text-lg font-bold text-gray-800">Dependent #{index + 1}</h4>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeDependent(index)}
-                                                        className="px-3 py-1.5 bg-red-100 text-red-700 font-medium rounded-lg hover:bg-red-200 transition-colors text-sm"
-                                                    >
-                                                        Remove
-                                                    </button>
-                                                </div>
+                                        {data.dependents.map((dependent, index) => {
+                                            const getDependentError = (field) => errors?.[`dependents.${index}.${field}`];
 
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            UID Number
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            value={dependent.uid_number}
-                                                            onChange={(e) => {
-                                                                const newDependents = [...data.dependents];
-                                                                newDependents[index].uid_number = e.target.value;
-                                                                setData('dependents', newDependents);
-                                                            }}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                            placeholder="Optional"
-                                                        />
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Emirates ID Number
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            value={dependent.eid_number}
-                                                            onChange={(e) => {
-                                                                const newDependents = [...data.dependents];
-                                                                newDependents[index].eid_number = formatEmiratesId(e.target.value);
-                                                                setData('dependents', newDependents);
-                                                            }}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                            placeholder="784-YYYY-XXXXXXX-X"
-                                                            maxLength="18"
-                                                        />
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Date of Birth <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <input
-                                                            type="date"
-                                                            value={dependent.dob}
-                                                            onChange={(e) => {
-                                                                const newDependents = [...data.dependents];
-                                                                newDependents[index].dob = e.target.value;
-                                                                setData('dependents', newDependents);
-                                                            }}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                        />
-                                                    </div>
-
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Relationship <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <select
-                                                            value={dependent.relationship}
-                                                            onChange={(e) => {
-                                                                const newDependents = [...data.dependents];
-                                                                newDependents[index].relationship = e.target.value;
-                                                                setData('dependents', newDependents);
-                                                            }}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            return (
+                                                <div key={index} className="p-6 bg-gray-50 rounded-lg border border-gray-200">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <h4 className="text-lg font-bold text-gray-800">Dependent #{index + 1}</h4>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeDependent(index)}
+                                                            className="px-3 py-1.5 bg-red-100 text-red-700 font-medium rounded-lg hover:bg-red-200 transition-colors text-sm"
                                                         >
-                                                            <option value="spouse">Spouse</option>
-                                                            <option value="child">Child</option>
-                                                            <option value="parent">Parent</option>
-                                                            <option value="sibling">Sibling</option>
-                                                        </select>
+                                                            Remove
+                                                        </button>
                                                     </div>
 
-                                                    <div>
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Marital Status <span className="text-red-500">*</span>
-                                                        </label>
-                                                        <select
-                                                            value={dependent.marital_status}
-                                                            onChange={(e) => {
-                                                                const newDependents = [...data.dependents];
-                                                                newDependents[index].marital_status = e.target.value;
-                                                                setData('dependents', newDependents);
-                                                            }}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                        >
-                                                            <option value="single">Single</option>
-                                                            <option value="married">Married</option>
-                                                        </select>
+                                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                First Name <span className="text-red-500">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={dependent.first_name}
+                                                                onChange={(e) => updateDependentField(index, 'first_name', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                required
+                                                            />
+                                                            {getDependentError('first_name') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('first_name')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Middle Name
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={dependent.middle_name}
+                                                                onChange={(e) => updateDependentField(index, 'middle_name', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            />
+                                                            {getDependentError('middle_name') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('middle_name')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Last Name <span className="text-red-500">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={dependent.last_name}
+                                                                onChange={(e) => updateDependentField(index, 'last_name', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                required
+                                                            />
+                                                            {getDependentError('last_name') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('last_name')}</p>
+                                                            )}
+                                                        </div>
                                                     </div>
 
-                                                    <div className="md:col-span-2">
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Profile Picture
-                                                        </label>
-                                                        {dependent.existing_profile_picture && !dependent.profile_picture && (
-                                                            <div className="mb-2">
-                                                                <img 
-                                                                    src={`/storage/${dependent.existing_profile_picture}`} 
-                                                                    alt="Current" 
-                                                                    className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
-                                                                />
-                                                            </div>
-                                                        )}
-                                                        <input
-                                                            type="file"
-                                                            accept="image/jpeg,image/png,image/jpg"
-                                                            onChange={(e) => handleDependentFileChange(index, 'profile_picture', e.target.files[0])}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                        />
-                                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG</p>
-                                                    </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                UID Number
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={dependent.uid_number}
+                                                                onChange={(e) => updateDependentField(index, 'uid_number', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                placeholder="Optional"
+                                                            />
+                                                            {getDependentError('uid_number') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('uid_number')}</p>
+                                                            )}
+                                                        </div>
 
-                                                    <div className="md:col-span-2">
-                                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                            Emirates ID Copy
-                                                        </label>
-                                                        {dependent.existing_eid_file && !dependent.eid_file && (
-                                                            <div className="mb-2">
-                                                                <a 
-                                                                    href={`/storage/${dependent.existing_eid_file}`} 
-                                                                    target="_blank" 
-                                                                    rel="noopener noreferrer"
-                                                                    className="text-blue-600 hover:underline text-sm"
-                                                                >
-                                                                    View current file
-                                                                </a>
-                                                            </div>
-                                                        )}
-                                                        <input
-                                                            type="file"
-                                                            accept="image/jpeg,image/png,image/jpg,application/pdf"
-                                                            onChange={(e) => handleDependentFileChange(index, 'eid_file', e.target.files[0])}
-                                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                        />
-                                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Emirates ID Number
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={dependent.eid_number}
+                                                                onChange={(e) => updateDependentField(index, 'eid_number', formatEmiratesId(e.target.value))}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                placeholder="784-YYYY-XXXXXXX-X"
+                                                                maxLength="18"
+                                                            />
+                                                            {getDependentError('eid_number') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('eid_number')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Date of Birth <span className="text-red-500">*</span>
+                                                            </label>
+                                                            <input
+                                                                type="date"
+                                                                value={dependent.dob}
+                                                                onChange={(e) => updateDependentField(index, 'dob', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            />
+                                                            {getDependentError('dob') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('dob')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Relationship <span className="text-red-500">*</span>
+                                                            </label>
+                                                            <select
+                                                                value={dependent.relationship}
+                                                                onChange={(e) => updateDependentField(index, 'relationship', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            >
+                                                                <option value="spouse">Spouse</option>
+                                                                <option value="child">Child</option>
+                                                                <option value="parent">Parent</option>
+                                                                <option value="sibling">Sibling</option>
+                                                            </select>
+                                                            {getDependentError('relationship') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('relationship')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Marital Status <span className="text-red-500">*</span>
+                                                            </label>
+                                                            <select
+                                                                value={dependent.marital_status}
+                                                                onChange={(e) => updateDependentField(index, 'marital_status', e.target.value)}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            >
+                                                                <option value="single">Single</option>
+                                                                <option value="married">Married</option>
+                                                            </select>
+                                                            {getDependentError('marital_status') && (
+                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('marital_status')}</p>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="md:col-span-2">
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Profile Picture
+                                                            </label>
+                                                            {dependent.existing_profile_picture && !dependent.profile_picture && (
+                                                                <div className="mb-2">
+                                                                    <img 
+                                                                        src={`/storage/${dependent.existing_profile_picture}`} 
+                                                                        alt="Current" 
+                                                                        className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                            <input
+                                                                type="file"
+                                                                accept="image/jpeg,image/png,image/jpg"
+                                                                onChange={(e) => handleDependentFileChange(index, 'profile_picture', e.target.files[0])}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            />
+                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG</p>
+                                                        </div>
+
+                                                        <div className="md:col-span-2">
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Emirates ID Copy
+                                                            </label>
+                                                            {dependent.existing_eid_file && !dependent.eid_file && (
+                                                                <div className="mb-2">
+                                                                    <a 
+                                                                        href={`/storage/${dependent.existing_eid_file}`} 
+                                                                        target="_blank" 
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-blue-600 hover:underline text-sm"
+                                                                    >
+                                                                        View current file
+                                                                    </a>
+                                                                </div>
+                                                            )}
+                                                            <input
+                                                                type="file"
+                                                                accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                                                onChange={(e) => handleDependentFileChange(index, 'eid_file', e.target.files[0])}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            />
+                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>

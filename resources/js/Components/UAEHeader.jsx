@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function UAEHeader() {
     return (
-        <div className="w-full bg-white border-b border-gray-200 shadow-sm">
+        <div className="w-full bg-gold border-b border-gray-200 shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row">
                     <img 
@@ -11,10 +11,10 @@ export default function UAEHeader() {
                         className="w-12 h-12"
                     />
                     <div className="flex flex-col items-center text-center">
-                        <h1 className="text-lg font-bold text-gold">
+                        <h1 className="text-lg font-bold text-white">
                             Government Services & Processing Center
                         </h1>
-                        <p className="text-sm font-medium text-gold opacity-80">Health Insurance Portal</p>
+                        <p className="text-sm font-medium text-white opacity-80">Health Insurance Portal</p>
                     </div>
                 </div>
             </div>

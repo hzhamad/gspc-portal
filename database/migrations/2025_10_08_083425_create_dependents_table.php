@@ -16,6 +16,9 @@ return new class extends Migration
             $table->foreignId('quote_request_id')->constrained()->onDelete('cascade');
 
             // Dependent details
+            $table->string('first_name');
+            $table->string('middle_name')->nullable();
+            $table->string('last_name');
             $table->string('uid_number')->nullable();
             $table->string('eid_number')->nullable();
             $table->enum('marital_status', ['single', 'married']);
