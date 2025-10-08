@@ -120,8 +120,18 @@ class QuoteRequestController extends Controller
 
             // Send email notification to sponsor/admin team
             try {
-                $notificationEmail = config('services.quote_request.notification_email');
-                Mail::to($notificationEmail)->send(new QuoteRequestSubmitted($quoteRequest));
+                $notificationRecipients = config('services.quote_request.notification_recipients');
+
+                if (empty($notificationRecipients)) {
+                    $fallbackEmail = config('services.quote_request.notification_email');
+                    $notificationRecipients = $fallbackEmail ? [$fallbackEmail] : [];
+                }
+
+                if (! empty($notificationRecipients)) {
+                    Mail::to($notificationRecipients)->send(new QuoteRequestSubmitted($quoteRequest));
+                }
+
+                // Mail::to($quoteRequest->user->email)->send(new QuoteRequestSubmitted($quoteRequest));
             } catch (\Exception $emailException) {
                 // Log the error but don't fail the request submission
                 Log::error('Failed to send quote request notification email', [
