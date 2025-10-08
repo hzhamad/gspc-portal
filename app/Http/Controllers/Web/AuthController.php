@@ -36,6 +36,7 @@ class AuthController extends Controller
             'phone' => 'required|string|max:20',
             'eid_number' => 'nullable|string|max:50',
             'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -43,6 +44,12 @@ class AuthController extends Controller
         $eidFilePath = null;
         if ($request->hasFile('eid_file')) {
             $eidFilePath = $request->file('eid_file')->store('eid_files', 'public');
+        }
+
+        // Handle profile image upload
+        $profileImagePath = null;
+        if ($request->hasFile('profile_image')) {
+            $profileImagePath = $request->file('profile_image')->store('profile_images', 'public');
         }
 
         $user = User::create([
@@ -54,6 +61,7 @@ class AuthController extends Controller
             'phone' => $validated['phone'],
             'eid_number' => $validated['eid_number'] ?? null,
             'eid_file' => $eidFilePath,
+            'profile_image' => $profileImagePath,
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -79,6 +87,7 @@ class AuthController extends Controller
             'phone' => 'nullable|string|max:20',
             'eid_number' => 'nullable|string|max:50',
             'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // Handle EID file upload
@@ -88,6 +97,15 @@ class AuthController extends Controller
                 Storage::disk('public')->delete($user->eid_file);
             }
             $validated['eid_file'] = $request->file('eid_file')->store('eid_files', 'public');
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old file if exists
+            if ($user->profile_image && Storage::disk('public')->exists($user->profile_image)) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+            $validated['profile_image'] = $request->file('profile_image')->store('profile_images', 'public');
         }
 
         // Update name field based on first, middle, and last names

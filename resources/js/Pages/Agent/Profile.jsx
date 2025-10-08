@@ -16,6 +16,7 @@ export default function Profile() {
         phone: user?.phone || '',
         eid_number: user?.eid_number || '',
         eid_file: null,
+        profile_image: null,
         _method: 'PUT',
     });
 
@@ -42,9 +43,17 @@ export default function Profile() {
                         {/* Profile Avatar */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-6">
                             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                                <div className="w-24 h-24 bg-gradient-to-br from-gold to-gold/80 rounded-full flex items-center justify-center text-white font-bold text-3xl shrink-0">
-                                    {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
-                                </div>
+                                {user?.profile_image ? (
+                                    <img 
+                                        src={`/storage/${user.profile_image}`} 
+                                        alt="Profile" 
+                                        className="w-24 h-24 rounded-full object-cover border-4 border-gold/20 shrink-0"
+                                    />
+                                ) : (
+                                    <div className="w-24 h-24 bg-gradient-to-br from-gold to-gold/80 rounded-full flex items-center justify-center text-white font-bold text-3xl shrink-0">
+                                        {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                                    </div>
+                                )}
                                 <div className="text-center sm:text-left">
                                     <h2 className="text-xl sm:text-2xl font-bold text-gray-800">{user?.fullname || user?.name}</h2>
                                     <p className="text-gray-600 mt-1">{user?.email}</p>
@@ -126,8 +135,27 @@ export default function Profile() {
 
                             {/* Emirates ID Section */}
                             <div className="border-t border-gray-200 pt-6 mb-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Emirates ID Information</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile & Emirates ID Information</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div>
+                                        <FileUpload
+                                            label="Profile Picture"
+                                            accept="image/*"
+                                            onChange={(e) => setData('profile_image', e.target.files[0])}
+                                            fileName={data.profile_image?.name}
+                                            placeholder={user?.profile_image ? "Replace current profile picture" : "Upload profile photo (PNG/JPG)"}
+                                            error={errors.profile_image}
+                                        />
+                                        {user?.profile_image && !data.profile_image && (
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <span className="text-sm text-gray-600">Current profile picture uploaded</span>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
                                         <input
@@ -140,7 +168,7 @@ export default function Profile() {
                                         {errors.eid_number && <p className="text-red-600 text-sm mt-1">{errors.eid_number}</p>}
                                     </div>
 
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <FileUpload
                                             label="Emirates ID Copy"
                                             accept="image/*,.pdf"

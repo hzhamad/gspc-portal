@@ -23,8 +23,6 @@ export default function QuoteRequest() {
         sponsor_id: '',
         date_of_birth: '',
         emirate_of_residency: '',
-        profile_picture: null,
-        eid_copy: null,
         // Dependents
         dependents: [],
     });
@@ -50,7 +48,6 @@ export default function QuoteRequest() {
             date_of_birth: '',
             relationship: '',
             emirate_of_residency: '',
-            profile_picture: null,
             eid_copy: null,
         };
         setDependents([...dependents, newDependent]);
@@ -101,13 +98,6 @@ export default function QuoteRequest() {
             formData.append('sponsor_id', data.sponsor_id);
             formData.append('date_of_birth', data.date_of_birth);
             formData.append('emirate_of_residency', data.emirate_of_residency);
-            
-            if (data.profile_picture) {
-                formData.append('profile_picture', data.profile_picture);
-            }
-            if (data.eid_copy) {
-                formData.append('eid_copy', data.eid_copy);
-            }
         }
         
         // Add dependents data
@@ -120,9 +110,6 @@ export default function QuoteRequest() {
                 formData.append(`dependents[${index}][relationship]`, dep.relationship);
                 formData.append(`dependents[${index}][emirate_of_residency]`, dep.emirate_of_residency || '');
                 
-                if (dep.profile_picture) {
-                    formData.append(`dependents[${index}][profile_picture]`, dep.profile_picture);
-                }
                 if (dep.eid_copy) {
                     formData.append(`dependents[${index}][eid_copy]`, dep.eid_copy);
                 }
@@ -321,25 +308,13 @@ export default function QuoteRequest() {
                                         </select>
                                         {errors.emirate_of_residency && <p className="text-red-600 text-sm mt-1">{errors.emirate_of_residency}</p>}
                                     </div>
-
-                                    {/* File Upload with custom component */}
-                                    <FileUpload
-                                        label="Profile Picture"
-                                        accept="image/*"
-                                        onChange={(e) => handleFileChange('profile_picture', e.target.files[0])}
-                                        fileName={data.profile_picture?.name}
-                                        placeholder="Click to upload PNG/JPG"
-                                        error={errors.profile_picture}
-                                    />
-
-                                    <FileUpload
-                                        label={idType === 'eid' ? 'Emirates ID Copy' : 'Unified ID Copy'}
-                                        accept="image/*,.pdf"
-                                        onChange={(e) => handleFileChange('eid_copy', e.target.files[0])}
-                                        fileName={data.eid_copy?.name}
-                                        placeholder="Click to upload PDF/Image"
-                                        error={errors.eid_copy}
-                                    />
+                                </div>
+                                
+                                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <p className="text-sm text-blue-800">
+                                        <strong>Note:</strong> Your profile picture and Emirates ID will be used from your profile. 
+                                        Please ensure they are up to date in your <a href="/profile" className="text-gold hover:brightness-110 font-semibold">Profile Settings</a>.
+                                    </p>
                                 </div>
                             </div>
                         )}
@@ -457,21 +432,15 @@ export default function QuoteRequest() {
                                                 </select>
                                             </div>
 
-                                            <FileUpload
-                                                label="Profile Picture"
-                                                accept="image/*"
-                                                onChange={(e) => handleDependentFileChange(dependent.id, 'profile_picture', e.target.files[0])}
-                                                fileName={dependent.profile_picture?.name}
-                                                placeholder="Click to upload PNG/JPG"
-                                            />
-
-                                            <FileUpload
-                                                label="Emirates ID Copy"
-                                                accept="image/*,.pdf"
-                                                onChange={(e) => handleDependentFileChange(dependent.id, 'eid_copy', e.target.files[0])}
-                                                fileName={dependent.eid_copy?.name}
-                                                placeholder="Click to upload PDF/Image"
-                                            />
+                                            <div className="md:col-span-2">
+                                                <FileUpload
+                                                    label="Emirates ID Copy"
+                                                    accept="image/*,.pdf"
+                                                    onChange={(e) => handleDependentFileChange(dependent.id, 'eid_copy', e.target.files[0])}
+                                                    fileName={dependent.eid_copy?.name}
+                                                    placeholder="Click to upload PDF/Image"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

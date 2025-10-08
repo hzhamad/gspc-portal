@@ -22,9 +22,17 @@ export default function DashboardHeader({ title, subtitle }) {
                             <p className="text-sm text-white/80">Signed in as</p>
                             <p className="text-sm font-semibold text-white">{user?.email}</p>
                         </div>
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
-                            {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
-                        </div>
+                        {user?.profile_image ? (
+                            <img 
+                                src={`/storage/${user.profile_image}`} 
+                                alt="Profile" 
+                                className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
+                            />
+                        ) : (
+                            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg border-2 border-white/30">
+                                {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

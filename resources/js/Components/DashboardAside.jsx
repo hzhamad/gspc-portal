@@ -144,9 +144,17 @@ export default function DashboardAside({ currentPath }) {
                 {/* User Info at Bottom */}
                 <div className="mt-8 pt-6 border-t border-gray-200">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-gold to-gold/80 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                            {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
-                        </div>
+                        {user?.profile_image ? (
+                            <img 
+                                src={`/storage/${user.profile_image}`} 
+                                alt="Profile" 
+                                className="w-10 h-10 rounded-full object-cover border-2 border-gold/20"
+                            />
+                        ) : (
+                            <div className="w-10 h-10 bg-gradient-to-br from-gold to-gold/80 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
+                            </div>
+                        )}
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-800 truncate">
                                 {user?.fullname || user?.name}

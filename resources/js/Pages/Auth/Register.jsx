@@ -12,6 +12,7 @@ export default function Register() {
         phone: '',
         eid_number: '',
         eid_file: null,
+        profile_image: null,
         password: '',
         password_confirmation: '',
     });
@@ -202,8 +203,19 @@ export default function Register() {
 
                                 {/* Emirates ID Section */}
                                 <div className="border-t border-gray-200 pt-6">
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Emirates ID Information (Optional)</h3>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Additional Information (Optional)</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <FileUpload
+                                                label="Profile Picture"
+                                                accept="image/*"
+                                                onChange={(e) => setData('profile_image', e.target.files[0])}
+                                                fileName={data.profile_image?.name}
+                                                placeholder="Upload profile photo (PNG/JPG)"
+                                                error={errors.profile_image}
+                                            />
+                                        </div>
+
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Emirates ID Number
@@ -220,7 +232,7 @@ export default function Register() {
                                             )}
                                         </div>
 
-                                        <div>
+                                        <div className="md:col-span-2">
                                             <FileUpload
                                                 label="Emirates ID Copy"
                                                 accept="image/*,.pdf"
