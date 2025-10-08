@@ -35,4 +35,18 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Quote Request Notification
+    |--------------------------------------------------------------------------
+    |
+    | Email address to receive notifications when new insurance applications
+    | (quote requests) are submitted by users.
+    |
+    */
+
+    'quote_request' => [
+        'notification_email' => env('QUOTE_REQUEST_NOTIFICATION_EMAIL', 'admin@example.com'),
+    ],
+
 ];
