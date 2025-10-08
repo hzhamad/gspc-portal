@@ -69,7 +69,7 @@ const Home = () => {
             </svg>
             <header className="w-full py-8 flex flex-col items-center z-10">
                 <h1 className="text-5xl font-extrabold text-blue-700 mb-4">
-                    Tabeeb WebApp
+                    GSPC Portal
                 </h1>
                 <p className="text-lg text-gray-600 mb-6 max-w-xl text-center">
                     Your trusted healthcare companion. Connect with doctors,
@@ -114,7 +114,7 @@ const Home = () => {
                 </div>
             </section>
             <footer className="mt-16 text-gray-400 text-sm z-10">
-                &copy; {new Date().getFullYear()} Tabeeb WebApp. All rights
+                &copy; {new Date().getFullYear()} GSPC Portal. All rights
                 reserved.
             </footer>
         </div>
