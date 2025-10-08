@@ -1,96 +1,108 @@
-<x-mail::message>
-    # New Insurance Application Submitted
+@component('mail::message')
 
-    A new insurance application has been submitted and requires review.
+# New Insurance Application Received
 
-    ## Application Details
+Dear Team,
 
-    **Application ID:** #{{ $quoteRequest->id }}
-    **Application Type:** {{ ucwords(str_replace('_', ' + ', $quoteRequest->application_type)) }}
-    **Submission Date:** {{ $quoteRequest->created_at->format('F d, Y h:i A') }}
-    **Status:** {{ ucfirst($quoteRequest->status) }}
+A new insurance application has been submitted by **{{ $user->name }}** (Email: {{ $user->email }}).
 
-    ---
+Please find the application details below for your review and processing.
 
-    ## Applicant Information
+---
 
-    **Name:** {{ $user->name }}
-    **Email:** {{ $user->email }}
-    **Phone:** {{ $user->phone ?? 'N/A' }}
+## Application Summary
 
-    ---
+- **Application ID:** #{{ $quoteRequest->id }}
+- **Application Type:** {{ ucwords(str_replace('_', ' + ', $quoteRequest->application_type)) }}
+- **Submission Date:** {{ $quoteRequest->created_at->format('l, F d, Y \a\t h:i A') }}
+- **Current Status:** {{ ucfirst($quoteRequest->status) }}
 
-    @if(in_array($quoteRequest->application_type, ['self', 'self_dependents']))
-    ## Principal/Sponsor Information
+---
 
-    **Full Name:** {{ $quoteRequest->sponsor_name }}
-    **Sponsor ID:** {{ $quoteRequest->sponsor_id }}
-    **Date of Birth:** {{ \Carbon\Carbon::parse($quoteRequest->date_of_birth)->format('F d, Y') }}
-    **Emirate of Residency:** {{ $quoteRequest->emirate_of_residency }}
+## Applicant Information
 
-    **Documents Attached:**
-    @if($quoteRequest->profile_picture)
-    - ✓ Profile Picture
-    @endif
-    @if($quoteRequest->eid_copy)
-    - ✓ Emirates ID Copy
-    @endif
+- **Full Name:** {{ $user->name }}
+- **Email Address:** {{ $user->email }}
+- **Contact Number:** {{ $user->phone ?? 'Not Provided' }}
 
-    ---
-    @endif
+---
 
-    @if(in_array($quoteRequest->application_type, ['dependents', 'self_dependents']) && $dependents->count() > 0)
-    ## Dependents Information
+@if(in_array($quoteRequest->application_type, ['self', 'self_dependents']))
 
-    **Total Dependents:** {{ $dependents->count() }}
+## Principal / Sponsor Information
 
-    @foreach($dependents as $index => $dependent)
-    ### Dependent #{{ $index + 1 }}
+- **Full Name:** {{ $quoteRequest->sponsor_name }}
+- **Sponsor ID:** {{ $quoteRequest->sponsor_id }}
+- **Date of Birth:** {{ \Carbon\Carbon::parse($quoteRequest->date_of_birth)->format('F d, Y') }}
+- **Emirate of Residency:** {{ $quoteRequest->emirate_of_residency }}
 
-    **Relationship:** {{ ucfirst($dependent->relationship) }}
-    **Date of Birth:** {{ \Carbon\Carbon::parse($dependent->date_of_birth)->format('F d, Y') }}
-    **Marital Status:** {{ ucfirst($dependent->marital_status) }}
-    @if($dependent->uid_number)
-    **UID Number:** {{ $dependent->uid_number }}
-    @endif
-    @if($dependent->eid_number)
-    **Emirates ID Number:** {{ $dependent->eid_number }}
-    @endif
+### 📎 Attached Documents
 
-    **Documents Attached:**
-    @if($dependent->profile_picture)
-    - ✓ Profile Picture
-    @endif
-    @if($dependent->eid_copy)
-    - ✓ Emirates ID Copy
-    @endif
+| Document Type | Status |
+|---------------|--------|
+@if($quoteRequest->profile_picture)
+| Profile Picture | ✅ Attached |
+@endif
+@if($quoteRequest->eid_copy)
+| Emirates ID Copy | ✅ Attached |
+@endif
 
-    @if(!$loop->last)
-    ---
-    @endif
-    @endforeach
+---
 
-    ---
-    @endif
+@endif
 
-    ## Next Steps
+@if(in_array($quoteRequest->application_type, ['dependents', 'self_dependents']) && $dependents->count() > 0)
 
-    Please review the application details and attached documents. You can:
+## Dependents Information
 
-    1. Review the application thoroughly
-    2. Prepare and upload the insurance quote
-    3. Update the application status accordingly
+**Total Dependents:** {{ $dependents->count() }}
 
-    <x-mail::button :url="config('app.url') . '/admin/quote-requests/' . $quoteRequest->id">
-        View Full Application
-    </x-mail::button>
+@foreach($dependents as $index => $dependent)
 
-    **Important:** All uploaded documents are attached to this email for your convenience.
+### Dependent {{ $index + 1 }} of {{ $dependents->count() }}
 
-    ---
+- **Relationship:** {{ ucfirst($dependent->relationship) }}
+- **Date of Birth:** {{ \Carbon\Carbon::parse($dependent->date_of_birth)->format('F d, Y') }}
+- **Marital Status:** {{ ucfirst($dependent->marital_status) }}
+@if($dependent->uid_number)
+- **UID Number:** {{ $dependent->uid_number }}
+@endif
+@if($dependent->eid_number)
+- **Emirates ID Number:** {{ $dependent->eid_number }}
+@endif
 
-    **Note:** This is an automated notification. Please do not reply to this email.
+@if($dependent->profile_picture || $dependent->eid_copy)
 
-    Thanks,<br>
-    {{ config('app.name') }}
-</x-mail::message>
+**📎 Attached Documents:**
+@if($dependent->profile_picture)
+- ✅ Profile Picture
+@endif
+@if($dependent->eid_copy)
+- ✅ Emirates ID Copy
+@endif
+@endif
+
+---
+
+@endforeach
+@endif
+
+## Next Steps
+
+1. **Review Application** - Check all submitted details and documents.
+2. **Validate Documents** - Ensure all attachments are correct and legible.
+3. **Prepare Quote** - Calculate and prepare the insurance quotation.
+4. **Update Status** - Reflect progress within the GSPC Portal.
+
+@component('mail::button', ['url' => config('app.url') . '/my-requests/' . $quoteRequest->id])
+View Application Details
+@endcomponent
+
+---
+
+**Note:** All uploaded documents are attached to this email for your convenience. This is an **automated message** from the GSPC Portal. Please do not reply to this email.
+
+Warm regards,<br>
+**The {{ config('app.name') }} Team**
+
+@endcomponent

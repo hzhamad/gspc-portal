@@ -21,6 +21,7 @@ export default function QuoteRequest() {
         sponsor_id: '',
         date_of_birth: '',
         emirate_of_residency: '',
+        profile_picture: null,
         // Dependents
         dependents: [],
     });
@@ -82,7 +83,7 @@ export default function QuoteRequest() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Validate Sponsor Emirates ID if applicable
+        // Validate Principal Emirates ID if applicable
         if ((applicationType === 'self' || applicationType === 'self_dependents') && !validateSponsorId(data.sponsor_id)) {
             alert('Invalid Emirates ID format');
             return;
@@ -105,6 +106,10 @@ export default function QuoteRequest() {
             formData.append('sponsor_id', data.sponsor_id);
             formData.append('date_of_birth', data.date_of_birth);
             formData.append('emirate_of_residency', data.emirate_of_residency);
+            
+            if (data.profile_picture) {
+                formData.append('profile_picture', data.profile_picture);
+            }
         }
         
         // Add dependents data
@@ -223,11 +228,11 @@ export default function QuoteRequest() {
                         {/* Principal Details */}
                         {(applicationType === 'self' || applicationType === 'self_dependents') && (
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4">Sponsor Information</h2>
+                                <h2 className="text-xl font-bold text-gray-800 mb-4">Principal Information</h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Sponsor Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Principal Name</label>
                                         <input
                                             type="text"
                                             value={data.sponsor_name}
@@ -279,18 +284,20 @@ export default function QuoteRequest() {
                                         </select>
                                         {errors.emirate_of_residency && <p className="text-red-600 text-sm mt-1">{errors.emirate_of_residency}</p>}
                                     </div>
-                                </div>
-                                
-                                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <p className="text-sm text-blue-800">
-                                        <strong>Note:</strong> Your profile picture and Emirates ID will be used from your profile. 
-                                        Please ensure they are up to date in your <a href="/profile" className="text-gold hover:brightness-110 font-semibold">Profile Settings</a>.
-                                    </p>
+
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Profile Picture"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange('profile_picture', e.target.files[0])}
+                                            fileName={data.profile_picture?.name}
+                                            placeholder="Click to upload profile picture"
+                                        />
+                                        {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
+                                    </div>
                                 </div>
                             </div>
-                        )}
-
-                        {/* Dependents Section */}
+                        )}                        {/* Dependents Section */}
                         {(applicationType === 'dependents' || applicationType === 'self_dependents') && (
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                                 <div className="flex items-center justify-between mb-4">
@@ -420,7 +427,7 @@ export default function QuoteRequest() {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Relationship to Sponsor</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Relationship to Principal</label>
                 <select
                     value={dependent.relationship}
                     onChange={(e) => updateDependent(dependent.id, 'relationship', e.target.value)}
