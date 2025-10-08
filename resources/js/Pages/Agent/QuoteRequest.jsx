@@ -17,15 +17,24 @@ export default function QuoteRequest() {
     const [existingProfilePicture] = useState(user?.profile_image || null);
     const [existingEidCopy] = useState(user?.eid_file || null);
 
+    // Format date for input field (extract YYYY-MM-DD from datetime)
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        // Handle both date strings and datetime objects
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+        return date.toISOString().split('T')[0];
+    };
+
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
         sponsor_name: user?.fullname || '',
         sponsor_id: user?.eid_number || '',
-        dob: user?.dob || '',
+        dob: formatDateForInput(user?.dob),
         emirate_of_residency: user?.residency || '',
-        profile_picture: user?.profile_picture || null,
-        eid_file: user?.eid_file || null,
+        profile_picture: null,
+        eid_file: null,
         // Dependents
         dependents: [],
     });
@@ -329,8 +338,9 @@ export default function QuoteRequest() {
                                             onChange={(e) => handleFileChange('profile_picture', e.target.files[0])}
                                             fileName={data.profile_picture?.name}
                                             placeholder="Click to upload profile picture"
+                                            required
                                         />
-                                        {existingProfilePicture && !data.profile_picture && (
+                                        {existingProfilePicture && !data.profile_picture ? (
                                             <div className="mt-2">
                                                 <p className="text-sm text-gray-600 mb-2">Current profile picture:</p>
                                                 <img 
@@ -339,7 +349,11 @@ export default function QuoteRequest() {
                                                     className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
                                                 />
                                             </div>
-                                        )}
+                                        ) : !data.profile_picture ? (
+                                            <p className="text-sm text-gray-500 mt-1 italic">
+                                                No profile picture on file. Please upload one or update your profile.
+                                            </p>
+                                        ) : null}
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
                                     </div>
 
@@ -350,8 +364,9 @@ export default function QuoteRequest() {
                                             onChange={(e) => handleFileChange('eid_file', e.target.files[0])}
                                             fileName={data.eid_file?.name}
                                             placeholder="Click to upload PDF/Image"
+                                            required
                                         />
-                                        {existingEidCopy && !data.eid_file && (
+                                        {existingEidCopy && !data.eid_file ? (
                                             <p className="text-sm text-gray-600 mt-1">
                                                 Current file on record: 
                                                 <a 
@@ -363,7 +378,11 @@ export default function QuoteRequest() {
                                                     View
                                                 </a>
                                             </p>
-                                        )}
+                                        ) : !data.eid_file ? (
+                                            <p className="text-sm text-gray-500 mt-1 italic">
+                                                No Emirates ID copy on file. Please upload one or update your profile.
+                                            </p>
+                                        ) : null}
                                         {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
                                     </div>
                                 </div>

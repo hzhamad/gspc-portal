@@ -21,7 +21,7 @@ class UsersSeeder extends Seeder
             'phone' => '0000000000',
             'dob' => now()->subYears(30),
             'residency' => 'Dubai',
-            'eid_number' => '12345672201234',
+            'eid_number' => '784-1985-6545464-1',
             'password' => bcrypt('admin'),
         ]);
 
@@ -37,7 +37,7 @@ class UsersSeeder extends Seeder
             'phone' => '0000000001',
             'dob' => now()->subYears(25),
             'residency' => 'Dubai',
-            'eid_number' => '12345678902234',
+            'eid_number' => '784-1985-6545464-5',
             'password' => bcrypt('admin'),
         ]);
 
@@ -53,7 +53,7 @@ class UsersSeeder extends Seeder
             'phone' => '0000000002',
             'dob' => now()->subYears(20),
             'residency' => 'Dubai',
-            'eid_number' => '12345678903224',
+            'eid_number' => '784-1985-6545464-6',
             'password' => bcrypt('client'),
         ]);
 
