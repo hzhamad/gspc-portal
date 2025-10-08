@@ -1,94 +1,56 @@
 import React from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
+import DashboardHeader from '@/Components/DashboardHeader';
+import DashboardAside from '@/Components/DashboardAside';
+import FileUpload from '@/Components/FileUpload';
 
 export default function Profile() {
     const { props } = usePage();
     const user = props?.auth?.user;
 
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         first_name: user?.first_name || '',
         middle_name: user?.middle_name || '',
         last_name: user?.last_name || '',
         email: user?.email || '',
         phone: user?.phone || '',
+        eid_number: user?.eid_number || '',
+        eid_file: null,
+        _method: 'PUT',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put('/profile');
+        post('/profile');
     };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-            {/* Sidebar */}
-            <aside className="fixed top-0 left-0 h-full w-64 bg-white shadow-xl border-r border-gray-200 z-10">
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                            <img 
-                                src="/images/uae_logo.svg" 
-                                alt="UAE Logo" 
-                                className="w-6 h-6"
-                            />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-800">GSPC Portal</h2>
-                            <p className="text-xs text-gray-500">Client Dashboard</p>
-                        </div>
-                    </div>
-
-                    <nav className="space-y-2">
-                        <a href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                        <a href="/quote-request" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>New Application</span>
-                        </a>
-                        <a href="/my-requests" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span>My Requests</span>
-                        </a>
-                        <a href="/profile" className="flex items-center gap-3 px-4 py-3 text-gray-700 bg-blue-50 rounded-lg font-medium hover:bg-blue-100 transition-colors">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span>Profile</span>
-                        </a>
-                    </nav>
-                </div>
-            </aside>
+            {/* Unified Sidebar */}
+            <DashboardAside currentPath="/profile" />
 
             {/* Main Content */}
-            <div className="ml-64 min-h-screen">
-                <header className="bg-white border-b border-gray-200">
-                    <div className="px-8 py-6">
-                        <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-                        <p className="text-gray-600 mt-1">Manage your personal information</p>
-                    </div>
-                </header>
+            <div className="lg:ml-64 min-h-screen">
+                {/* Unified Header with Gold Background */}
+                <DashboardHeader 
+                    title="My Profile"
+                    subtitle="Manage your personal information"
+                />
 
-                <main className="p-8">
+                <main className="p-4 sm:p-6 lg:p-8">
                     <div className="max-w-3xl mx-auto">
                         {/* Profile Avatar */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
-                            <div className="flex items-center gap-6">
-                                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-3xl">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-6">
+                            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                                <div className="w-24 h-24 bg-gradient-to-br from-gold to-gold/80 rounded-full flex items-center justify-center text-white font-bold text-3xl shrink-0">
                                     {user?.fullname?.charAt(0) || user?.name?.charAt(0) || 'U'}
                                 </div>
-                                <div>
-                                    <h2 className="text-2xl font-bold text-gray-800">{user?.fullname || user?.name}</h2>
-                                    <p className="text-gray-600">{user?.email}</p>
-                                    <div className="flex gap-2 mt-2">
+                                <div className="text-center sm:text-left">
+                                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800">{user?.fullname || user?.name}</h2>
+                                    <p className="text-gray-600 mt-1">{user?.email}</p>
+                                    <div className="flex flex-wrap gap-2 mt-3 justify-center sm:justify-start">
                                         {user?.roles?.map((role, index) => (
-                                            <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                                            <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gold/10 text-gold border border-gold/20">
                                                 {role === 'agent' ? 'Client' : role}
                                             </span>
                                         ))}
@@ -98,17 +60,17 @@ export default function Profile() {
                         </div>
 
                         {/* Profile Form */}
-                        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                            <h3 className="text-xl font-bold text-gray-800 mb-6">Personal Information</h3>
+                        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">Personal Information</h3>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                                     <input
                                         type="text"
                                         value={data.first_name}
                                         onChange={(e) => setData('first_name', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                         required
                                     />
                                     {errors.first_name && <p className="text-red-600 text-sm mt-1">{errors.first_name}</p>}
@@ -120,7 +82,7 @@ export default function Profile() {
                                         type="text"
                                         value={data.middle_name}
                                         onChange={(e) => setData('middle_name', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                     />
                                     {errors.middle_name && <p className="text-red-600 text-sm mt-1">{errors.middle_name}</p>}
                                 </div>
@@ -131,7 +93,7 @@ export default function Profile() {
                                         type="text"
                                         value={data.last_name}
                                         onChange={(e) => setData('last_name', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                         required
                                     />
                                     {errors.last_name && <p className="text-red-600 text-sm mt-1">{errors.last_name}</p>}
@@ -143,36 +105,81 @@ export default function Profile() {
                                         type="email"
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                         required
                                     />
                                     {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
                                 </div>
 
-                                <div className="md:col-span-2">
+                                <div className="sm:col-span-2">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                     <input
                                         type="tel"
                                         value={data.phone}
                                         onChange={(e) => setData('phone', e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                        placeholder="+971XXXXXXXXX"
                                     />
                                     {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-end gap-4">
+                            {/* Emirates ID Section */}
+                            <div className="border-t border-gray-200 pt-6 mb-6">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Emirates ID Information</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
+                                        <input
+                                            type="text"
+                                            value={data.eid_number}
+                                            onChange={(e) => setData('eid_number', e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                            placeholder="784-XXXX-XXXXXXX-X"
+                                        />
+                                        {errors.eid_number && <p className="text-red-600 text-sm mt-1">{errors.eid_number}</p>}
+                                    </div>
+
+                                    <div>
+                                        <FileUpload
+                                            label="Emirates ID Copy"
+                                            accept="image/*,.pdf"
+                                            onChange={(e) => setData('eid_file', e.target.files[0])}
+                                            fileName={data.eid_file?.name}
+                                            placeholder={user?.eid_file ? "Replace current EID file" : "Upload EID copy (PNG/JPG/PDF)"}
+                                            error={errors.eid_file}
+                                        />
+                                        {user?.eid_file && !data.eid_file && (
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <a 
+                                                    href={`/storage/${user.eid_file}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm text-gold hover:brightness-110 font-medium"
+                                                >
+                                                    View current EID file
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4">
                                 <button
                                     type="button"
                                     onClick={() => router.visit('/dashboard')}
-                                    className="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                                    className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full sm:w-auto px-8 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {processing ? 'Saving...' : 'Save Changes'}
                                 </button>

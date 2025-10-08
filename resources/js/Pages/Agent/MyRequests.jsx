@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { router, usePage } from "@inertiajs/react";
+import DashboardHeader from '@/Components/DashboardHeader';
+import DashboardAside from '@/Components/DashboardAside';
 
 export default function MyRequests() {
     const { props } = usePage();
@@ -35,67 +37,25 @@ export default function MyRequests() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-            {/* Sidebar */}
-            <aside className="fixed top-0 left-0 h-full w-64 bg-white shadow-xl border-r border-gray-200 z-10">
-                <div className="p-6">
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-800">GSPC Portal</h2>
-                            <p className="text-xs text-gray-500">Client Dashboard</p>
-                        </div>
-                    </div>
-
-                    <nav className="space-y-2">
-                        <a href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                        <a href="/quote-request" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            <span>New Application</span>
-                        </a>
-                        <a href="/my-requests" className="flex items-center gap-3 px-4 py-3 text-gray-700 bg-blue-50 rounded-lg font-medium hover:bg-blue-100 transition-colors">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span>My Requests</span>
-                        </a>
-                        <a href="/profile" className="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            <span>Profile</span>
-                        </a>
-                    </nav>
-                </div>
-            </aside>
+            {/* Unified Sidebar */}
+            <DashboardAside currentPath="/my-requests" />
 
             {/* Main Content */}
-            <div className="ml-64 min-h-screen">
-                <header className="bg-white border-b border-gray-200">
-                    <div className="px-8 py-6">
-                        <h1 className="text-3xl font-bold text-gray-800">My Applications</h1>
-                        <p className="text-gray-600 mt-1">Track and manage your insurance applications</p>
-                    </div>
-                </header>
+            <div className="lg:ml-64 min-h-screen">
+                {/* Unified Header with Gold Background */}
+                <DashboardHeader 
+                    title="My Applications"
+                    subtitle="Track and manage your insurance applications"
+                />
 
-                <main className="p-8">
+                <main className="p-4 sm:p-6 lg:p-8">
                     {/* Filter Tabs */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2 mb-6">
                         <div className="flex gap-2 overflow-x-auto">
                             <button
                                 onClick={() => setFilterStatus('all')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                                    filterStatus === 'all' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                                    filterStatus === 'all' ? 'bg-gold text-white' : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
                                 All Applications
@@ -111,7 +71,7 @@ export default function MyRequests() {
                             <button
                                 onClick={() => setFilterStatus('quote_sent')}
                                 className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                                    filterStatus === 'quote_sent' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+                                    filterStatus === 'quote_sent' ? 'bg-gold text-white' : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
                                 Quote Sent
@@ -164,7 +124,7 @@ export default function MyRequests() {
                                             </div>
                                             <button
                                                 onClick={() => router.visit(`/my-requests/${request.id}`)}
-                                                className="ml-4 px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                                                className="ml-4 px-6 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all"
                                             >
                                                 View Details
                                             </button>
@@ -172,10 +132,10 @@ export default function MyRequests() {
 
                                         {/* Additional Info Based on Status */}
                                         {request.quote_file && (
-                                            <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                                <div className="flex items-center justify-between">
+                                            <div className="mt-4 p-4 bg-gold/5 border border-gold/20 rounded-lg">
+                                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                                     <div className="flex items-center gap-3">
-                                                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-8 h-8 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                         </svg>
                                                         <div>
@@ -187,7 +147,7 @@ export default function MyRequests() {
                                                         href={request.quote_file}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                                                        className="w-full sm:w-auto px-4 py-2 bg-gold text-white font-medium rounded-lg hover:brightness-110 transition-all text-center"
                                                     >
                                                         Download Quote
                                                     </a>
@@ -259,7 +219,7 @@ export default function MyRequests() {
                             </p>
                             <button
                                 onClick={() => router.visit('/quote-request')}
-                                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                                className="inline-flex items-center px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -277,15 +237,15 @@ export default function MyRequests() {
                                 <span className="font-medium">{pagination.to}</span> of{" "}
                                 <span className="font-medium">{pagination.total}</span> results
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap">
                                 {pagination.links?.map((link, index) => (
                                     <button
                                         key={index}
                                         onClick={() => link.url && router.visit(link.url)}
                                         disabled={!link.url}
-                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                                             link.active
-                                                ? "bg-blue-600 text-white"
+                                                ? "bg-gold text-white"
                                                 : link.url
                                                 ? "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                                                 : "bg-gray-100 text-gray-400 cursor-not-allowed"

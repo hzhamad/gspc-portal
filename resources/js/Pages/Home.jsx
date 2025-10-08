@@ -32,7 +32,7 @@ const Home = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={() => router.visit("/login")}
-                            className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                            className="inline-flex items-center justify-center px-8 py-4 bg-gold text-white text-lg font-semibold rounded-xl shadow-lg hover:bg-gold-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                         >
                             Get Started
                             <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@ const Home = () => {
                         </button>
                         {/* <button
                             onClick={() => router.visit("/login")}
-                            className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 border-blue-600 transition-all duration-300"
+                            className="inline-flex items-center justify-center px-8 py-4 bg-white text-gold text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl border-2 border-gold transition-all duration-300"
                         >
                             Sign In
                         </button> */}

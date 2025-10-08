@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -20,6 +21,83 @@ use Inertia\Response;
 
 class AuthController extends Controller
 {
+    public function showRegister(): Response
+    {
+        return Inertia::render('Auth/Register');
+    }
+
+    public function register(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20',
+            'eid_number' => 'nullable|string|max:50',
+            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        // Handle EID file upload
+        $eidFilePath = null;
+        if ($request->hasFile('eid_file')) {
+            $eidFilePath = $request->file('eid_file')->store('eid_files', 'public');
+        }
+
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name' => $validated['last_name'],
+            'name' => trim("{$validated['first_name']} {$validated['middle_name']} {$validated['last_name']}"),
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'eid_number' => $validated['eid_number'] ?? null,
+            'eid_file' => $eidFilePath,
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        // Assign default role (agent/client)
+        $user->assignRole('agent');
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect()->route('dashboard')->with('success', 'Account created successfully!');
+    }
+
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'phone' => 'nullable|string|max:20',
+            'eid_number' => 'nullable|string|max:50',
+            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        // Handle EID file upload
+        if ($request->hasFile('eid_file')) {
+            // Delete old file if exists
+            if ($user->eid_file && Storage::disk('public')->exists($user->eid_file)) {
+                Storage::disk('public')->delete($user->eid_file);
+            }
+            $validated['eid_file'] = $request->file('eid_file')->store('eid_files', 'public');
+        }
+
+        // Update name field based on first, middle, and last names
+        $validated['name'] = trim("{$validated['first_name']} {$validated['middle_name']} {$validated['last_name']}");
+
+        $user->update($validated);
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
     public function showLogin(): Response
     {
         return Inertia::render('Auth/Login', [
@@ -124,14 +202,14 @@ class AuthController extends Controller
     public function verifyEmail(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard').'?verified=1');
+            return redirect()->intended(route('dashboard') . '?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('dashboard').'?verified=1');
+        return redirect()->intended(route('dashboard') . '?verified=1');
     }
 
     /**

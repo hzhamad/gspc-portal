@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('eid_number')->nullable();
+            $table->string('eid_file')->nullable();
             $table->string('password');
             $table->boolean('status')->default(true);
             $table->timestamps();

@@ -11,7 +11,7 @@
     @inertiaHead
 </head>
 
-<body class="antialiased">
+<body class="min-h-screen bg-[#F8FAFC] text-[var(--foreground)] antialiased">
     @inertia
 </body>
 
