@@ -23,6 +23,12 @@ export default function Dashboard(){
         if (sessionUser) {
             setUser(sessionUser);
             
+            // Redirect admins to admin dashboard
+            if (isAdmin(sessionUser)) {
+                router.visit('/admin/dashboard');
+                return;
+            }
+            
             // Redirect clients to their dashboard
             if (isClient(sessionUser) && !isAdmin(sessionUser)) {
                 router.visit('/client/dashboard');
@@ -46,6 +52,12 @@ export default function Dashboard(){
             })
             .then(data => {
                 setUser(data.user);
+                
+                // Redirect admins to admin dashboard
+                if (data.user && isAdmin(data.user)) {
+                    router.visit('/admin/dashboard');
+                    return;
+                }
                 
                 // Redirect clients to their dashboard
                 if (data.user && isClient(data.user) && !isAdmin(data.user)) {

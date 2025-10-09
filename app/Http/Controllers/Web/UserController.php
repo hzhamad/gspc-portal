@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -14,9 +16,6 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // Check if user has permission to view users
-        // You can use: $request->user()->hasRole('admin') or similar
-
         $users = User::with('roles')
             ->orderBy('created_at', 'desc')
             ->paginate(15)
@@ -25,6 +24,37 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
         ]);
+    }
+
+    /**
+     * Store a newly created user in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'status' => 'required|boolean',
+            'role' => 'required|string|in:client,admin,super-admin',
+        ]);
+
+        $user = User::create([
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'status' => $validated['status'],
+        ]);
+
+        // Assign role
+        $user->assignRole($validated['role']);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'User created successfully.');
     }
 
     /**
@@ -61,10 +91,28 @@ class UserController extends Controller
             'middle_name' => 'nullable|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'status' => 'required|boolean',
+            'role' => 'required|string|in:client,admin,super-admin',
         ]);
 
-        $user->update($validated);
+        $updateData = [
+            'first_name' => $validated['first_name'],
+            'middle_name' => $validated['middle_name'] ?? null,
+            'last_name' => $validated['last_name'],
+            'email' => $validated['email'],
+            'status' => $validated['status'],
+        ];
+
+        // Only update password if provided
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updateData);
+
+        // Update role
+        $user->syncRoles([$validated['role']]);
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User updated successfully.');
