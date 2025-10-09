@@ -27,11 +27,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/home', function () {
-        return redirect()->route('dashboard');
-    });
-
     // Client Dashboard Route
     Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
 

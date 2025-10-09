@@ -261,7 +261,7 @@ export default function Profile() {
                             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => router.visit('/dashboard')}
+                                    onClick={() => router.visit('/client/dashboard')}
                                     className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel
