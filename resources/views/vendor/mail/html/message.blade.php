@@ -1,7 +1,7 @@
 <x-mail::layout>
     {{-- Header --}}
     <x-slot:header>
-        <x-mail::header :url="config('app.url')" :logo="$logoUrl ?? config('mail.markdown.logo')">
+        <x-mail::header :url="config('app.url')" :logo="isset($logoUrl) && $logoUrl ? $logoUrl : config('mail.markdown.logo')">
             {{ config('app.name') }}
         </x-mail::header>
     </x-slot:header>

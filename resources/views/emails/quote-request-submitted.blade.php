@@ -1,4 +1,4 @@
-@component('mail::message', ['logoUrl' => $logoUrl ?? null])
+@component('mail::message')
 
 # New Insurance Application Received
 
