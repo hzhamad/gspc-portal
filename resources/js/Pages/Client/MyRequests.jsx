@@ -143,14 +143,29 @@ export default function MyRequests() {
                                                             <p className="text-sm text-gray-600">Your insurance quote is ready</p>
                                                         </div>
                                                     </div>
-                                                    <a
-                                                        href={request.quote_file}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="w-full sm:w-auto px-4 py-2 bg-gold text-white font-medium rounded-lg hover:brightness-110 transition-all text-center"
-                                                    >
-                                                        Download Quote
-                                                    </a>
+                                                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                                        <a
+                                                            href={request.quote_file}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="w-full sm:w-auto px-4 py-2 bg-white border border-gold text-gold font-medium rounded-lg hover:bg-gold/10 transition-all text-center"
+                                                        >
+                                                            Download Quote
+                                                        </a>
+                                                        {request.status === 'quote_sent' && request.payment_link && (
+                                                            <a
+                                                                href={request.payment_link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="w-full sm:w-auto px-4 py-2 bg-gold text-white font-medium rounded-lg hover:brightness-110 transition-all text-center inline-flex items-center justify-center gap-2"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                                </svg>
+                                                                Proceed to Payment
+                                                            </a>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}

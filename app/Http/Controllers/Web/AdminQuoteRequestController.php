@@ -83,7 +83,17 @@ class AdminQuoteRequestController extends Controller
                 ->store('quote-files', 'public');
 
             $quoteRequest->payment_link = $validated['payment_link'] ?? $quoteRequest->payment_link;
-            $quoteRequest->admin_notes = $validated['admin_notes'] ?? $quoteRequest->admin_notes;
+
+            // Append admin notes to history
+            if (!empty($validated['admin_notes'])) {
+                $existingNotes = is_array($quoteRequest->admin_notes) ? $quoteRequest->admin_notes : [];
+                $existingNotes[] = [
+                    'note' => $validated['admin_notes'],
+                    'created_at' => now()->toIso8601String(),
+                    'action' => 'Quote Submitted'
+                ];
+                $quoteRequest->admin_notes = $existingNotes;
+            }
 
             // Update status to quote_sent if it was pending
             if ($quoteRequest->status === 'pending') {
@@ -125,7 +135,16 @@ class AdminQuoteRequestController extends Controller
             $allFiles = array_merge($existingFiles, $uploadedFiles);
             $quoteRequest->policy_file = $allFiles;
 
-            $quoteRequest->admin_notes = $validated['admin_notes'] ?? $quoteRequest->admin_notes;
+            // Append admin notes to history
+            if (!empty($validated['admin_notes'])) {
+                $existingNotes = is_array($quoteRequest->admin_notes) ? $quoteRequest->admin_notes : [];
+                $existingNotes[] = [
+                    'note' => $validated['admin_notes'],
+                    'created_at' => now()->toIso8601String(),
+                    'action' => 'Policy Submitted'
+                ];
+                $quoteRequest->admin_notes = $existingNotes;
+            }
 
             // Update status to completed
             $quoteRequest->status = 'completed';
@@ -157,7 +176,18 @@ class AdminQuoteRequestController extends Controller
         ]);
 
         $quoteRequest->status = $validated['status'];
-        $quoteRequest->admin_notes = $validated['admin_notes'] ?? $quoteRequest->admin_notes;
+
+        // Append admin notes to history
+        if (!empty($validated['admin_notes'])) {
+            $existingNotes = is_array($quoteRequest->admin_notes) ? $quoteRequest->admin_notes : [];
+            $existingNotes[] = [
+                'note' => $validated['admin_notes'],
+                'created_at' => now()->toIso8601String(),
+                'action' => 'Status Updated to ' . ucwords(str_replace('_', ' ', $validated['status']))
+            ];
+            $quoteRequest->admin_notes = $existingNotes;
+        }
+
         $quoteRequest->save();
 
         return redirect()->back()

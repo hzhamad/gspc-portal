@@ -104,46 +104,132 @@ export default function RequestDetail() {
                         </button>
                     </div>
 
-                    {/* Status and Actions Card */}
+                    {/* Quote Details Card */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                            <div>
-                                <div className="flex items-center gap-3 mb-2">
-                                    <h2 className="text-2xl font-bold text-gray-800">Application Status</h2>
-                                    {getStatusBadge(request.status)}
-                                </div>
-                                <p className="text-gray-600">
-                                    Submitted on {formatDateTime(request.created_at)}
-                                </p>
-                                {request.updated_at && request.updated_at !== request.created_at && (
-                                    <p className="text-sm text-gray-500">
-                                        Last updated: {formatDateTime(request.updated_at)}
-                                    </p>
-                                )}
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
                             </div>
-                            
-                            {/* <div className="flex flex-col sm:flex-row gap-3">
-                                {request.status === 'pending' && (
-                                    <button
-                                        onClick={() => router.visit(`/my-requests/${request.id}/edit`)}
-                                        className="px-6 py-2.5 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all inline-flex items-center justify-center"
+                            <h3 className="text-xl font-bold text-gray-800">Quote Details</h3>
+                        </div>
+
+                        {/* Application Status */}
+                        <div className="mb-6">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <h4 className="text-lg font-semibold text-gray-800">Application Status</h4>
+                                        {getStatusBadge(request.status)}
+                                    </div>
+                                    <p className="text-gray-600 text-sm">
+                                        Submitted on {formatDateTime(request.created_at)}
+                                    </p>
+                                    {request.updated_at && request.updated_at !== request.created_at && (
+                                        <p className="text-xs text-gray-500">
+                                            Last updated: {formatDateTime(request.updated_at)}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Documents Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Quote File */}
+                            {request.quote_file && (
+                                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-8 h-8 bg-gold/10 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800">Insurance Quote</h4>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-3">Your personalized insurance quote is ready for review.</p>
+                                    <a
+                                        href={`/storage/${request.quote_file}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all text-sm"
                                     >
-                                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        Edit Application
-                                    </button>
-                                )}
-                            </div> */}
+                                        Download Quote
+                                    </a>
+                                </div>
+                            )}
+
+                            {/* Policy Files */}
+                            {request.policy_file && Array.isArray(request.policy_file) && request.policy_file.length > 0 && (
+                                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                            </svg>
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800">Policy Documents</h4>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-3">Your insurance policy documents are ready.</p>
+                                    <div className="space-y-2">
+                                        {request.policy_file.map((file, index) => (
+                                            <a
+                                                key={index}
+                                                href={`/storage/${file}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full inline-flex items-center justify-between px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all text-sm"
+                                            >
+                                                <span className="flex items-center">
+                                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                    Policy Document {request.policy_file.length > 1 ? `${index + 1}` : ''}
+                                                </span>
+                                            </a>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Payment Link */}
+                            {request.payment_link && (
+                                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800">Payment</h4>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-3">Complete your payment to activate your insurance policy.</p>
+                                    <a
+                                        href={request.payment_link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all text-sm"
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                        Proceed to Payment
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     {/* Application Type Info */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
-                                <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800">Application Details</h3>
@@ -411,89 +497,8 @@ export default function RequestDetail() {
                         </div>
                     )}
 
-                    {/* Documents & Actions Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        {/* Quote File */}
-                        {request.quote_file && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-gold/10 rounded-lg flex items-center justify-center">
-                                        <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-800">Insurance Quote</h3>
-                                </div>
-                                <p className="text-gray-600 mb-4">Your personalized insurance quote is ready for review.</p>
-                                <a
-                                    href={request.quote_file}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full inline-flex items-center justify-center px-4 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all"
-                                >
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Download Quote
-                                </a>
-                            </div>
-                        )}
-
-                        {/* Payment Link */}
-                        {request.payment_link && request.status === 'payment_pending' && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                        <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-800">Payment Required</h3>
-                                </div>
-                                <p className="text-gray-600 mb-4">Complete your payment to activate your insurance policy.</p>
-                                <a
-                                    href={request.payment_link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full inline-flex items-center justify-center px-4 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all"
-                                >
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                    </svg>
-                                    Proceed to Payment
-                                </a>
-                            </div>
-                        )}
-
-                        {/* Policy File */}
-                        {request.policy_file && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                        </svg>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-800">Policy Document</h3>
-                                </div>
-                                <p className="text-gray-600 mb-4">Your insurance policy document is ready.</p>
-                                <a
-                                    href={request.policy_file}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full inline-flex items-center justify-center px-4 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all"
-                                >
-                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Download Policy
-                                </a>
-                            </div>
-                        )}
-                    </div>
-
                     {/* Admin Notes */}
-                    {request.admin_notes && (
+                    {request.admin_notes && Array.isArray(request.admin_notes) && request.admin_notes.length > 0 && (
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
@@ -503,8 +508,26 @@ export default function RequestDetail() {
                                 </div>
                                 <h3 className="text-lg font-bold text-gray-800">Notes from Admin</h3>
                             </div>
-                            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                                <p className="text-gray-800 whitespace-pre-wrap">{request.admin_notes}</p>
+                            <div className="space-y-3">
+                                {request.admin_notes.map((noteItem, index) => (
+                                    <div key={index} className="p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-200 text-amber-800">
+                                                {noteItem.action || 'Note'}
+                                            </span>
+                                            <span className="text-xs text-amber-700">
+                                                {new Date(noteItem.created_at).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </span>
+                                        </div>
+                                        <p className="text-amber-900 whitespace-pre-wrap">{noteItem.note}</p>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     )}

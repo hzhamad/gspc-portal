@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('policy_file')->nullable();
 
             // Notes from production team
-            $table->text('admin_notes')->nullable();
+            $table->json('admin_notes')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

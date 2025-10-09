@@ -32,6 +32,7 @@ class QuoteRequest extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'policy_file' => 'array',
+        'admin_notes' => 'array',
     ];
 
     /**
