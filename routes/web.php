@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\AdminQuoteRequestController;
 use App\Http\Controllers\Web\ClientDashboardController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
@@ -74,4 +75,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+
+    // Quote Request Management Routes
+    Route::get('/quote-requests', [AdminQuoteRequestController::class, 'index'])->name('quote-requests.index');
+    Route::get('/quote-requests/{quoteRequest}', [AdminQuoteRequestController::class, 'show'])->name('quote-requests.show');
+    Route::post('/quote-requests/{quoteRequest}/upload-quote', [AdminQuoteRequestController::class, 'uploadQuote'])->name('quote-requests.upload-quote');
+    Route::post('/quote-requests/{quoteRequest}/upload-policy', [AdminQuoteRequestController::class, 'uploadPolicy'])->name('quote-requests.upload-policy');
+    Route::patch('/quote-requests/{quoteRequest}/status', [AdminQuoteRequestController::class, 'updateStatus'])->name('quote-requests.update-status');
 });

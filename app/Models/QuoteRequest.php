@@ -31,6 +31,7 @@ class QuoteRequest extends Model
         'dob' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'policy_file' => 'array',
     ];
 
     /**
