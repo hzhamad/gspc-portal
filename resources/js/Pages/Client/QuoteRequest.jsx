@@ -491,7 +491,9 @@ export default function QuoteRequest() {
 
                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        First Name <span className="text-red-500">*</span>
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={dependent.first_name}
@@ -516,7 +518,9 @@ export default function QuoteRequest() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Last Name <span className="text-red-500">*</span>
+                                                    </label>
                                                     <input
                                                         type="text"
                                                         value={dependent.last_name}
@@ -532,7 +536,9 @@ export default function QuoteRequest() {
         
                                             {/* ID Type Toggle */}
                                             <div className="mb-6">
-                                                <label className="block text-sm font-medium text-gray-700 mb-3">ID Type</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                    ID Type <span className="text-red-500">*</span>
+                                                </label>
                                                 <div className="grid grid-cols-2 gap-3">
                                                     <button
                                                         type="button"
@@ -571,7 +577,7 @@ export default function QuoteRequest() {
                                             {dependent.id_type === 'uid' ? (
                                                 <div className="mb-4">
                                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                        Unified ID Number
+                                                        Unified ID Number <span className="text-red-500">*</span>
                                                     </label>
                                                     <input
                                                         type="text"
@@ -585,7 +591,7 @@ export default function QuoteRequest() {
                                                 </div>
                                             ) : (
                                                 <EidInput
-                                                    label="Emirates ID Number"
+                                                    label="Emirates ID Number *"
                                                     value={dependent.eid_number}
                                                     onChange={(val) => updateDependent(dependent.id, 'eid_number', val)}
                                                     helperText="Format: 784-YYYY-NNNNNNN-N"
@@ -597,7 +603,9 @@ export default function QuoteRequest() {
                                             {/* Rest of dependent fields */}
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Marital Status <span className="text-red-500">*</span>
+                                                    </label>
                                                     <select
                                                         value={dependent.marital_status}
                                                         onChange={(e) => updateDependent(dependent.id, 'marital_status', e.target.value)}
@@ -611,7 +619,9 @@ export default function QuoteRequest() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Date of Birth <span className="text-red-500">*</span>
+                                                    </label>
                                                     <input
                                                         type="date"
                                                         value={dependent.dob}
@@ -622,7 +632,9 @@ export default function QuoteRequest() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Relationship to Principal</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Relationship to Principal <span className="text-red-500">*</span>
+                                                    </label>
                                                     <select
                                                         value={dependent.relationship}
                                                         onChange={(e) => updateDependent(dependent.id, 'relationship', e.target.value)}
@@ -638,7 +650,9 @@ export default function QuoteRequest() {
                                                 </div>
 
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emirate of Residency</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                        Emirate of Residency
+                                                    </label>
                                                     <select
                                                         value={dependent.emirate_of_residency}
                                                         onChange={(e) => updateDependent(dependent.id, 'emirate_of_residency', e.target.value)}

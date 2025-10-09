@@ -522,7 +522,7 @@ export default function RequestEdit() {
 
                                                         <div>
                                                             <EidInput
-                                                                label="Emirates ID Number"
+                                                                label="Emirates ID Number *"
                                                                 value={dependent.eid_number}
                                                                 onChange={(val) => updateDependentField(index, 'eid_number', val)}
                                                                 helperText="Format: 784-YYYY-NNNNNNN-N"
