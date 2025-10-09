@@ -84,4 +84,16 @@ class User extends Authenticatable // implements MustVerifyEmail
     {
         return $query->whereNull('email_verified_at');
     }
+
+    /**
+     * Get the appropriate dashboard route based on user role.
+     */
+    public function getDashboardRoute(): string
+    {
+        if ($this->hasAnyRole(['admin', 'super-admin'])) {
+            return 'admin.dashboard';
+        }
+
+        return 'client.dashboard';
+    }
 }

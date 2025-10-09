@@ -25,7 +25,7 @@ export default function DashboardAside({ currentPath }) {
     };
 
     // Check if user is admin
-    const isAdmin = user?.roles?.some(role => 
+    const isAdmin = user?.roles?.some(role =>
         role.name === 'admin' || role.name === 'super-admin'
     );
 
@@ -73,7 +73,7 @@ export default function DashboardAside({ currentPath }) {
     const clientMenuItems = [
         {
             name: 'Dashboard',
-            path: '/dashboard',
+            path: '/client/dashboard',
             icon: (
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -141,13 +141,13 @@ export default function DashboardAside({ currentPath }) {
             }`}>
             <div className="p-6">
                 {/* Logo Section with Gold Background */}
-                <div className="bg-gradient-to-br from-gold to-gold/80 rounded-xl p-4 mb-8 shadow-lg">
+                <a href={isAdmin ? "/admin/dashboard" : "/client/dashboard"} className="bg-gradient-to-br from-gold to-gold/80 rounded-xl p-4 mb-8 shadow-lg block">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white backdrop-blur-sm rounded-lg flex items-center justify-center border-2 border-white/30">
-                            <img 
-                                src="/images/uae_logo.svg" 
-                                alt="UAE Logo" 
-                                className="w-8 h-8"
+                            <img
+                                src="/images/uae_logo.svg"
+                                alt="UAE Logo"
+                                className="w-6 h-8"
                             />
                         </div>
                         <div>
@@ -155,7 +155,7 @@ export default function DashboardAside({ currentPath }) {
                             <p className="text-xs text-white/80">Health Insurance</p>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 {/* Navigation */}
                 <nav className="space-y-2">
@@ -193,9 +193,9 @@ export default function DashboardAside({ currentPath }) {
                 <div className="mt-8 pt-6 border-t border-gray-200">
                     <div className="flex items-center gap-3">
                         {user?.profile_picture ? (
-                            <img 
-                                src={`/storage/${user.profile_picture}`} 
-                                alt="Profile" 
+                            <img
+                                src={`/storage/${user.profile_picture}`}
+                                alt="Profile"
                                 className="w-10 h-10 rounded-full object-cover border-2 border-gold/20"
                             />
                         ) : (

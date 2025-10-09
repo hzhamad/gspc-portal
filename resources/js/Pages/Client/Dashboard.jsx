@@ -34,12 +34,12 @@ export default function ClientDashboard() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             {/* Unified Sidebar */}
-            <DashboardAside currentPath="/dashboard" />
+            <DashboardAside currentPath="/client/dashboard" />
 
             {/* Main Content */}
             <div className="lg:ml-64 min-h-screen">
                 {/* Unified Header with Gold Background */}
-                <DashboardHeader 
+                <DashboardHeader
                     title={`Welcome back, ${user?.fullname || user?.name}!`}
                     subtitle="Manage your insurance applications and policies"
                 />
@@ -47,14 +47,14 @@ export default function ClientDashboard() {
                 {/* Dashboard Content */}
                 <main className="p-8">
                     {/* Quick Action */}
-                    <div className="bg-gradient-to-r from-gold to-gold/80 rounded-2xl shadow-lg p-8 mb-8 text-white">
+                    <div className="bg-gradient-to-br from-white to-gold/15 border border-gold rounded-2xl shadow-lg p-8 mb-8 text-white">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h2 className="text-2xl font-bold mb-2">Apply for Health Insurance</h2>
-                                <p className="text-white/90 mb-4">Get coverage for yourself and your family members</p>
+                                <h2 className="text-2xl font-bold mb-2 text-gold">Apply for Health Insurance</h2>
+                                <p className="text-black mb-4">Get coverage for yourself and your family members</p>
                                 <button
                                     onClick={() => router.visit('/quote-request#application-type')}
-                                    className="inline-flex items-center px-6 py-3 bg-white text-gold font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+                                    className="inline-flex items-center px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-colors shadow-lg"
                                 >
                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -63,7 +63,7 @@ export default function ClientDashboard() {
                                 </button>
                             </div>
                             <div className="hidden md:block">
-                                <svg className="w-32 h-32 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-32 h-32 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
@@ -86,38 +86,38 @@ export default function ClientDashboard() {
 
                         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                             </div>
                             <p className="text-gray-600 text-sm font-medium mb-1">Pending Review</p>
-                            <p className="text-3xl font-bold text-yellow-600">{stats.pending_requests}</p>
+                            <p className="text-3xl font-bold text-black">{stats.pending_requests}</p>
                         </div>
 
                         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
                             </div>
                             <p className="text-gray-600 text-sm font-medium mb-1">Completed</p>
-                            <p className="text-3xl font-bold text-green-600">{stats.completed_requests}</p>
+                            <p className="text-3xl font-bold text-black">{stats.completed_requests}</p>
                         </div>
 
                         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between mb-4">
-                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center">
+                                    <svg className="w-6 h-6 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
                             </div>
                             <p className="text-gray-600 text-sm font-medium mb-1">Active Policies</p>
-                            <p className="text-3xl font-bold text-purple-600">{stats.active_policies}</p>
+                            <p className="text-3xl font-bold text-black">{stats.active_policies}</p>
                         </div>
                     </div>
 
@@ -134,7 +134,7 @@ export default function ClientDashboard() {
                                 </button>
                             </div>
                         </div>
-                        
+
                         {recentRequests.length > 0 ? (
                             <div className="divide-y divide-gray-200">
                                 {recentRequests.map((request) => (
@@ -150,10 +150,10 @@ export default function ClientDashboard() {
                                                 </p>
                                                 <p className="text-sm text-gray-500">
                                                     Submitted on {new Date(request.created_at).toLocaleDateString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric'
-                                                    })}
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
+                                                })}
                                                 </p>
                                             </div>
                                             <button
@@ -168,7 +168,7 @@ export default function ClientDashboard() {
                             </div>
                         ) : (
                             <div className="px-6 py-12 text-center">
-                                <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-16 h-16 text-gold mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
@@ -197,7 +197,7 @@ export default function ClientDashboard() {
                             <div>
                                 <h3 className="font-semibold text-gray-800 mb-1">Need Help?</h3>
                                 <p className="text-sm text-gray-600 mb-3">
-                                    Our production team is here to assist you with your insurance applications. 
+                                    Our production team is here to assist you with your insurance applications.
                                     Once you submit an application, we'll review it and send you a customized quote via email and WhatsApp.
                                 </p>
                                 <p className="text-sm text-gray-600">

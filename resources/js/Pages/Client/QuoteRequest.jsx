@@ -716,7 +716,7 @@ export default function QuoteRequest() {
                             <div className="flex items-center justify-between">
                                 <button
                                     type="button"
-                                    onClick={() => router.visit('/dashboard')}
+                                    onClick={() => router.visit('/client/dashboard')}
                                     className="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
                                 >
                                     Cancel

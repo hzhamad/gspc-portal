@@ -72,7 +72,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Account created successfully!');
+        return redirect()->route($user->getDashboardRoute())->with('success', 'Account created successfully!');
     }
 
     public function updateProfile(Request $request): RedirectResponse
@@ -139,7 +139,8 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'))->with('success', 'Welcome back! You have successfully logged in.');
+        $dashboardRoute = $request->user()->getDashboardRoute();
+        return redirect()->intended(route($dashboardRoute))->with('success', 'Welcome back! You have successfully logged in.');
     }
 
     public function showForgotPassword(): Response
@@ -210,7 +211,7 @@ class AuthController extends Controller
     public function showVerifyEmail(Request $request): Response|RedirectResponse
     {
         return $request->user()->hasVerifiedEmail()
-            ? redirect()->intended(route('dashboard'))
+            ? redirect()->intended(route($request->user()->getDashboardRoute()))
             : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
     }
 
@@ -219,15 +220,17 @@ class AuthController extends Controller
      */
     public function verifyEmail(Request $request): RedirectResponse
     {
+        $dashboardRoute = $request->user()->getDashboardRoute();
+
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard') . '?verified=1');
+            return redirect()->intended(route($dashboardRoute) . '?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('dashboard') . '?verified=1');
+        return redirect()->intended(route($dashboardRoute) . '?verified=1');
     }
 
     /**
@@ -236,7 +239,7 @@ class AuthController extends Controller
     public function sendVerificationEmail(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route($request->user()->getDashboardRoute()));
         }
 
         $request->user()->sendEmailVerificationNotification();
