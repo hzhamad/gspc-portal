@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Web\AgentDashboardController;
+use App\Http\Controllers\Web\ClientDashboardController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\ProfileController;
@@ -31,8 +31,8 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
-    // Agent Dashboard Route
-    Route::get('/agent/dashboard', [AgentDashboardController::class, 'index'])->name('agent.dashboard');
+    // Client Dashboard Route
+    Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -44,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // Quote Request Routes (for agents/clients)
+    // Quote Request Routes (for clients/clients)
     Route::get('/quote-request', [QuoteRequestController::class, 'create'])->name('quote-request.create');
     Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
 

@@ -3,7 +3,7 @@ import { router, usePage } from "@inertiajs/react";
 import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
 
-export default function AgentDashboard() {
+export default function ClientDashboard() {
     const { props } = usePage();
     const user = props?.auth?.user;
     const stats = props?.stats || {

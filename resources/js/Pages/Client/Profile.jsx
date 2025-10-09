@@ -90,7 +90,7 @@ export default function Profile() {
                                     <div className="flex flex-wrap gap-2 mt-3 justify-center sm:justify-start">
                                         {user?.roles?.map((role, index) => (
                                             <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gold/10 text-gold border border-gold/20">
-                                                {role === 'agent' ? 'Client' : role}
+                                                {role === 'client' ? 'Client' : role}
                                             </span>
                                         ))}
                                     </div>

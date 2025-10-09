@@ -13,19 +13,19 @@ export default function Dashboard(){
         return user.roles.includes('admin') || user.roles.includes('super-admin');
     };
 
-    // Helper function to check if user is an agent
-    const isAgent = (user) => {
+    // Helper function to check if user is a client
+    const isClient = (user) => {
         if (!user || !user.roles) return false;
-        return user.roles.includes('agent');
+        return user.roles.includes('client');
     };
 
     useEffect(() => {
         if (sessionUser) {
             setUser(sessionUser);
             
-            // Redirect agents to agent dashboard
-            if (isAgent(sessionUser) && !isAdmin(sessionUser)) {
-                router.visit('/agent/dashboard');
+            // Redirect clients to their dashboard
+            if (isClient(sessionUser) && !isAdmin(sessionUser)) {
+                router.visit('/client/dashboard');
             }
             return;
         }
@@ -47,9 +47,9 @@ export default function Dashboard(){
             .then(data => {
                 setUser(data.user);
                 
-                // Redirect agents to agent dashboard
-                if (data.user && isAgent(data.user) && !isAdmin(data.user)) {
-                    router.visit('/agent/dashboard');
+                // Redirect clients to their dashboard
+                if (data.user && isClient(data.user) && !isAdmin(data.user)) {
+                    router.visit('/client/dashboard');
                 }
             })
             .catch(() => {

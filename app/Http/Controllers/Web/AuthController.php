@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -64,8 +65,8 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Assign default role (agent/client)
-        $user->assignRole('agent');
+        // Assign default role (client)
+        $user->assignRole(UserRoles::CLIENT->value);
 
         event(new Registered($user));
 

@@ -31,7 +31,7 @@ class QuoteRequestController extends Controller
             'Fujairah'
         ];
 
-        return Inertia::render('Agent/QuoteRequest', [
+        return Inertia::render('Client/QuoteRequest', [
             'emirates' => $emirates,
         ]);
     }
@@ -180,7 +180,7 @@ class QuoteRequestController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return Inertia::render('Agent/MyRequests', [
+        return Inertia::render('Client/MyRequests', [
             'requests' => $requests,
         ]);
     }
@@ -197,7 +197,7 @@ class QuoteRequestController extends Controller
 
         $quoteRequest->load('dependents');
 
-        return Inertia::render('Agent/RequestDetail', [
+        return Inertia::render('Client/RequestDetail', [
             'request' => $quoteRequest,
         ]);
     }
@@ -230,7 +230,7 @@ class QuoteRequestController extends Controller
             'Fujairah'
         ];
 
-        return Inertia::render('Agent/RequestEdit', [
+        return Inertia::render('Client/RequestEdit', [
             'request' => $quoteRequest,
             'emirates' => $emirates,
         ]);

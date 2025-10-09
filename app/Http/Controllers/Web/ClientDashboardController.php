@@ -7,10 +7,10 @@ use App\Models\QuoteRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class AgentDashboardController extends Controller
+class ClientDashboardController extends Controller
 {
     /**
-     * Display the agent dashboard.
+     * Display the client dashboard.
      */
     public function index(Request $request)
     {
@@ -30,7 +30,7 @@ class AgentDashboardController extends Controller
             ->limit(5)
             ->get();
 
-        return Inertia::render('Agent/Dashboard', [
+        return Inertia::render('Client/Dashboard', [
             'stats' => $stats,
             'recentRequests' => $recentRequests,
         ]);

@@ -45,7 +45,13 @@ const UsersIndex = ({ users, auth }) => {
         const roleColors = {
             "super-admin": "bg-purple-100 text-purple-800",
             "admin": "bg-blue-100 text-blue-800",
-            "agent": "bg-gray-100 text-gray-800",
+            "client": "bg-gray-100 text-gray-800",
+        };
+
+        const roleLabels = {
+            "super-admin": "Super Admin",
+            "admin": "Admin",
+            "client": "Client",
         };
 
         return roles.map((role, index) => (
@@ -53,7 +59,7 @@ const UsersIndex = ({ users, auth }) => {
                 key={index}
                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${roleColors[role.name] || "bg-gray-100 text-gray-800"} mr-1`}
             >
-                {role.name === "super-admin" ? "Super Admin" : role.name === "admin" ? "Admin" : "Client"}
+                {roleLabels[role.name] || role.name}
             </span>
         ));
     };

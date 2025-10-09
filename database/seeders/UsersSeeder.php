@@ -43,8 +43,8 @@ class UsersSeeder extends Seeder
 
         $user->assignRole($adminRole);
 
-        //Client / Agent
-        $agentRole = Role::firstOrCreate(['name' => UserRoles::AGENT->value]);
+        // Client
+        $clientRole = Role::firstOrCreate(['name' => UserRoles::CLIENT->value]);
 
         $user = User::create([
             'first_name' => "Client",
@@ -57,6 +57,6 @@ class UsersSeeder extends Seeder
             'password' => bcrypt('client'),
         ]);
 
-        $user->assignRole($agentRole);
+        $user->assignRole($clientRole);
     }
 }
