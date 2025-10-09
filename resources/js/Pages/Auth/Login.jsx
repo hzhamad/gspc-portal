@@ -3,7 +3,7 @@ import { Head, Link, useForm } from "@inertiajs/react";
 import UAEHeader from '@/Components/UAEHeader';
 
 export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, get, processing, errors, reset } = useForm({
         email: '',
         password: '',
         remember: false,
@@ -13,7 +13,7 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post('/login', {
+        get('/login/authenticate', {
             onFinish: () => reset('password'),
         });
     };

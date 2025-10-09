@@ -13,7 +13,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/login/authenticate', [AuthController::class, 'login'])->name('login.authenticate');
 
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
@@ -34,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
     // Client Dashboard Route
     Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/email/verify', [AuthController::class, 'showVerifyEmail'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
@@ -44,7 +44,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // Quote Request Routes (for clients/clients)
+    // Quote Request Routes (for clients)
     Route::get('/quote-request', [QuoteRequestController::class, 'create'])->name('quote-request.create');
     Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
 

@@ -61,7 +61,7 @@ export default function Dashboard(){
     const handleLogout = (e) => {
         e.preventDefault();
         const token = document.head.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        router.post("/logout", {}, {
+        router.get("/logout", {}, {
             headers: { "X-CSRF-TOKEN": token },
             onFinish: () => {
                 localStorage.removeItem("token");
@@ -112,12 +112,4 @@ export default function Dashboard(){
             </div>
         );
     }
-    return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="bg-white p-8 rounded shadow text-center">
-                <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
-                <p className="text-gray-700">You do not have permission to view this page.</p>
-            </div>
-        </div>
-    );
 }
