@@ -7,8 +7,14 @@
             @else
             @if($logo)
             @php
-                // If logo is a relative path, prepend the app URL
-                $logoUrl = str_starts_with($logo, 'http') ? $logo : rtrim(config('app.url'), '/') . '/' . ltrim($logo, '/');
+            // Handle embedded images (CID URLs) or convert relative paths to absolute
+            if (str_starts_with($logo, 'cid:')) {
+            $logoUrl = $logo;
+            } elseif (str_starts_with($logo, 'http')) {
+            $logoUrl = $logo;
+            } else {
+            $logoUrl = rtrim(config('app.url'), '/') . '/' . ltrim($logo, '/');
+            }
             @endphp
             <img src="{{ $logoUrl }}" class="logo" alt="{{ config('app.name') }} Logo">
             @else

@@ -1,10 +1,10 @@
-@component('mail::message')
+@component('mail::message', ['logoUrl' => $logoUrl ?? null])
 
 # New Insurance Application Received
 
 Dear Team,
 
-A new insurance application has been submitted by **{{ $user->name }}** (Email: {{ $user->email }}).
+A new insurance application has been submitted by **{{ $user->fullname }}** (Email: {{ $user->email }}).
 
 Please find the application details below for your review and processing.
 

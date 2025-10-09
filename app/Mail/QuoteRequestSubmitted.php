@@ -45,8 +45,25 @@ class QuoteRequestSubmitted extends Mailable implements ShouldQueue
                 'quoteRequest' => $this->quoteRequest,
                 'user'         => $this->quoteRequest->user,
                 'dependents'   => $this->quoteRequest->dependents,
+                'logoUrl'      => $this->getLogoUrl(),
             ],
         );
+    }
+
+    /**
+     * Get the absolute URL for the logo.
+     */
+    protected function getLogoUrl(): string
+    {
+        $logoPath = config('mail.markdown.logo', '/images/uae_logo.svg');
+
+        // If it's already an absolute URL, return it
+        if (str_starts_with($logoPath, 'http')) {
+            return $logoPath;
+        }
+
+        // Convert relative path to absolute URL
+        return rtrim(config('app.url'), '/') . '/' . ltrim($logoPath, '/');
     }
 
     /**
