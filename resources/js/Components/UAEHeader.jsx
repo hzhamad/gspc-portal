@@ -6,30 +6,34 @@ export default function UAEHeader() {
   return (
     <div className="w-full bg-gold border-b-2 border-gold shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_auto] items-center justify-items-center sm:justify-items-stretch gap-4 sm:gap-6 text-center sm:text-left">
           {/* LEFT: Logo */}
-          <div className="flex items-center justify-start">
+          <div className="flex items-center justify-center sm:justify-start">
             <a href="/" aria-label="Go to homepage">
               <img
                 src="/images/uae_logo.svg"
                 alt="UAE Emblem"
-                className="w-14 h-18 object-contain drop-shadow"
+                className="w-16 h-16 sm:w-14 sm:h-18 object-contain drop-shadow"
               />
             </a>
           </div>
 
           {/* CENTER: Title (perfectly centered) */}
-          <div className="flex items-center ">
-            <div className="text-center">
-              <h1 className="text-lg sm:text-xl font-semibold text-white tracking-wide drop-shadow-md">
-                <span className="block">Government Services &amp;</span>
-                <span className="block">Processing Center</span>
+          <div className="flex items-center justify-center sm:justify-start">
+            <div className="text-center sm:text-left">
+              <h1 className="text-base sm:text-lg md:text-xl font-semibold text-white tracking-wide drop-shadow-md leading-snug space-y-1">
+                <span className="block">
+                  General Secretary of Presidential Court&nbsp;–&nbsp;Health Insurance Portal
+                </span>
+                <span className="block text-sm sm:text-base md:text-lg font-medium">
+                  الامانة العامة لديوان الرئاسة - منصة التأمين الصحي
+                </span>
               </h1>
             </div>
           </div>
 
         {/* RIGHT: Contact rectangle */}
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-center sm:justify-end w-full">
             <button
               type="button"
               aria-label={`Support number ${CONTACT_NUMBER}`}
@@ -39,7 +43,7 @@ export default function UAEHeader() {
                          hover:shadow-2xl hover:bg-gradient-to-r hover:from-white hover:to-amber-50
                          transform transition-all duration-300 ease-out
                          focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gold
-                         border-2 border-gold"
+                         border-2 border-gold w-full sm:w-auto justify-center sm:justify-start"
             >
               {/* Icon Circle */}
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gold
