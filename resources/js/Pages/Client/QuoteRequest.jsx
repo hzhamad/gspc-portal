@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import DashboardAside from '@/Components/DashboardAside';
 import DashboardHeader from '@/Components/DashboardHeader';
@@ -14,6 +14,8 @@ export default function QuoteRequest() {
 
     const [applicationType, setApplicationType] = useState('');
     const [dependents, setDependents] = useState([]);
+    
+    const principalInfoRef = useRef(null);
 
     const existingProfilePicture = user?.profile_picture || null;
     const existingEidCopy = user?.eid_file || null;
@@ -158,6 +160,20 @@ export default function QuoteRequest() {
         }
     };
 
+    const handleApplicationTypeSelect = (type) => {
+        setApplicationType(type);
+        
+        // Scroll to principal info section for 'self' or 'self_dependents'
+        if (type === 'self' || type === 'self_dependents') {
+            setTimeout(() => {
+                principalInfoRef.current?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100); // Small delay to ensure state update and DOM render
+        }
+    };
+    
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -254,7 +270,7 @@ export default function QuoteRequest() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => setApplicationType('self')}
+                                    onClick={() => handleApplicationTypeSelect('self')}
                                     className={`p-6 rounded-xl border-2 transition-all ${
                                         applicationType === 'self'
                                             ? 'border-gold bg-gold/10'
@@ -276,7 +292,7 @@ export default function QuoteRequest() {
 
                                 <button
                                     type="button"
-                                    onClick={() => setApplicationType('self_dependents')}
+                                    onClick={() => handleApplicationTypeSelect('self')}
                                     className={`p-6 rounded-xl border-2 transition-all ${
                                         applicationType === 'self_dependents'
                                             ? 'border-gold bg-gold/10'
@@ -298,7 +314,7 @@ export default function QuoteRequest() {
 
                                 <button
                                     type="button"
-                                    onClick={() => setApplicationType('dependents')}
+                                    onClick={() => handleApplicationTypeSelect('self')}
                                     className={`p-6 rounded-xl border-2 transition-all ${
                                         applicationType === 'dependents'
                                             ? 'border-gold bg-gold/10'
@@ -323,12 +339,16 @@ export default function QuoteRequest() {
 
                         {/* Principal Details */}
                         {(applicationType === 'self' || applicationType === 'self_dependents' || applicationType === 'dependents') && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                                <h2 className="text-xl font-bold text-gray-800 mb-4">Principal Information</h2>
+                            <div ref={principalInfoRef} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                                    {applicationType === 'self' ? 'Self Information' : 'Principal Information'}
+                                </h2>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Principal Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            {applicationType === 'self' ? 'Your Name' : 'Principal Name'}
+                                        </label>
                                         <input
                                             type="text"
                                             value={data.sponsor_name}
@@ -633,7 +653,7 @@ export default function QuoteRequest() {
 
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                        Relationship to Principal <span className="text-red-500">*</span>
+                                                        Relationship to {applicationType === 'self' ? 'Self' : 'Principal'} <span className="text-red-500">*</span>
                                                     </label>
                                                     <select
                                                         value={dependent.relationship}

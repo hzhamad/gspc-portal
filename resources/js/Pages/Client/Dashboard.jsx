@@ -53,7 +53,7 @@ export default function ClientDashboard() {
                                 <h2 className="text-2xl font-bold mb-2">Apply for Health Insurance</h2>
                                 <p className="text-white/90 mb-4">Get coverage for yourself and your family members</p>
                                 <button
-                                    onClick={() => router.visit('/quote-request')}
+                                    onClick={() => router.visit('/quote-request#application-type')}
                                     className="inline-flex items-center px-6 py-3 bg-white text-gold font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
                                 >
                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ export default function ClientDashboard() {
                                 <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
                                 <p className="text-gray-500 mb-4">Start by submitting your first insurance application</p>
                                 <button
-                                    onClick={() => router.visit('/quote-request')}
+                                    onClick={() => router.visit('/quote-request#application-type')}
                                     className="inline-flex items-center px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all"
                                 >
                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

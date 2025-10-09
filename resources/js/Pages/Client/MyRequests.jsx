@@ -218,7 +218,7 @@ export default function MyRequests() {
                                     : `No ${filterStatus.replace('_', ' ')} applications found.`}
                             </p>
                             <button
-                                onClick={() => router.visit('/quote-request')}
+                                onClick={() => router.visit('/quote-request#application-type')}
                                 className="inline-flex items-center px-6 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all"
                             >
                                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
