@@ -131,7 +131,7 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
-        'logo' => env('MAIL_LOGO', asset('images/uae_logo.svg')),
+        'logo' => env('MAIL_LOGO', '/images/uae_logo.svg'),
     ],
 
 ];
