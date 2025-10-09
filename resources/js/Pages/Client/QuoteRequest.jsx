@@ -292,7 +292,7 @@ export default function QuoteRequest() {
 
                                 <button
                                     type="button"
-                                    onClick={() => handleApplicationTypeSelect('self')}
+                                    onClick={() => handleApplicationTypeSelect('self_dependents')}
                                     className={`p-6 rounded-xl border-2 transition-all ${
                                         applicationType === 'self_dependents'
                                             ? 'border-gold bg-gold/10'
@@ -314,7 +314,7 @@ export default function QuoteRequest() {
 
                                 <button
                                     type="button"
-                                    onClick={() => handleApplicationTypeSelect('self')}
+                                    onClick={() => handleApplicationTypeSelect('dependents')}
                                     className={`p-6 rounded-xl border-2 transition-all ${
                                         applicationType === 'dependents'
                                             ? 'border-gold bg-gold/10'
