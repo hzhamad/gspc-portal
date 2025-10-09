@@ -26,7 +26,7 @@ export default function DashboardAside({ currentPath }) {
 
     // Check if user is admin
     const isAdmin = user?.roles?.some(role =>
-        role.name === 'admin' || role.name === 'super-admin'
+        role === 'admin' || role === 'super-admin'
     );
 
     // Admin menu items

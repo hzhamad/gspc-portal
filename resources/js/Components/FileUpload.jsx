@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function FileUpload({ 
     label, 
@@ -7,8 +7,76 @@ export default function FileUpload({
     fileName = null,
     placeholder = "Click to upload PNG/JPG/PDF",
     error = null,
-    required = false
+    required = false,
+    maxSize = 10, // MB
+    fileType = 'document' // 'image' or 'document'
 }) {
+    const [validationError, setValidationError] = useState(null);
+
+    const validateFile = (file) => {
+        if (!file) return null;
+
+        const errors = [];
+
+        // File size validation
+        const maxBytes = (fileType === 'image' ? 5 : 10) * 1024 * 1024;
+        if (file.size > maxBytes) {
+            errors.push(`File size must not exceed ${fileType === 'image' ? 5 : 10} MB`);
+        }
+
+        if (file.size === 0) {
+            errors.push('The uploaded file is empty');
+        }
+
+        // File type validation
+        const allowedTypes = {
+            'application/pdf': ['.pdf'],
+            'image/jpeg': ['.jpg', '.jpeg'],
+            'image/png': ['.png'],
+            'application/msword': ['.doc'],
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+        };
+
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+        const isValidType = Object.entries(allowedTypes).some(([mime, exts]) => 
+            file.type === mime && exts.includes(fileExtension)
+        );
+
+        if (!isValidType) {
+            errors.push('Please upload PDF, DOC, DOCX, JPG, or PNG files only');
+        }
+
+        // File name validation
+        if (!/^[a-zA-Z0-9\s\-_.]+$/.test(file.name)) {
+            errors.push('File name contains invalid characters');
+        }
+
+        if (file.name.length > 255) {
+            errors.push('File name is too long');
+        }
+
+        return errors.length > 0 ? errors[0] : null;
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        setValidationError(null);
+
+        if (!file) {
+            onChange(e);
+            return;
+        }
+
+        const error = validateFile(file);
+        if (error) {
+            setValidationError(error);
+            e.target.value = ''; // Clear the input
+            return;
+        }
+
+        onChange(e);
+    };
+
     return (
         <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -19,7 +87,7 @@ export default function FileUpload({
                 <input
                     type="file"
                     accept={accept}
-                    onChange={onChange}
+                    onChange={handleFileChange}
                     required={required}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
@@ -47,9 +115,12 @@ export default function FileUpload({
                     )}
                 </div>
             </div>
-            {error && (
-                <p className="mt-2 text-sm text-red-600">{error}</p>
+            {(error || validationError) && (
+                <p className="mt-2 text-sm text-red-600">{error || validationError}</p>
             )}
+            <p className="mt-1 text-xs text-gray-500">
+                Max size: {fileType === 'image' ? '5' : '10'}MB. Allowed: PDF, DOC, DOCX, JPG, PNG
+            </p>
         </div>
     );
 }

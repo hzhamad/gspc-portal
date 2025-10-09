@@ -86,14 +86,14 @@ export default function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-purple-600 to-purple-500 rounded-2xl shadow-lg p-8 text-white">
+                        <div className="bg-gradient-to-r from-white to-gold/15 border border-gold rounded-2xl shadow-lg p-8 text-gold">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h2 className="text-2xl font-bold mb-2">Quote Requests</h2>
-                                    <p className="text-white/90 mb-4">Review pending insurance applications</p>
+                                    <p className="text-gold/90 mb-4">Review pending insurance applications</p>
                                     <button
                                         onClick={() => router.visit('/admin/quote-requests')}
-                                        className="inline-flex items-center px-6 py-3 bg-white text-purple-600 font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+                                        className="inline-flex items-center px-6 py-3 bg-white text-gold font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
                                     >
                                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
                                     </button>
                                 </div>
                                 <div className="hidden md:block">
-                                    <svg className="w-32 h-32 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-32 h-32 text-gold/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>

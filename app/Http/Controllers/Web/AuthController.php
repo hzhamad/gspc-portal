@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\ValidatedFile;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -36,9 +37,9 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'phone' => 'required|string|max:20',
             'eid_number' => 'nullable|string|max:50',
-            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'eid_file' => ['nullable', new ValidatedFile('document')],
+            'profile_picture' => ['nullable', new ValidatedFile('image')],
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         // Handle EID file upload
@@ -85,9 +86,11 @@ class AuthController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
+            'dob' => 'nullable|date|before:today',
+            'residency' => 'nullable|string|max:255',
             'eid_number' => 'nullable|string|max:50',
-            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'eid_file' => ['nullable', new ValidatedFile('document')],
+            'profile_picture' => ['nullable', new ValidatedFile('image')],
         ]);
 
         // Handle EID file upload

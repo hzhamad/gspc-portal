@@ -32,8 +32,8 @@ export default function QuoteRequest() {
         sponsor_id: user?.eid_number || '',
         dob: user?.dob?.split('T')[0] || '',
         emirate_of_residency: user?.residency || '',
-        profile_picture: user?.profile_picture || null,
-        eid_file: user?.eid_file || null,
+        profile_picture: existingProfilePicture || null,
+        // eid_file: user?.eid_file || null,
         // Dependents
         dependents: [],
     });
@@ -115,6 +115,8 @@ export default function QuoteRequest() {
                 setProfilePicturePreview(objectUrl);
                 setProfilePictureObjectUrl(objectUrl);
             } else {
+                // When file is cleared, keep the existing profile picture
+                setData('profile_picture', existingProfilePicture || null);
                 setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
             }
         }
@@ -130,20 +132,10 @@ export default function QuoteRequest() {
 
     useEffect(() => {
         if (!data.profile_picture) {
+            setData('profile_picture', existingProfilePicture || null);
             setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
         }
-    }, [existingProfilePicture, data.profile_picture]);
-
-    const resetProfilePictureSelection = () => {
-        setData('profile_picture', null);
-
-        if (profilePictureObjectUrl) {
-            URL.revokeObjectURL(profilePictureObjectUrl);
-            setProfilePictureObjectUrl(null);
-        }
-
-        setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
-    };
+    }, [existingProfilePicture]);
 
     const handleDependentFileChange = (id, field, file) => {
         setDependents(dependents.map(dep =>
@@ -207,9 +199,9 @@ export default function QuoteRequest() {
             if (data.profile_picture) {
                 formData.append('profile_picture', data.profile_picture);
             }
-            if (data.eid_file) {
-                formData.append('eid_file', data.eid_file);
-            }
+            // if (data.eid_file) {
+            //     formData.append('eid_file', data.eid_file);
+            // }
         }
         
         // Add dependents data
@@ -244,6 +236,7 @@ export default function QuoteRequest() {
                     setProfilePictureObjectUrl(null);
                 }
                 setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
+                setData('profile_picture', existingProfilePicture || null);
             }
         });
     };
@@ -401,33 +394,23 @@ export default function QuoteRequest() {
                                     <div className="md:col-span-2">
                                         <FileUpload
                                             label="Profile Picture"
-                                            accept="image/*"
+                                            accept="image/jpeg,image/png,image/jpg"
                                             onChange={(e) => handleFileChange('profile_picture', e.target.files[0])}
                                             fileName={data.profile_picture?.name}
                                             placeholder="Click to upload profile picture"
                                             required={!existingProfilePicture}
+                                            fileType="image"
                                         />
                                         {profilePicturePreview ? (
-                                            <div className="mt-3 flex items-start gap-4">
-                                                <div>
-                                                    <p className="text-sm text-gray-600 mb-2">
-                                                        {data.profile_picture ? 'New profile picture preview:' : 'Current profile picture on file:'}
-                                                    </p>
-                                                    <img
-                                                        src={profilePicturePreview}
-                                                        alt="Profile preview"
-                                                        className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                                                    />
-                                                </div>
-                                                {data.profile_picture && existingProfilePicture && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={resetProfilePictureSelection}
-                                                        className="px-3 py-2 h-fit mt-6 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-                                                    >
-                                                        Keep current photo
-                                                    </button>
-                                                )}
+                                            <div className="mt-3">
+                                                <p className="text-sm text-gray-600 mb-2">
+                                                    {data.profile_picture && typeof data.profile_picture === 'object' ? 'New profile picture preview:' : 'Current profile picture on file:'}
+                                                </p>
+                                                <img
+                                                    src={profilePicturePreview}
+                                                    alt="Profile preview"
+                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                                                />
                                             </div>
                                         ) : (
                                             <p className="text-sm text-gray-500 mt-1 italic">
@@ -437,36 +420,21 @@ export default function QuoteRequest() {
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
                                     </div>
 
-                                    {/*
+                                    { !existingEidCopy ? (
                                     <div className="md:col-span-2">
-                                        <FileUpload
-                                            label="Emirates ID Copy"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => handleFileChange('eid_file', e.target.files[0])}
-                                            fileName={data.eid_file?.name}
-                                            placeholder="Click to upload PDF/Image"
-                                            required
-                                        />
-                                        {existingEidCopy && !data.eid_file ? (
-                                            <p className="text-sm text-gray-600 mt-1">
-                                                Current file on record: 
-                                                <a 
-                                                    href={`/storage/${existingEidCopy}`} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline ml-1"
-                                                >
-                                                    View
-                                                </a>
-                                            </p>
-                                        ) : !data.eid_file ? (
-                                            <p className="text-sm text-gray-500 mt-1 italic">
-                                                No Emirates ID copy on file. Please upload one or update your profile.
-                                            </p>
-                                        ) : null}
-                                        {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
+                                            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                                <p className="text-sm text-yellow-800">
+                                                    No Emirates ID copy on file. You can upload it in your 
+                                                    <a 
+                                                        href="/profile"
+                                                        className="text-yellow-700 hover:text-yellow-900 underline font-medium ml-1"
+                                                    >
+                                                        profile settings
+                                                    </a>.
+                                                </p>
+                                            </div>
                                     </div>
-                                    */}
+                                    ) : null}
                                 </div>
                             </div>
                         )}
@@ -688,20 +656,24 @@ export default function QuoteRequest() {
                                                 <div className="md:col-span-2">
                                                     <FileUpload
                                                         label="Profile Picture *"
-                                                        accept="image/*"
+                                                        accept="image/jpeg,image/png,image/jpg"
                                                         onChange={(e) => handleDependentFileChange(dependent.id, 'profile_picture', e.target.files[0])}
                                                         fileName={dependent.profile_picture?.name}
                                                         placeholder="Upload profile picture"
+                                                        required
+                                                        fileType="image"
                                                     />
                                                 </div>
 
                                                 <div className="md:col-span-2">
                                                     <FileUpload
                                                         label="Emirates ID Copy *"
-                                                        accept="image/*,.pdf"
+                                                        accept="image/jpeg,image/png,image/jpg,application/pdf,.pdf"
                                                         onChange={(e) => handleDependentFileChange(dependent.id, 'eid_file', e.target.files[0])}
                                                         fileName={dependent.eid_file?.name}
                                                         placeholder="Upload Emirates ID copy"
+                                                        required
+                                                        fileType="document"
                                                     />
                                                 </div>
                                             </div>

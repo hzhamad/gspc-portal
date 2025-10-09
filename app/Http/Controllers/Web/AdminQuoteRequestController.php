@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Rules\ValidatedFile;
 use App\Http\Controllers\Controller;
 use App\Models\QuoteRequest;
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ class AdminQuoteRequestController extends Controller
     public function uploadQuote(Request $request, QuoteRequest $quoteRequest)
     {
         $validated = $request->validate([
-            'quote_file' => 'required|file|mimes:pdf,doc,docx|max:10240',
+            'quote_file' => ['required', new ValidatedFile('document')],
             'payment_link' => 'nullable|url|max:500',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
@@ -106,7 +107,7 @@ class AdminQuoteRequestController extends Controller
     {
         $validated = $request->validate([
             'policy_files' => 'required|array|min:1|max:10',
-            'policy_files.*' => 'required|file|mimes:pdf,doc,docx|max:10240',
+            'policy_files.*' => ['required', new ValidatedFile('document')],
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 

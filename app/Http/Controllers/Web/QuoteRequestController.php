@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Rules\ValidatedFile;
+use App\Services\FileValidationService;
 use App\Http\Controllers\Controller;
 use App\Mail\QuoteRequestSubmitted;
 use App\Models\QuoteRequest;
@@ -41,25 +43,36 @@ class QuoteRequestController extends Controller
      */
     public function store(Request $request)
     {
+        // Custom validation for profile_picture
+        $profilePictureRules = ['required_if:application_type,self,self_dependents'];
+
+        // If profile_picture is a file, validate it; if it's a string (existing path), allow it
+        if ($request->hasFile('profile_picture')) {
+            $profilePictureRules[] = new ValidatedFile('image');
+        } else {
+            $profilePictureRules[] = 'string';
+        }
+
         $validated = $request->validate([
-            'application_type' => 'required|in:self,self_dependents,dependents',
+            'application_type' => 'required|in:self,dependents_only,self_dependents',
+
+            // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
-            'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'dependents' => 'required_if:application_type,dependents,self_dependents|array',
-            'dependents.*.uid_number' => 'nullable|string|max:255',
-            'dependents.*.eid_number' => 'nullable|string|max:255',
-            'dependents.*.marital_status' => 'required|in:single,married',
+            'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
+            'profile_picture' => $profilePictureRules,
+            // 'eid_file' => ['required_if:application_type,self,self_dependents', new ValidatedFile('document')],
+
+            // Dependents
+            'dependents' => 'required_if:application_type,dependents_only,self_dependents|array|min:1',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
             'dependents.*.first_name' => 'required|string|max:255',
             'dependents.*.middle_name' => 'nullable|string|max:255',
             'dependents.*.last_name' => 'required|string|max:255',
-            'dependents.*.profile_picture' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'dependents.*.eid_file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'dependents.*.profile_picture' => ['required', new ValidatedFile('image')],
+            'dependents.*.eid_file' => ['required', new ValidatedFile('document')],
         ]);
 
         DB::beginTransaction();
@@ -88,15 +101,28 @@ class QuoteRequestController extends Controller
                     $quoteRequest->profile_picture = $destination;
                 }
 
-                if ($request->hasFile('eid_file')) {
-                    $quoteRequest->eid_file = $request->file('eid_file')
-                        ->store('quote-requests/eids', 'public');
-                } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
+                // if ($request->hasFile('eid_file')) {
+                //     $quoteRequest->eid_file = $request->file('eid_file')
+                //         ->store('quote-requests/eids', 'public');
+                // } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
+                //     $source = $request->user()->eid_file;
+                //     $extension = pathinfo($source, PATHINFO_EXTENSION);
+                //     $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                //     Storage::disk('public')->copy($source, $destination);
+                //     $quoteRequest->eid_file = $destination;
+                // }
+
+                if ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
                     $source = $request->user()->eid_file;
                     $extension = pathinfo($source, PATHINFO_EXTENSION);
                     $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
                     Storage::disk('public')->copy($source, $destination);
                     $quoteRequest->eid_file = $destination;
+                } else {
+                    // If no existing eid_file, validation error
+                    return back()
+                        ->withInput()
+                        ->withErrors(["eid_file" => "The eid file field is required when application type is self."]);
                 }
             }
 
@@ -241,37 +267,35 @@ class QuoteRequestController extends Controller
      */
     public function update(Request $request, QuoteRequest $quoteRequest)
     {
-        // Ensure user can only update their own requests
+        // Authorization check
         if ($quoteRequest->user_id !== $request->user()->id) {
-            abort(403, 'Unauthorized access to this request.');
-        }
-
-        // Only allow updating pending requests
-        if ($quoteRequest->status !== 'pending') {
-            return redirect()->route('my-requests.show', $quoteRequest)
-                ->with('error', 'You can only edit applications with "Pending Review" status.');
+            abort(403);
         }
 
         $validated = $request->validate([
-            'application_type' => 'required|in:self,self_dependents,dependents',
+            'application_type' => 'required|in:self,dependents_only,self_dependents',
+
+            // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
-            'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:255',
-            'profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'dependents' => 'required_if:application_type,dependents,self_dependents|array',
+            'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
+            'profile_picture' => ['nullable', new ValidatedFile('image')],
+            'eid_file' => ['nullable', new ValidatedFile('document')],
+
+            // Dependents
+            'dependents' => 'required_if:application_type,dependents_only,self_dependents|array',
             'dependents.*.id' => 'nullable|exists:dependents,id',
-            'dependents.*.uid_number' => 'nullable|string|max:255',
-            'dependents.*.eid_number' => 'nullable|string|max:255',
-            'dependents.*.marital_status' => 'required|in:single,married',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
             'dependents.*.first_name' => 'required|string|max:255',
             'dependents.*.middle_name' => 'nullable|string|max:255',
             'dependents.*.last_name' => 'required|string|max:255',
-            'dependents.*.profile_picture' => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
-            'dependents.*.eid_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'dependents.*.uid_number' => 'nullable|string|max:100',
+            'dependents.*.eid_number' => 'nullable|string|max:100',
+            'dependents.*.marital_status' => 'required|in:single,married,divorced,widowed',
+            'dependents.*.profile_picture' => ['nullable', new ValidatedFile('image')],
+            'dependents.*.eid_file' => ['nullable', new ValidatedFile('document')],
         ]);
 
         DB::beginTransaction();
