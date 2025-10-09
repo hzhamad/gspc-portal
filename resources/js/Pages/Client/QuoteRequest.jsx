@@ -16,6 +16,7 @@ export default function QuoteRequest() {
     const [dependents, setDependents] = useState([]);
     
     const principalInfoRef = useRef(null);
+    const dependentsRef = useRef(null);
 
     const existingProfilePicture = user?.profile_picture || null;
     const existingEidCopy = user?.eid_file || null;
@@ -163,15 +164,13 @@ export default function QuoteRequest() {
     const handleApplicationTypeSelect = (type) => {
         setApplicationType(type);
         
-        // Scroll to principal info section for 'self' or 'self_dependents'
-        if (type === 'self' || type === 'self_dependents') {
-            setTimeout(() => {
-                principalInfoRef.current?.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }, 100); // Small delay to ensure state update and DOM render
-        }
+        // Scroll to principal info section for all types since principal info is always required
+        setTimeout(() => {
+            principalInfoRef.current?.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }, 100);
     };
     
     const handleSubmit = (e) => {
@@ -339,7 +338,7 @@ export default function QuoteRequest() {
 
                         {/* Principal Details */}
                         {(applicationType === 'self' || applicationType === 'self_dependents' || applicationType === 'dependents') && (
-                            <div ref={principalInfoRef} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                            <div ref={principalInfoRef} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6 scroll-mt-24">
                                 <h2 className="text-xl font-bold text-gray-800 mb-4">
                                     {applicationType === 'self' ? 'Self Information' : 'Principal Information'}
                                 </h2>
@@ -470,9 +469,10 @@ export default function QuoteRequest() {
                                     */}
                                 </div>
                             </div>
-                        )}                        {/* Dependents Section */}
+                        )}
+                        {/* Dependents Section */}
                         {(applicationType === 'dependents' || applicationType === 'self_dependents') && (
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                            <div ref={dependentsRef} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6 scroll-mt-20 md:scroll-mt-24">
                                 <div className="flex items-center justify-between mb-4">
                                     <h2 className="text-xl font-bold text-gray-800">Dependents</h2>
                                     <button
