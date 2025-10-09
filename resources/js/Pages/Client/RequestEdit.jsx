@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
+import DashboardHeader from '@/Components/DashboardHeader';
+import EidInput from '@/Components/EidInput';
 
 export default function RequestEdit() {
     const { props } = usePage();
@@ -41,31 +42,6 @@ export default function RequestEdit() {
     const [eidCopyPreview, setEidCopyPreview] = useState(
         request.eid_file ? `/storage/${request.eid_file}` : null
     );
-
-    // Format Emirates ID with dashes
-    const formatEmiratesId = (value) => {
-        // Remove all non-digit characters
-        const digits = value.replace(/\D/g, '');
-        
-        // Limit to 15 digits
-        const limitedDigits = digits.substring(0, 15);
-        
-        // Format: 784-YYYY-XXXXXXX-X
-        let formatted = '';
-        if (limitedDigits.length > 0) {
-            formatted = limitedDigits.substring(0, 3);
-            if (limitedDigits.length > 3) {
-                formatted += '-' + limitedDigits.substring(3, 7);
-            }
-            if (limitedDigits.length > 7) {
-                formatted += '-' + limitedDigits.substring(7, 14);
-            }
-            if (limitedDigits.length > 14) {
-                formatted += '-' + limitedDigits.substring(14, 15);
-            }
-        }
-        return formatted;
-    };
 
     const updateDependentField = (index, field, value) => {
         const updatedDependents = data.dependents.map((dependent, dependentIndex) =>
@@ -319,20 +295,15 @@ export default function RequestEdit() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Sponsor ID Number <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
+                                        <EidInput
+                                            label="Sponsor ID Number"
                                             value={data.sponsor_id}
-                                            onChange={(e) => setData('sponsor_id', formatEmiratesId(e.target.value))}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                            placeholder="784-YYYY-XXXXXXX-X"
-                                            maxLength="18"
+                                            onChange={(val) => setData('sponsor_id', val)}
+                                            required
+                                            helperText="Format: 784-YYYY-NNNNNNN-N"
+                                            error={errors.sponsor_id}
+                                            disabled={processing}
                                         />
-                                        {errors.sponsor_id && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.sponsor_id}</p>
-                                        )}
                                     </div>
 
                                     <div>
@@ -550,20 +521,14 @@ export default function RequestEdit() {
                                                         </div>
 
                                                         <div>
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                Emirates ID Number
-                                                            </label>
-                                                            <input
-                                                                type="text"
+                                                            <EidInput
+                                                                label="Emirates ID Number"
                                                                 value={dependent.eid_number}
-                                                                onChange={(e) => updateDependentField(index, 'eid_number', formatEmiratesId(e.target.value))}
-                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                                                placeholder="784-YYYY-XXXXXXX-X"
-                                                                maxLength="18"
+                                                                onChange={(val) => updateDependentField(index, 'eid_number', val)}
+                                                                helperText="Format: 784-YYYY-NNNNNNN-N"
+                                                                error={getDependentError('eid_number')}
+                                                                disabled={processing}
                                                             />
-                                                            {getDependentError('eid_number') && (
-                                                                <p className="text-red-500 text-sm mt-1">{getDependentError('eid_number')}</p>
-                                                            )}
                                                         </div>
 
                                                         <div>
@@ -695,3 +660,4 @@ export default function RequestEdit() {
         </div>
     );
 }
+

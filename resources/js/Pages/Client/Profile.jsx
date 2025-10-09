@@ -2,6 +2,7 @@ import React from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
 import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
+import EidInput from '@/Components/EidInput';
 import FileUpload from '@/Components/FileUpload';
 
 export default function Profile() {
@@ -219,15 +220,14 @@ export default function Profile() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
-                                        <input
-                                            type="text"
+                                        <EidInput
+                                            label="Emirates ID Number"
                                             value={data.eid_number}
-                                            onChange={(e) => setData('eid_number', e.target.value)}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                            placeholder="784-XXXX-XXXXXXX-X"
+                                            onChange={(val) => setData('eid_number', val)}
+                                            helperText="Format: 784-YYYY-NNNNNNN-N"
+                                            error={errors.eid_number}
+                                            disabled={processing}
                                         />
-                                        {errors.eid_number && <p className="text-red-600 text-sm mt-1">{errors.eid_number}</p>}
                                     </div>
 
                                     <div className="sm:col-span-2">

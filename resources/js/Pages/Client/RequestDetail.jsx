@@ -122,7 +122,7 @@ export default function RequestDetail() {
                                 )}
                             </div>
                             
-                            <div className="flex flex-col sm:flex-row gap-3">
+                            {/* <div className="flex flex-col sm:flex-row gap-3">
                                 {request.status === 'pending' && (
                                     <button
                                         onClick={() => router.visit(`/my-requests/${request.id}/edit`)}
@@ -134,7 +134,7 @@ export default function RequestDetail() {
                                         Edit Application
                                     </button>
                                 )}
-                            </div>
+                            </div> */}
                         </div>
                     </div>
 

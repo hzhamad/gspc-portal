@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { router, useForm, usePage } from "@inertiajs/react";
-import FileUpload from '@/Components/FileUpload';
-import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
+import DashboardHeader from '@/Components/DashboardHeader';
+import EidInput from '@/Components/EidInput';
+import FileUpload from '@/Components/FileUpload';
 
 export default function QuoteRequest() {
     const { props } = usePage();
@@ -21,21 +22,12 @@ export default function QuoteRequest() {
     ));
     const [profilePictureObjectUrl, setProfilePictureObjectUrl] = useState(null);
 
-    // Format date for input field (extract YYYY-MM-DD from datetime)
-    const formatDateForInput = (dateString) => {
-        if (!dateString) return '';
-        // Handle both date strings and datetime objects
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '';
-        return date.toISOString().split('T')[0];
-    };
-
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
         sponsor_name: user?.fullname || '',
         sponsor_id: user?.eid_number || '',
-        dob: formatDateForInput(user?.dob),
+        dob: user?.dob?.split('T')[0] || '',
         emirate_of_residency: user?.residency || '',
         profile_picture: user?.profile_picture || null,
         eid_file: user?.eid_file || null,
@@ -348,18 +340,15 @@ export default function QuoteRequest() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID</label>
-                                        <input
-                                            type="text"
+                                        <EidInput
+                                            label="Emirates ID"
                                             value={data.sponsor_id}
-                                            onChange={(e) => setData('sponsor_id', formatEmiratesId(e.target.value))}
-                                            placeholder="784-YYYY-XXXXXXX-X"
-                                            maxLength="18"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                            onChange={(val) => setData('sponsor_id', val)}
                                             required
+                                            error={errors.sponsor_id}
+                                            helperText="Format: 784-YYYY-NNNNNNN-N"
+                                            disabled={processing}
                                         />
-                                        <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
-                                        {errors.sponsor_id && <p className="text-red-600 text-sm mt-1">{errors.sponsor_id}</p>}
                                     </div>
 
                                     <div>
@@ -595,18 +584,14 @@ export default function QuoteRequest() {
                                                     <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                                                 </div>
                                             ) : (
-                                                <div className="mb-4">
-                                                    <label className="block text-sm font-medium text-gray-700 mb-2">Emirates ID Number</label>
-                                                    <input
-                                                        type="text"
-                                                        value={dependent.eid_number}
-                                                        onChange={(e) => updateDependent(dependent.id, 'eid_number', formatEmiratesId(e.target.value))}
-                                                        placeholder="784-YYYY-XXXXXXX-X"
-                                                        maxLength="18"
-                                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
-                                                    />
-                                                    <p className="mt-1 text-xs text-gray-500">Format: 784-YYYY-XXXXXXX-X</p>
-                                                </div>
+                                                <EidInput
+                                                    label="Emirates ID Number"
+                                                    value={dependent.eid_number}
+                                                    onChange={(val) => updateDependent(dependent.id, 'eid_number', val)}
+                                                    helperText="Format: 784-YYYY-NNNNNNN-N"
+                                                    error={getDependentError('eid_number')}
+                                                    disabled={processing}
+                                                />
                                             )}
 
                                             {/* Rest of dependent fields */}
