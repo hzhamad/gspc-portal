@@ -37,7 +37,9 @@ export default function UAEHeader() {
             <button
               type="button"
               aria-label={`Support number ${CONTACT_NUMBER}`}
-              onClick={() => {}}
+              onClick={() => {
+                window.open(`https://wa.me/${CONTACT_NUMBER.replace(/\D/g, '')}`, '_blank');
+              }}
               className="group relative inline-flex items-center gap-3 rounded-full bg-white
                          pl-4 pr-6 py-3 text-sm font-medium shadow-xl
                          hover:shadow-2xl hover:bg-gradient-to-r hover:from-white hover:to-amber-50
