@@ -53,6 +53,22 @@ class QuoteRequestController extends Controller
             $profilePictureRules[] = 'string';
         }
 
+        // Custom validation for eid_file
+        $eidFileRules = ['nullable'];
+        if ($request->hasFile('eid_file')) {
+            $eidFileRules[] = new ValidatedFile('document');
+        } else {
+            $eidFileRules[] = 'string';
+        }
+
+        // Custom validation for passport_copy
+        $passportCopyRules = ['nullable'];
+        if ($request->hasFile('passport_copy')) {
+            $passportCopyRules[] = new ValidatedFile('document');
+        } else {
+            $passportCopyRules[] = 'string';
+        }
+
         $validated = $request->validate([
             'application_type' => 'required|in:self,dependents,self_dependents',
 
@@ -63,8 +79,8 @@ class QuoteRequestController extends Controller
             'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
             'profile_picture' => $profilePictureRules,
-            'eid_file' => ['nullable', new ValidatedFile('document')],
-            'passport_copy' => ['nullable', new ValidatedFile('document')],
+            'eid_file' => $eidFileRules,
+            'passport_copy' => $passportCopyRules,
 
             // Dependents
             'dependents' => 'required_if:application_type,dependents,self_dependents|array|min:1',
