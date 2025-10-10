@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('eid_file')->nullable();
             $table->string('passport_copy')->nullable();
             $table->string('profile_picture')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

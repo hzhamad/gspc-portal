@@ -26,13 +26,26 @@ class Dependent extends Model
         'passport_copy',
     ];
 
+    protected $appends = ['fullname', 'name'];
+
     protected $casts = [
         'dob' => 'date',
     ];
 
-    public function getFullNameAttribute(): string
+    /**
+     * Get the dependent's full name.
+     */
+    public function getFullnameAttribute(): string
     {
-        return $this->first_name . ($this->middle_name ? ' ' . $this->middle_name : '') . ' ' . $this->last_name;
+        return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
+    }
+
+    /**
+     * Get the dependent's name (alias for fullname).
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->getFullnameAttribute();
     }
 
     /**

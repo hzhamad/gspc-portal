@@ -14,7 +14,9 @@ class QuoteRequest extends Model
     protected $fillable = [
         'user_id',
         'application_type',
-        'principal_name',
+        'principal_first_name',
+        'principal_middle_name',
+        'principal_last_name',
         'phone_number',
         'principal_id',
         'dob',
@@ -28,6 +30,8 @@ class QuoteRequest extends Model
         'policy_file',
         'admin_notes',
     ];
+
+    protected $appends = ['principal_fullname', 'principal_name'];
 
     protected $casts = [
         'dob' => 'date',
@@ -51,5 +55,21 @@ class QuoteRequest extends Model
     public function dependents(): HasMany
     {
         return $this->hasMany(Dependent::class);
+    }
+
+    /**
+     * Get the principal's full name.
+     */
+    public function getPrincipalFullnameAttribute(): string
+    {
+        return trim("{$this->principal_first_name} {$this->principal_middle_name} {$this->principal_last_name}");
+    }
+
+    /**
+     * Get the principal's name (alias for principal_fullname).
+     */
+    public function getPrincipalNameAttribute(): string
+    {
+        return $this->getPrincipalFullnameAttribute();
     }
 }

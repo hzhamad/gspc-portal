@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\OtpService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -17,34 +18,42 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    protected OtpService $otpService;
+
+    public function __construct(OtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
     /**
-     * Register a new user
+     * Register a new user with OTP verification
      */
     public function register(Request $request): JsonResponse
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255',
+                'middle_name' => 'nullable|string|max:255',
+                'last_name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
 
+            // Create user with name parts
             $user = User::create([
-                'name' => $request->name,
+                'first_name' => $request->first_name,
+                'middle_name' => $request->middle_name,
+                'last_name' => $request->last_name,
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
             ]);
 
             event(new Registered($user));
 
-            $token = $user->createToken('auth_token', ['*'], now()->addDays(30))->plainTextToken;
+            // Send OTP for verification
+            $this->otpService->sendOtp($user, 'register');
 
             return response()->json([
-                'message' => 'User registered successfully',
-                'user' => $user->only(['id', 'name', 'email', 'email_verified_at']),
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'expires_in' => 30 * 24 * 60 * 60, // 30 days in seconds
+                'message' => 'Registration initiated. Please check your email for the verification code.',
+                'user' => $user->only(['id', 'first_name', 'middle_name', 'last_name', 'email']),
             ], 201);
 
         } catch (ValidationException $e) {
@@ -61,31 +70,82 @@ class AuthController extends Controller
     }
 
     /**
-     * Authenticate user and return token
+     * Initiate login by sending OTP to user's email
      */
     public function login(Request $request): JsonResponse
     {
         try {
             $request->validate([
                 'email' => 'required|email',
-                'password' => 'required|string',
             ]);
 
             $user = User::where('email', $request->email)->first();
 
-            if (!$user || !Hash::check($request->password, $user->password)) {
+            if (!$user) {
                 return response()->json([
-                    'message' => 'Invalid credentials',
+                    'message' => 'No account found with this email address.',
+                ], 404);
+            }
+
+            // Check rate limiting
+            if (!$this->otpService->canRequestOtp($user)) {
+                return response()->json([
+                    'message' => 'Too many OTP requests. Please try again later.',
+                ], 429);
+            }
+
+            // Send OTP for login
+            $this->otpService->sendOtp($user, 'login');
+
+            return response()->json([
+                'message' => 'Verification code sent to your email. Please check your inbox.',
+                'user' => $user->only(['id', 'email']),
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Login failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Verify OTP and complete login/registration
+     */
+    public function verifyOtp(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'otp_code' => 'required|string|size:6',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found.',
+                ], 404);
+            }
+
+            // Verify OTP
+            if (!$this->otpService->verifyOtp($user, $request->otp_code)) {
+                return response()->json([
+                    'message' => 'Invalid or expired verification code.',
                 ], 401);
             }
 
-            // Revoke old tokens if needed (optional - uncomment if you want single session)
-            // $user->tokens()->delete();
-
+            // Create access token
             $token = $user->createToken('auth_token', ['*'], now()->addDays(30))->plainTextToken;
 
             return response()->json([
-                'message' => 'Login successful',
+                'message' => 'Verification successful',
                 'user' => $user->only(['id', 'name', 'email', 'email_verified_at']),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
@@ -99,7 +159,47 @@ class AuthController extends Controller
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Login failed',
+                'message' => 'Verification failed',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Resend OTP code
+     */
+    public function resendOtp(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'action' => 'nullable|in:login,register,verify',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found.',
+                ], 404);
+            }
+
+            // Send new OTP
+            $action = $request->input('action', 'verify');
+            $this->otpService->sendOtp($user, $action);
+
+            return response()->json([
+                'message' => 'A new verification code has been sent to your email.',
+            ]);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to resend code',
                 'error' => $e->getMessage(),
             ], 500);
         }

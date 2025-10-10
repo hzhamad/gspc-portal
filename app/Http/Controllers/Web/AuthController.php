@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\Rules\ValidatedFile;
+use App\Services\OtpService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -24,14 +25,30 @@ use Inertia\Response;
 
 class AuthController extends Controller
 {
+    protected OtpService $otpService;
+
+    public function __construct(OtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
+
     public function showRegister(): Response
     {
         return Inertia::render('Auth/Register');
     }
 
-    public function register(RegisterRequest $request): RedirectResponse
+    public function register(Request $request): RedirectResponse
     {
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'nullable|string|max:20',
+            'eid_number' => 'nullable|string|max:50',
+            'eid_file' => ['nullable', new ValidatedFile('document')],
+            'profile_picture' => ['nullable', new ValidatedFile('image')],
+        ]);
 
         // Handle EID file upload
         $eidFilePath = null;
@@ -50,11 +67,10 @@ class AuthController extends Controller
             'middle_name' => $validated['middle_name'] ?? null,
             'last_name' => $validated['last_name'],
             'email' => $validated['email'],
-            'phone' => $validated['phone'],
+            'phone' => $validated['phone'] ?? null,
             'eid_number' => $validated['eid_number'] ?? null,
             'eid_file' => $eidFilePath,
             'profile_picture' => $profileImagePath,
-            'password' => Hash::make($validated['password']),
         ]);
 
         // Assign default role (client)
@@ -62,9 +78,13 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Send OTP for verification
+        $this->otpService->sendOtp($user, 'register');
 
-        return redirect()->route($user->getDashboardRoute())->with('success', 'Account created successfully!');
+        // Store user email in session for OTP verification
+        session(['otp_email' => $user->email, 'otp_action' => 'register']);
+
+        return redirect()->route('verify-otp')->with('success', 'Registration successful! Please check your email for the verification code.');
     }
 
     public function updateProfile(Request $request): RedirectResponse
@@ -102,8 +122,6 @@ class AuthController extends Controller
             $validated['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
         }
 
-        // Update name field based on first, middle, and last names
-        $validated['name'] = trim("{$validated['first_name']} {$validated['middle_name']} {$validated['last_name']}");
 
         $user->update($validated);
 
@@ -116,6 +134,130 @@ class AuthController extends Controller
             'canResetPassword' => true,
             'status' => session('status'),
         ]);
+    }
+
+    /**
+     * Initiate OTP-based login
+     */
+    public function loginWithOtp(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'email' => 'No account found with this email address.',
+            ]);
+        }
+
+        // Check rate limiting
+        if (!$this->otpService->canRequestOtp($user)) {
+            throw ValidationException::withMessages([
+                'email' => 'Too many OTP requests. Please try again later.',
+            ]);
+        }
+
+        // Send OTP for login
+        $this->otpService->sendOtp($user, 'login');
+
+        // Store user email in session for OTP verification
+        session(['otp_email' => $user->email, 'otp_action' => 'login']);
+
+        return redirect()->route('verify-otp')->with('success', 'Verification code sent to your email. Please check your inbox.');
+    }
+
+    /**
+     * Show OTP verification form
+     */
+    public function showVerifyOtp(): Response|RedirectResponse
+    {
+        $email = session('otp_email');
+        $action = session('otp_action', 'verify');
+
+        if (!$email) {
+            return redirect()->route('login')->with('error', 'Session expired. Please try again.');
+        }
+
+        return Inertia::render('Auth/VerifyOtp', [
+            'email' => $email,
+            'action' => $action,
+        ]);
+    }
+
+    /**
+     * Verify OTP and complete login/registration
+     */
+    public function verifyOtp(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'otp_code' => 'required|string|size:6',
+        ]);
+
+        $email = session('otp_email');
+        $action = session('otp_action', 'verify');
+
+        if (!$email) {
+            throw ValidationException::withMessages([
+                'otp_code' => 'Session expired. Please try again.',
+            ]);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'otp_code' => 'User not found.',
+            ]);
+        }
+
+        // Verify OTP
+        if (!$this->otpService->verifyOtp($user, $request->otp_code)) {
+            throw ValidationException::withMessages([
+                'otp_code' => 'Invalid or expired verification code.',
+            ]);
+        }
+
+
+        // Clear session data
+        session()->forget(['otp_email', 'otp_action']);
+
+        // Log in the user
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        $dashboardRoute = $user->getDashboardRoute();
+        $message = $action === 'register'
+            ? 'Registration completed successfully! Welcome aboard.'
+            : 'Login successful! Welcome back.';
+
+        return redirect()->intended(route($dashboardRoute))->with('success', $message);
+    }
+
+    /**
+     * Resend OTP code
+     */
+    public function resendOtp(Request $request): RedirectResponse
+    {
+        $email = session('otp_email');
+        $action = session('otp_action', 'verify');
+
+        if (!$email) {
+            return redirect()->route('login')->with('error', 'Session expired. Please try again.');
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'User not found.');
+        }
+
+        // Send new OTP
+        $this->otpService->sendOtp($user, $action);
+
+        return back()->with('success', 'A new verification code has been sent to your email.');
     }
 
     public function login(Request $request): RedirectResponse

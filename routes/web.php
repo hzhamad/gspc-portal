@@ -14,10 +14,15 @@ Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::get('/login/authenticate', [AuthController::class, 'login'])->name('login.authenticate');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.authenticate');
+    Route::post('/login/otp', [AuthController::class, 'loginWithOtp'])->name('login.otp');
 
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/verify-otp', [AuthController::class, 'showVerifyOtp'])->name('verify-otp');
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
+    Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend-otp');
 
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');

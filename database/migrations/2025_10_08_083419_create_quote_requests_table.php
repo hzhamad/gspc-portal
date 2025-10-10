@@ -17,7 +17,9 @@ return new class extends Migration
             $table->enum('application_type', ['self', 'self_dependents', 'dependents']);
 
             // Principal applicant details (nullable for dependents-only applications)
-            $table->string('principal_name')->nullable();
+            $table->string('principal_first_name')->nullable();
+            $table->string('principal_middle_name')->nullable();
+            $table->string('principal_last_name')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('principal_id')->nullable();
             $table->date('dob')->nullable();

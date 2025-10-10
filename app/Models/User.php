@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -14,7 +15,6 @@ class User extends Authenticatable // implements MustVerifyEmail
     use HasFactory, Notifiable, HasRoles, HasApiTokens;
 
     protected $fillable = [
-        'name',
         'first_name',
         'middle_name',
         'last_name',
@@ -30,7 +30,7 @@ class User extends Authenticatable // implements MustVerifyEmail
         'email_verified_at',
     ];
 
-    protected $appends = ['fullname'];
+    protected $appends = ['fullname', 'name'];
 
     protected $hidden = [
         'password',
@@ -47,11 +47,27 @@ class User extends Authenticatable // implements MustVerifyEmail
     }
 
     /**
+     * Get the OTPs for the user.
+     */
+    public function otps(): HasMany
+    {
+        return $this->hasMany(UserOtp::class);
+    }
+
+    /**
      * Get the user's full name.
      */
     public function getFullnameAttribute(): string
     {
         return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
+    }
+
+    /**
+     * Get the user's name (alias for fullname).
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->getFullnameAttribute();
     }
 
     /**
