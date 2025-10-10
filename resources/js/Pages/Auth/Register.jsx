@@ -17,31 +17,52 @@ export default function Register() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [phoneError, setPhoneError] = useState('');
 
     // Handle phone number input to maintain +971- prefix
     const handlePhoneChange = (e) => {
         let value = e.target.value;
-        
+
         // Remove all non-digits
         value = value.replace(/\D/g, '');
-        
+
         // If it starts with 971, format it properly
         if (value.startsWith('971')) {
             value = value.substring(3);
         }
-        
+
+        // Limit to 9 digits
+        if (value.length > 9) {
+            value = value.substring(0, 9);
+        }
+
         setData('phone', value);
+
+        // Client-side validation
+        if (value.length > 0 && value.length < 9) {
+            setPhoneError('Phone number must be exactly 9 digits');
+        } else if (value.length > 9) {
+            setPhoneError('Phone number cannot exceed 9 digits');
+        } else {
+            setPhoneError('');
+        }
     };
 
     const submit = (e) => {
         e.preventDefault();
-        
+
+        // Validate phone before submission
+        if (data.phone.length !== 9) {
+            setPhoneError('Phone number must be exactly 9 digits');
+            return;
+        }
+
         // Prepare data with +971 prefix for phone
         const submitData = {
             ...data,
             phone: `+971${data.phone}`
         };
-        
+
         post('/register', {
             data: submitData,
             forceFormData: true,
@@ -155,10 +176,15 @@ export default function Register() {
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all pl-24"
                                                 placeholder="XXXXXXXXX"
                                                 required
+                                                minLength={9}
+                                                maxLength={9}
                                             />
                                         </div>
                                         {errors.phone && (
                                             <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                                        )}
+                                        {phoneError && (
+                                            <p className="mt-2 text-sm text-red-600">{phoneError}</p>
                                         )}
                                     </div>
                                 </div>

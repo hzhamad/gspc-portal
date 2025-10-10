@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\Rules\ValidatedFile;
 use Illuminate\Auth\Events\PasswordReset;
@@ -28,19 +29,9 @@ class AuthController extends Controller
         return Inertia::render('Auth/Register');
     }
 
-    public function register(Request $request): RedirectResponse
+    public function register(RegisterRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20',
-            'eid_number' => 'nullable|string|max:50',
-            'eid_file' => ['nullable', new ValidatedFile('document')],
-            'profile_picture' => ['nullable', new ValidatedFile('image')],
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
         // Handle EID file upload
         $eidFilePath = null;
