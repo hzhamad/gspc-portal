@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function UAEHeader() {
-  const CONTACT_NUMBER = "+971 4 123 4567"; // replace with real number
+  const CONTACT_NUMBER = "+971 4 123 4567";
 
   return (
     <div className="w-full bg-gold border-b-2 border-gold shadow-lg">
@@ -25,7 +25,7 @@ export default function UAEHeader() {
                 <span className="block">
                   General Secretary of Presidential Court&nbsp;–&nbsp;Health Insurance Portal
                 </span>
-                <span className="block text-sm sm:text-base md:text-lg font-medium">
+                <span className="block text-sm sm:text-base md:text-lg font-medium" lang="ar">
                   الامانة العامة لديوان الرئاسة - منصة التأمين الصحي
                 </span>
               </h1>
