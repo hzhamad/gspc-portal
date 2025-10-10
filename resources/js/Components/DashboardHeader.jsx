@@ -10,14 +10,14 @@ export default function DashboardHeader({ title, subtitle }) {
             <div className="px-8 py-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">
+                        <h1 className="text-3xl font-bold text-white text-center">
                             {title || `Welcome back, ${user?.fullname || user?.name}!`}
                         </h1>
                         {subtitle && (
                             <p className="text-white/90 mt-1">{subtitle}</p>
                         )}
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 hidden sm:flex">
                         <div className="text-right">
                             <p className="text-sm text-white/80">Signed in as</p>
                             <p className="text-sm font-semibold text-white">{user?.email}</p>
