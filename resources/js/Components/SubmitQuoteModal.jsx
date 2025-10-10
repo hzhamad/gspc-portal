@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from '@inertiajs/react';
 
 export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
@@ -10,6 +10,19 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
 
     const [validationErrors, setValidationErrors] = useState({});
     const [selectedFileName, setSelectedFileName] = useState('');
+    const fileInputRef = useRef(null);
+
+    // Reset form when modal closes
+    React.useEffect(() => {
+        if (!isOpen) {
+            form.reset();
+            setValidationErrors({});
+            setSelectedFileName('');
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    }, [isOpen]);
 
     const validateForm = () => {
         const errors = {};
@@ -70,16 +83,30 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
 
         // Validate form
         if (!validateForm()) {
+            console.log('Validation failed:', validationErrors);
             return;
         }
+
+        console.log('Submitting quote with data:', {
+            has_file: !!form.data.quote_file,
+            file_name: form.data.quote_file?.name,
+            file_size: form.data.quote_file?.size,
+            file_type: form.data.quote_file?.type,
+            payment_link: form.data.payment_link,
+            admin_notes: form.data.admin_notes,
+            requestId: requestId
+        });
 
         // Submit the form
         form.post(`/admin/quote-requests/${requestId}/upload-quote`, {
             preserveScroll: true,
+            forceFormData: true,
             onSuccess: () => {
+                console.log('Quote submitted successfully');
                 handleClose();
             },
             onError: (errors) => {
+                console.error('Server validation errors:', errors);
                 // Set server-side validation errors
                 setValidationErrors(errors);
             },
@@ -90,6 +117,9 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
         form.reset();
         setValidationErrors({});
         setSelectedFileName('');
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
         onClose();
     };
 
@@ -124,6 +154,7 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
                             </label>
                             <div className="relative">
                                 <input
+                                    ref={fileInputRef}
                                     type="file"
                                     accept=".pdf,.doc,.docx"
                                     onChange={handleFileChange}
