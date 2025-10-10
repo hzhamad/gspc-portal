@@ -229,15 +229,15 @@ export default function QuoteRequestShow() {
                                 <label className="text-sm font-medium text-gray-600">Application Type</label>
                                 <p className="text-base text-gray-900 mt-1">{getApplicationTypeLabel(request.application_type)}</p>
                             </div>
-                            {request.sponsor_name && (
+                            {request.principal_name && (
                                 <>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-600">Sponsor Name</label>
-                                        <p className="text-base text-gray-900 mt-1">{request.sponsor_name}</p>
+                                        <label className="text-sm font-medium text-gray-600">Principal Name</label>
+                                        <p className="text-base text-gray-900 mt-1">{request.principal_name}</p>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-600">Sponsor ID</label>
-                                        <p className="text-base text-gray-900 mt-1">{request.sponsor_id || 'N/A'}</p>
+                                        <label className="text-sm font-medium text-gray-600">Principal ID</label>
+                                        <p className="text-base text-gray-900 mt-1">{request.principal_id || 'N/A'}</p>
                                     </div>
                                     <div>
                                         <label className="text-sm font-medium text-gray-600">Date of Birth</label>

@@ -20,9 +20,9 @@ export default function RequestEdit() {
 
     const { data, setData, post, processing, errors } = useForm({
         application_type: request.application_type || 'self',
-        sponsor_name: request.sponsor_name || '',
+        principal_name: request.principal_name || '',
         phone_number: formatPhoneForInput(request.phone_number || ''),
-        sponsor_id: request.sponsor_id || '',
+        principal_id: request.principal_id || '',
         dob: request.dob || '',
         emirate_of_residency: request.emirate_of_residency || '',
         profile_picture: null,
@@ -79,9 +79,9 @@ export default function RequestEdit() {
         
         // Add principal fields if applicable
         if (data.application_type === 'self' || data.application_type === 'self_dependents') {
-            formData.append('sponsor_name', data.sponsor_name);
+            formData.append('principal_name', data.principal_name);
             formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
-            formData.append('sponsor_id', data.sponsor_id);
+            formData.append('principal_id', data.principal_id);
             formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
             
@@ -290,17 +290,17 @@ export default function RequestEdit() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Sponsor Name <span className="text-red-500">*</span>
+                                            Principal Name <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={data.sponsor_name}
-                                            onChange={(e) => setData('sponsor_name', e.target.value)}
+                                            value={data.principal_name}
+                                            onChange={(e) => setData('principal_name', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                                             placeholder="Full name as per Emirates ID"
                                         />
-                                        {errors.sponsor_name && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.sponsor_name}</p>
+                                        {errors.principal_name && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.principal_name}</p>
                                         )}
                                     </div>
 
@@ -318,12 +318,12 @@ export default function RequestEdit() {
 
                                     <div>
                                         <EidInput
-                                            label="Sponsor ID Number"
-                                            value={data.sponsor_id}
-                                            onChange={(val) => setData('sponsor_id', val)}
+                                            label="Principal ID Number"
+                                            value={data.principal_id}
+                                            onChange={(val) => setData('principal_id', val)}
                                             required
                                             helperText="Format: 784-YYYY-NNNNNNN-N"
-                                            error={errors.sponsor_id}
+                                            error={errors.principal_id}
                                             disabled={processing}
                                         />
                                     </div>

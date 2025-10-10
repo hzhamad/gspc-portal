@@ -161,7 +161,7 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold"
-                                        placeholder="Search by name, email, sponsor..."
+                                        placeholder="Search by name, email, principal..."
                                     />
                                 </div>
                             </div>
@@ -217,7 +217,7 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
                                             Client
                                         </th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                            Sponsor Name
+                                            Principal Name
                                         </th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                             Type
@@ -256,7 +256,7 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {request.sponsor_name || 'N/A'}
+                                                    {request.principal_name || 'N/A'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     {getApplicationTypeBadge(request.application_type)}

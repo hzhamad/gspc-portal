@@ -266,15 +266,15 @@ export default function RequestDetail() {
                                 {/* Basic Info */}
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="text-sm font-medium text-gray-600 block mb-1">Sponsor Name</label>
+                                        <label className="text-sm font-medium text-gray-600 block mb-1">Principal Name</label>
                                         <p className="text-base font-semibold text-gray-800 p-3 bg-gray-50 rounded-lg">
-                                            {request.sponsor_name || 'N/A'}
+                                            {request.principal_name || 'N/A'}
                                         </p>
                                     </div>
                                     <div>
-                                        <label className="text-sm font-medium text-gray-600 block mb-1">Sponsor ID</label>
+                                        <label className="text-sm font-medium text-gray-600 block mb-1">Principal ID</label>
                                         <p className="text-base font-semibold text-gray-800 p-3 bg-gray-50 rounded-lg">
-                                            {request.sponsor_id || 'N/A'}
+                                            {request.principal_id || 'N/A'}
                                         </p>
                                     </div>
                                     <div>

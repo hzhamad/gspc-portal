@@ -29,10 +29,10 @@ Please find the application details below for your review and processing.
 
 @if(in_array($quoteRequest->application_type, ['self', 'self_dependents']))
 
-## Principal / Sponsor Information
+## Principal Information
 
-- **Full Name:** {{ $quoteRequest->sponsor_name }}
-- **Sponsor ID:** {{ $quoteRequest->sponsor_id }}
+- **Full Name:** {{ $quoteRequest->principal_name }}
+- **Principal ID:** {{ $quoteRequest->principal_id }}
 - **Date of Birth:** {{ \Carbon\Carbon::parse($quoteRequest->dob)->format('F d, Y') }}
 - **Emirate of Residency:** {{ $quoteRequest->emirate_of_residency }}
 

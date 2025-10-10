@@ -36,9 +36,9 @@ export default function QuoteRequest() {
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
-        sponsor_name: user?.fullname || '',
+        principal_name: user?.fullname || '',
         phone_number: formatPhoneForInput(user?.phone_number || user?.phone || ''),
-        sponsor_id: user?.eid_number || '',
+        principal_id: user?.eid_number || '',
         dob: user?.dob?.split('T')[0] || '',
         emirate_of_residency: user?.residency || '',
         profile_picture: existingProfilePicture || null,
@@ -72,8 +72,8 @@ export default function QuoteRequest() {
         return formatted;
     };
 
-    // Validate Sponsor Emirates ID
-    const validateSponsorId = (value) => {
+    // Validate Principal Emirates ID
+    const validatePrincipalId = (value) => {
         // Emirates ID: 784-YYYY-XXXXXXX-X (15 digits with dashes)
         const eidPattern = /^784-\d{4}-\d{7}-\d{1}$/;
         return eidPattern.test(value);
@@ -178,7 +178,7 @@ export default function QuoteRequest() {
         e.preventDefault();
 
         // Validate Principal Emirates ID if applicable
-        if ((applicationType === 'self' || applicationType === 'self_dependents') && !validateSponsorId(data.sponsor_id)) {
+        if ((applicationType === 'self' || applicationType === 'self_dependents') && !validatePrincipalId(data.principal_id)) {
             alert('Invalid Emirates ID format');
             return;
         }
@@ -200,9 +200,9 @@ export default function QuoteRequest() {
         
         // Add principal data if applying for self
         if (applicationType === 'self' || applicationType === 'self_dependents') {
-            formData.append('sponsor_name', data.sponsor_name);
+            formData.append('principal_name', data.principal_name);
             formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
-            formData.append('sponsor_id', data.sponsor_id);
+            formData.append('principal_id', data.principal_id);
             formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
             
@@ -353,12 +353,12 @@ export default function QuoteRequest() {
                                         </label>
                                         <input
                                             type="text"
-                                            value={data.sponsor_name}
-                                            onChange={(e) => setData('sponsor_name', e.target.value)}
+                                            value={data.principal_name}
+                                            onChange={(e) => setData('principal_name', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                             required
                                         />
-                                        {errors.sponsor_name && <p className="text-red-600 text-sm mt-1">{errors.sponsor_name}</p>}
+                                        {errors.principal_name && <p className="text-red-600 text-sm mt-1">{errors.principal_name}</p>}
                                     </div>
 
                                     <div>
@@ -376,10 +376,10 @@ export default function QuoteRequest() {
                                     <div>
                                         <EidInput
                                             label="Emirates ID"
-                                            value={data.sponsor_id}
-                                            onChange={(val) => setData('sponsor_id', val)}
+                                            value={data.principal_id}
+                                            onChange={(val) => setData('principal_id', val)}
                                             required
-                                            error={errors.sponsor_id}
+                                            error={errors.principal_id}
                                             helperText="Format: 784-YYYY-NNNNNNN-N"
                                             disabled={processing}
                                         />

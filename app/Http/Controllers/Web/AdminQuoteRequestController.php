@@ -26,8 +26,8 @@ class AdminQuoteRequestController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('sponsor_name', 'like', "%{$search}%")
-                    ->orWhere('sponsor_id', 'like', "%{$search}%")
+                $q->where('principal_name', 'like', "%{$search}%")
+                    ->orWhere('principal_id', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($userQuery) use ($search) {
                         $userQuery->where('first_name', 'like', "%{$search}%")
                             ->orWhere('last_name', 'like', "%{$search}%")

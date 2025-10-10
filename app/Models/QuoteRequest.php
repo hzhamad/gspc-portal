@@ -14,9 +14,9 @@ class QuoteRequest extends Model
     protected $fillable = [
         'user_id',
         'application_type',
-        'sponsor_name',
+        'principal_name',
         'phone_number',
-        'sponsor_id',
+        'principal_id',
         'dob',
         'emirate_of_residency',
         'profile_picture',
