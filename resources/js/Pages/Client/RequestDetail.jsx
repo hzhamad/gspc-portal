@@ -207,6 +207,9 @@ export default function RequestDetail() {
                                         <h4 className="font-semibold text-gray-800">Payment</h4>
                                     </div>
                                     <p className="text-sm text-gray-600 mb-3">Complete your payment to activate your insurance policy.</p>
+                                    <div className="bg-white border border-orange-200 rounded-lg p-2 mb-3">
+                                            <p className="text-xs text-orange-700 break-all">{request.payment_link}</p>
+                                    </div>
                                     <a
                                         href={request.payment_link}
                                         target="_blank"
