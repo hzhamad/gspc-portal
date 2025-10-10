@@ -252,7 +252,7 @@ export default function QuoteRequestShow() {
                         </div>
 
                         {/* Files */}
-                        {(request.profile_picture || request.eid_file) && (
+                        {(request.profile_picture || request.eid_file || request.passport_copy) && (
                             <div className="mt-6 pt-6 border-t border-gray-200">
                                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Uploaded Documents</h4>
                                 <div className="flex flex-wrap gap-3">
@@ -280,6 +280,19 @@ export default function QuoteRequestShow() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                             </svg>
                                             Emirates ID
+                                        </a>
+                                    )}
+                                    {request.passport_copy && (
+                                        <a
+                                            href={`/storage/${request.passport_copy}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                        >
+                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Passport Copy
                                         </a>
                                     )}
                                 </div>
@@ -335,7 +348,7 @@ export default function QuoteRequestShow() {
                                         </div>
 
                                         {/* Dependent Files */}
-                                        {(dependent.profile_picture || dependent.eid_file) && (
+                                        {(dependent.profile_picture || dependent.eid_file || dependent.passport_copy) && (
                                             <div className="mt-4 pt-4 border-t border-gray-200">
                                                 <h5 className="text-sm font-semibold text-gray-700 mb-2">Documents</h5>
                                                 <div className="flex flex-wrap gap-2">
@@ -363,6 +376,19 @@ export default function QuoteRequestShow() {
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                             </svg>
                                                             EID
+                                                        </a>
+                                                    )}
+                                                    {dependent.passport_copy && (
+                                                        <a
+                                                            href={`/storage/${dependent.passport_copy}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors"
+                                                        >
+                                                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            Passport
                                                         </a>
                                                     )}
                                                 </div>

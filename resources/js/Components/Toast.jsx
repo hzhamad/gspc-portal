@@ -2,39 +2,54 @@ import React, { useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 
 export default function Toast() {
-    const { flash } = usePage().props;
-    const [visible, setVisible] = useState(false);
-    const [message, setMessage] = useState('');
-    const [type, setType] = useState('success'); // success, error, warning, info
+    const { flash, errors } = usePage().props;
+    const [toasts, setToasts] = useState([]);
+    const [nextId, setNextId] = useState(0);
 
     useEffect(() => {
+        const newToasts = [];
+        
+        // Handle flash messages first
         if (flash?.success) {
-            showToast(flash.success, 'success');
+            newToasts.push({ id: nextId, msg: flash.success, type: 'success' });
+            setNextId(prev => prev + 1);
         } else if (flash?.error) {
-            showToast(flash.error, 'error');
+            newToasts.push({ id: nextId, msg: flash.error, type: 'error' });
+            setNextId(prev => prev + 1);
         } else if (flash?.warning) {
-            showToast(flash.warning, 'warning');
+            newToasts.push({ id: nextId, msg: flash.warning, type: 'warning' });
+            setNextId(prev => prev + 1);
         } else if (flash?.info) {
-            showToast(flash.info, 'info');
+            newToasts.push({ id: nextId, msg: flash.info, type: 'info' });
+            setNextId(prev => prev + 1);
         }
-    }, [flash]);
+        
+        // Handle validation errors - show each error as a separate toast
+        if (errors && Object.keys(errors).length > 0) {
+            const errorMessages = Object.values(errors);
+            errorMessages.forEach((err, index) => {
+                newToasts.push({ id: nextId + index + 1, msg: err, type: 'error' });
+            });
+            setNextId(prev => prev + errorMessages.length + 1);
+        }
+        
+        if (newToasts.length > 0) {
+            setToasts(prev => [...prev, ...newToasts]);
+            
+            // Auto-remove each toast after 5 seconds
+            newToasts.forEach((toast) => {
+                setTimeout(() => {
+                    setToasts(prev => prev.filter(t => t.id !== toast.id));
+                }, 5000);
+            });
+        }
+    }, [flash, errors]);
 
-    const showToast = (msg, toastType) => {
-        setMessage(msg);
-        setType(toastType);
-        setVisible(true);
-
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            setVisible(false);
-        }, 5000);
+    const handleClose = (id) => {
+        setToasts(prev => prev.filter(t => t.id !== id));
     };
 
-    const handleClose = () => {
-        setVisible(false);
-    };
-
-    if (!visible) return null;
+    if (toasts.length === 0) return null;
 
     const styles = {
         success: {
@@ -67,38 +82,48 @@ export default function Toast() {
         }
     };
 
-    const currentStyle = styles[type];
-
     return (
-        <div
-            className="fixed top-4 right-4 z-50 animate-slide-in-right"
-            role="alert"
-        >
-            <div className={`${currentStyle.bg} border-l-4 ${currentStyle.border} p-4 rounded-lg shadow-lg max-w-md flex items-start gap-3`}>
-                <svg
-                    className={`w-6 h-6 ${currentStyle.icon} shrink-0`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                >
-                    <path fillRule="evenodd" d={currentStyle.iconPath} clipRule="evenodd" />
-                </svg>
-                <div className="flex-1">
-                    <p className={`${currentStyle.text} font-medium text-sm`}>{message}</p>
-                </div>
-                <button
-                    onClick={handleClose}
-                    className={`${currentStyle.icon} hover:opacity-70 transition-opacity shrink-0`}
-                    aria-label="Close"
-                >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            fillRule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </button>
-            </div>
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-md">
+            {toasts.map((toast, index) => {
+                const currentStyle = styles[toast.type];
+                
+                return (
+                    <div
+                        key={toast.id}
+                        className="animate-slide-in-up"
+                        role="alert"
+                        style={{
+                            animationDelay: `${index * 0.1}s`
+                        }}
+                    >
+                        <div className={`${currentStyle.bg} border-l-4 ${currentStyle.border} p-4 rounded-lg shadow-xl flex items-start gap-3`}>
+                            <svg
+                                className={`w-6 h-6 ${currentStyle.icon} shrink-0`}
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path fillRule="evenodd" d={currentStyle.iconPath} clipRule="evenodd" />
+                            </svg>
+                            <div className="flex-1">
+                                <p className={`${currentStyle.text} font-medium text-sm`}>{toast.msg}</p>
+                            </div>
+                            <button
+                                onClick={() => handleClose(toast.id)}
+                                className={`${currentStyle.icon} hover:opacity-70 transition-opacity shrink-0`}
+                                aria-label="Close"
+                            >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }

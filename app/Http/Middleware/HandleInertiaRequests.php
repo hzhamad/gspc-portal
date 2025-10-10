@@ -49,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                     'eid_number' => $request->user()->eid_number ?? null,
                     'profile_picture' => $request->user()->profile_picture ?? null,
                     'eid_file' => $request->user()->eid_file ?? null,
+                    'passport_copy' => $request->user()->passport_copy ?? null,
                     'roles' => $request->user()->roles->pluck('name')->toArray(),
                     'permissions' => $request->user()->getAllPermissions()->pluck('name')->toArray(),
                 ] : null,

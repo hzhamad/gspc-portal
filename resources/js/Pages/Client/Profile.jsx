@@ -184,7 +184,7 @@ export default function Profile() {
                             <div className="border-t border-gray-200 pt-6 mb-6">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile & Documents</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <FileUpload
                                             label="Profile Picture"
                                             accept="image/*"
@@ -192,18 +192,13 @@ export default function Profile() {
                                             fileName={data.profile_picture?.name}
                                             placeholder={user?.profile_picture ? "Replace current profile picture" : "Upload profile photo (PNG/JPG)"}
                                             error={errors.profile_picture}
+                                            fileType="image"
+                                            currentFileUrl={user?.profile_picture ? `/storage/${user.profile_picture}` : null}
+                                            currentFileName="Profile Picture"
                                         />
-                                        {user?.profile_picture && !data.profile_picture && (
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                                <span className="text-sm text-gray-600">Current profile picture uploaded</span>
-                                            </div>
-                                        )}
                                     </div>
 
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <EidInput
                                             label="Emirates ID Number"
                                             value={data.eid_number}
@@ -222,22 +217,10 @@ export default function Profile() {
                                             fileName={data.eid_file?.name}
                                             placeholder={user?.eid_file ? "Replace current EID file" : "Upload EID copy (PNG/JPG/PDF)"}
                                             error={errors.eid_file}
+                                            fileType="document"
+                                            currentFileUrl={user?.eid_file ? `/storage/${user.eid_file}` : null}
+                                            currentFileName="Emirates ID Copy"
                                         />
-                                        {user?.eid_file && !data.eid_file && (
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                                <a 
-                                                    href={`/storage/${user.eid_file}`} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="text-sm text-gold hover:brightness-110 font-medium"
-                                                >
-                                                    View current EID file
-                                                </a>
-                                            </div>
-                                        )}
                                     </div>
 
                                     <div className="sm:col-span-2">
@@ -248,22 +231,10 @@ export default function Profile() {
                                             fileName={data.passport_copy?.name}
                                             placeholder={user?.passport_copy ? "Replace current passport file" : "Upload passport copy (PNG/JPG/PDF)"}
                                             error={errors.passport_copy}
+                                            fileType="document"
+                                            currentFileUrl={user?.passport_copy ? `/storage/${user.passport_copy}` : null}
+                                            currentFileName="Passport Copy"
                                         />
-                                        {user?.passport_copy && !data.passport_copy && (
-                                            <div className="mt-2 flex items-center gap-2">
-                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                                <a 
-                                                    href={`/storage/${user.passport_copy}`} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="text-sm text-gold hover:brightness-110 font-medium"
-                                                >
-                                                    View current passport file
-                                                </a>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>

@@ -433,23 +433,9 @@ export default function QuoteRequest() {
                                             placeholder="Click to upload profile picture"
                                             required={!existingProfilePicture}
                                             fileType="image"
+                                            currentFileUrl={existingProfilePicture ? `/storage/${existingProfilePicture}` : null}
+                                            currentFileName="Profile Picture"
                                         />
-                                        {profilePicturePreview ? (
-                                            <div className="mt-3">
-                                                <p className="text-sm text-gray-600 mb-2">
-                                                    {data.profile_picture && typeof data.profile_picture === 'object' ? 'New profile picture preview:' : 'Current profile picture on file:'}
-                                                </p>
-                                                <img
-                                                    src={profilePicturePreview}
-                                                    alt="Profile preview"
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <p className="text-sm text-gray-500 mt-1 italic">
-                                                No profile picture on file. Please upload one.
-                                            </p>
-                                        )}
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
                                     </div>
 
@@ -462,12 +448,9 @@ export default function QuoteRequest() {
                                             placeholder="Click to upload Emirates ID copy"
                                             required={!existingEidCopy}
                                             fileType="document"
+                                            currentFileUrl={existingEidCopy ? `/storage/${existingEidCopy}` : null}
+                                            currentFileName="Emirates ID Copy"
                                         />
-                                        {existingEidCopy && !data.eid_file?.name && (
-                                            <p className="text-sm text-green-600 mt-1">
-                                                ✓ Emirates ID copy on file
-                                            </p>
-                                        )}
                                         {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
                                     </div>
 
@@ -480,12 +463,9 @@ export default function QuoteRequest() {
                                             placeholder="Click to upload passport copy"
                                             required={!existingPassportCopy}
                                             fileType="document"
+                                            currentFileUrl={existingPassportCopy ? `/storage/${existingPassportCopy}` : null}
+                                            currentFileName="Passport Copy"
                                         />
-                                        {existingPassportCopy && !data.passport_copy?.name && (
-                                            <p className="text-sm text-green-600 mt-1">
-                                                ✓ Passport copy on file
-                                            </p>
-                                        )}
                                         {errors.passport_copy && <p className="text-red-600 text-sm mt-1">{errors.passport_copy}</p>}
                                     </div>
                                 </div>

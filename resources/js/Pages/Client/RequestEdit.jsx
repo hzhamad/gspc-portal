@@ -4,6 +4,7 @@ import DashboardAside from '@/Components/DashboardAside';
 import DashboardHeader from '@/Components/DashboardHeader';
 import EidInput from '@/Components/EidInput';
 import PhoneInput from '@/Components/PhoneInput';
+import FileUpload from '@/Components/FileUpload';
 
 export default function RequestEdit() {
     const { props } = usePage();
@@ -379,85 +380,46 @@ export default function RequestEdit() {
                                         )}
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Profile Picture
-                                        </label>
-                                        {profilePicturePreview && (
-                                            <div className="mb-3">
-                                                <img 
-                                                    src={profilePicturePreview} 
-                                                    alt="Preview" 
-                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                                                />
-                                            </div>
-                                        )}
-                                        <input
-                                            type="file"
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Profile Picture"
                                             accept="image/jpeg,image/png,image/jpg"
                                             onChange={(e) => handleFileChange(e, 'profile_picture')}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            fileName={data.profile_picture?.name}
+                                            placeholder="Upload or replace profile picture"
+                                            error={errors.profile_picture}
+                                            fileType="image"
+                                            currentFileUrl={request.profile_picture && !data.profile_picture ? `/storage/${request.profile_picture}` : profilePicturePreview}
+                                            currentFileName="Profile Picture"
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG</p>
-                                        {errors.profile_picture && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.profile_picture}</p>
-                                        )}
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Emirates ID Copy
-                                        </label>
-                                        {eidCopyPreview && (
-                                            <div className="mb-3">
-                                                <a 
-                                                    href={eidCopyPreview} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline text-sm"
-                                                >
-                                                    View current file
-                                                </a>
-                                            </div>
-                                        )}
-                                        <input
-                                            type="file"
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Emirates ID Copy"
                                             accept="image/jpeg,image/png,image/jpg,application/pdf"
                                             onChange={(e) => handleFileChange(e, 'eid_file')}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            fileName={data.eid_file?.name}
+                                            placeholder="Upload or replace Emirates ID copy"
+                                            error={errors.eid_file}
+                                            fileType="document"
+                                            currentFileUrl={request.eid_file && !data.eid_file ? `/storage/${request.eid_file}` : eidCopyPreview}
+                                            currentFileName="Emirates ID Copy"
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
-                                        {errors.eid_file && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.eid_file}</p>
-                                        )}
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Passport Copy
-                                        </label>
-                                        {passportCopyPreview && (
-                                            <div className="mb-3">
-                                                <a 
-                                                    href={passportCopyPreview} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="text-blue-600 hover:underline text-sm"
-                                                >
-                                                    View current file
-                                                </a>
-                                            </div>
-                                        )}
-                                        <input
-                                            type="file"
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Passport Copy"
                                             accept="image/jpeg,image/png,image/jpg,application/pdf"
                                             onChange={(e) => handleFileChange(e, 'passport_copy')}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            fileName={data.passport_copy?.name}
+                                            placeholder="Upload or replace passport copy"
+                                            error={errors.passport_copy}
+                                            fileType="document"
+                                            currentFileUrl={request.passport_copy && !data.passport_copy ? `/storage/${request.passport_copy}` : passportCopyPreview}
+                                            currentFileName="Passport Copy"
                                         />
-                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
-                                        {errors.passport_copy && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.passport_copy}</p>
-                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -648,75 +610,42 @@ export default function RequestEdit() {
                                                         </div>
 
                                                         <div className="md:col-span-2">
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                Profile Picture
-                                                            </label>
-                                                            {dependent.existing_profile_picture && !dependent.profile_picture && (
-                                                                <div className="mb-2">
-                                                                    <img 
-                                                                        src={`/storage/${dependent.existing_profile_picture}`} 
-                                                                        alt="Current" 
-                                                                        className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
-                                                                    />
-                                                                </div>
-                                                            )}
-                                                            <input
-                                                                type="file"
+                                                            <FileUpload
+                                                                label="Profile Picture"
                                                                 accept="image/jpeg,image/png,image/jpg"
                                                                 onChange={(e) => handleDependentFileChange(index, 'profile_picture', e.target.files[0])}
-                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                fileName={dependent.profile_picture?.name}
+                                                                placeholder="Upload or replace profile picture"
+                                                                fileType="image"
+                                                                currentFileUrl={dependent.existing_profile_picture && !dependent.profile_picture ? `/storage/${dependent.existing_profile_picture}` : null}
+                                                                currentFileName="Profile Picture"
                                                             />
-                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG</p>
                                                         </div>
 
                                                         <div className="md:col-span-2">
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                Emirates ID Copy
-                                                            </label>
-                                                            {dependent.existing_eid_file && !dependent.eid_file && (
-                                                                <div className="mb-2">
-                                                                    <a 
-                                                                        href={`/storage/${dependent.existing_eid_file}`} 
-                                                                        target="_blank" 
-                                                                        rel="noopener noreferrer"
-                                                                        className="text-blue-600 hover:underline text-sm"
-                                                                    >
-                                                                        View current file
-                                                                    </a>
-                                                                </div>
-                                                            )}
-                                                            <input
-                                                                type="file"
+                                                            <FileUpload
+                                                                label="Emirates ID Copy"
                                                                 accept="image/jpeg,image/png,image/jpg,application/pdf"
                                                                 onChange={(e) => handleDependentFileChange(index, 'eid_file', e.target.files[0])}
-                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                fileName={dependent.eid_file?.name}
+                                                                placeholder="Upload or replace Emirates ID copy"
+                                                                fileType="document"
+                                                                currentFileUrl={dependent.existing_eid_file && !dependent.eid_file ? `/storage/${dependent.existing_eid_file}` : null}
+                                                                currentFileName="Emirates ID Copy"
                                                             />
-                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
                                                         </div>
 
                                                         <div className="md:col-span-2">
-                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                                Passport Copy
-                                                            </label>
-                                                            {dependent.existing_passport_copy && !dependent.passport_copy && (
-                                                                <div className="mb-2">
-                                                                    <a 
-                                                                        href={`/storage/${dependent.existing_passport_copy}`} 
-                                                                        target="_blank" 
-                                                                        rel="noopener noreferrer"
-                                                                        className="text-blue-600 hover:underline text-sm"
-                                                                    >
-                                                                        View current file
-                                                                    </a>
-                                                                </div>
-                                                            )}
-                                                            <input
-                                                                type="file"
+                                                            <FileUpload
+                                                                label="Passport Copy"
                                                                 accept="image/jpeg,image/png,image/jpg,application/pdf"
                                                                 onChange={(e) => handleDependentFileChange(index, 'passport_copy', e.target.files[0])}
-                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                                fileName={dependent.passport_copy?.name}
+                                                                placeholder="Upload or replace passport copy"
+                                                                fileType="document"
+                                                                currentFileUrl={dependent.existing_passport_copy && !dependent.passport_copy ? `/storage/${dependent.existing_passport_copy}` : null}
+                                                                currentFileName="Passport Copy"
                                                             />
-                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
                                                         </div>
                                                     </div>
                                                 </div>

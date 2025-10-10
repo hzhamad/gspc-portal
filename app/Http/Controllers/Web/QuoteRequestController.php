@@ -206,7 +206,7 @@ class QuoteRequestController extends Controller
 
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Failed to submit application. Please try again.']);
+                ->with('error', 'Failed to submit application. Please try again.');
         }
     }
 
@@ -525,7 +525,7 @@ class QuoteRequestController extends Controller
 
             return back()
                 ->withInput()
-                ->withErrors(['error' => 'Failed to update application. Please try again.']);
+                ->with('error', 'Failed to update application. Please try again.');
         }
     }
 }

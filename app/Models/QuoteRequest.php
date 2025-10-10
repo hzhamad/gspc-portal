@@ -21,6 +21,7 @@ class QuoteRequest extends Model
         'emirate_of_residency',
         'profile_picture',
         'eid_file',
+        'passport_copy',
         'status',
         'quote_file',
         'payment_link',

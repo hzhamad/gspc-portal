@@ -106,7 +106,7 @@ class AdminQuoteRequestController extends Controller
                 ->with('success', 'Quote file uploaded successfully!');
         } catch (\Exception $e) {
             return back()
-                ->withErrors(['error' => 'Failed to upload quote file. Please try again.']);
+                ->with('error', 'Failed to upload quote file. Please try again.');
         }
     }
 
@@ -161,7 +161,7 @@ class AdminQuoteRequestController extends Controller
             }
 
             return back()
-                ->withErrors(['error' => 'Failed to upload policy files. Please try again.']);
+                ->with('error', 'Failed to upload policy files. Please try again.');
         }
     }
 

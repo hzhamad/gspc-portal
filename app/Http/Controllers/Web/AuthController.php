@@ -162,7 +162,7 @@ class AuthController extends Controller
         $status = Password::sendResetLink($request->only('email'));
 
         if ($status == Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+            return back()->with('success', 'Password reset link has been sent to your email!');
         }
 
         throw ValidationException::withMessages([
@@ -200,7 +200,7 @@ class AuthController extends Controller
         );
 
         if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
+            return redirect()->route('login')->with('success', 'Your password has been reset successfully! Please login with your new password.');
         }
 
         throw ValidationException::withMessages([
@@ -226,14 +226,14 @@ class AuthController extends Controller
         $dashboardRoute = $request->user()->getDashboardRoute();
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route($dashboardRoute) . '?verified=1');
+            return redirect()->intended(route($dashboardRoute))->with('info', 'Your email is already verified.');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route($dashboardRoute) . '?verified=1');
+        return redirect()->intended(route($dashboardRoute))->with('success', 'Your email has been verified successfully!');
     }
 
     /**
@@ -242,12 +242,12 @@ class AuthController extends Controller
     public function sendVerificationEmail(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route($request->user()->getDashboardRoute()));
+            return redirect()->intended(route($request->user()->getDashboardRoute()))->with('info', 'Your email is already verified.');
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        return back()->with('status', 'verification-link-sent');
+        return back()->with('success', 'Verification link has been sent to your email!');
     }
 
     /**
@@ -260,6 +260,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'You have been logged out successfully.');
     }
 }
