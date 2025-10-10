@@ -4,7 +4,7 @@ import UAEHeader from '@/Components/UAEHeader';
 import FileUpload from '@/Components/FileUpload';
 
 export default function Register() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, transform } = useForm({
         first_name: '',
         middle_name: '',
         last_name: '',
@@ -57,14 +57,16 @@ export default function Register() {
             return;
         }
 
-        // Prepare data with +971 prefix for phone
-        const submitData = {
+        // Clear any validation errors
+        setPhoneError('');
+
+        // Transform data before sending - add +971 prefix to phone
+        transform((data) => ({
             ...data,
             phone: `+971${data.phone}`
-        };
+        }));
 
         post('/register', {
-            data: submitData,
             forceFormData: true,
         });
     };
