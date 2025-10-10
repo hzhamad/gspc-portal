@@ -4,6 +4,7 @@ import DashboardAside from '@/Components/DashboardAside';
 import DashboardHeader from '@/Components/DashboardHeader';
 import EidInput from '@/Components/EidInput';
 import FileUpload from '@/Components/FileUpload';
+import PhoneInput from '@/Components/PhoneInput';
 
 export default function QuoteRequest() {
     const { props } = usePage();
@@ -25,10 +26,18 @@ export default function QuoteRequest() {
     ));
     const [profilePictureObjectUrl, setProfilePictureObjectUrl] = useState(null);
 
+    // Format phone number for input (remove +971 prefix if present)
+    const formatPhoneForInput = (phone) => {
+        if (!phone) return '';
+        const digitsOnly = phone.replace(/\D/g, '');
+        return digitsOnly.startsWith('971') ? digitsOnly.substring(3) : digitsOnly;
+    };
+
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
         sponsor_name: user?.fullname || '',
+        phone_number: formatPhoneForInput(user?.phone_number || user?.phone || ''),
         sponsor_id: user?.eid_number || '',
         dob: user?.dob?.split('T')[0] || '',
         emirate_of_residency: user?.residency || '',
@@ -192,6 +201,7 @@ export default function QuoteRequest() {
         // Add principal data if applying for self
         if (applicationType === 'self' || applicationType === 'self_dependents') {
             formData.append('sponsor_name', data.sponsor_name);
+            formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
             formData.append('sponsor_id', data.sponsor_id);
             formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
@@ -349,6 +359,18 @@ export default function QuoteRequest() {
                                             required
                                         />
                                         {errors.sponsor_name && <p className="text-red-600 text-sm mt-1">{errors.sponsor_name}</p>}
+                                    </div>
+
+                                    <div>
+                                        <PhoneInput
+                                            label="Phone Number"
+                                            value={data.phone_number}
+                                            onChange={(value) => setData('phone_number', value)}
+                                            error={errors.phone_number}
+                                            required
+                                            disabled={processing}
+                                            helperText="UAE mobile number"
+                                        />
                                     </div>
 
                                     <div>

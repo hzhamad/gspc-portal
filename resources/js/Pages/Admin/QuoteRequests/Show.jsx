@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { router, usePage, useForm } from "@inertiajs/react";
 import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
+import SubmitQuoteModal from '@/Components/SubmitQuoteModal';
 
 export default function QuoteRequestShow() {
     const { props } = usePage();
@@ -11,28 +12,11 @@ export default function QuoteRequestShow() {
     const [showQuoteModal, setShowQuoteModal] = useState(false);
     const [showPolicyModal, setShowPolicyModal] = useState(false);
 
-    const quoteForm = useForm({
-        quote_file: null,
-        payment_link: '',
-        admin_notes: '',
-    });
-
     const [policyFiles, setPolicyFiles] = useState([{ file: null }]);
     const policyForm = useForm({
         policy_files: [],
         admin_notes: '',
     });
-
-    const handleSubmitQuote = (e) => {
-        e.preventDefault();
-        quoteForm.post(`/admin/quote-requests/${request.id}/upload-quote`, {
-            preserveScroll: true,
-            onSuccess: () => {
-                setShowQuoteModal(false);
-                quoteForm.reset();
-            },
-        });
-    };
 
     const handleSubmitPolicy = (e) => {
         e.preventDefault();
@@ -221,7 +205,7 @@ export default function QuoteRequestShow() {
                             </div>
                             <div>
                                 <label className="text-sm font-medium text-gray-600">Phone Number</label>
-                                <p className="text-base text-gray-900 mt-1">{request.user?.phone_number || 'N/A'}</p>
+                                <p className="text-base text-gray-900 mt-1">{request.phone_number || 'N/A'}</p>
                             </div>
                             <div>
                                 <label className="text-sm font-medium text-gray-600">Nationality</label>
@@ -516,94 +500,11 @@ export default function QuoteRequestShow() {
             </div>
 
             {/* Submit Quote Modal */}
-            {showQuoteModal && (
-                <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-                        <div className="p-6 border-b border-gray-200">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-2xl font-bold text-gray-800">Submit Quote</h2>
-                                <button
-                                    onClick={() => setShowQuoteModal(false)}
-                                    className="text-gray-400 hover:text-gray-600 transition-colors"
-                                >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <form onSubmit={handleSubmitQuote} className="p-6">
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Quote File <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="file"
-                                        accept=".pdf,.doc,.docx"
-                                        onChange={(e) => quoteForm.setData('quote_file', e.target.files[0])}
-                                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:border-gold"
-                                    />
-                                    {quoteForm.errors.quote_file && (
-                                        <p className="mt-1 text-sm text-red-600">{quoteForm.errors.quote_file}</p>
-                                    )}
-                                    <p className="mt-1 text-xs text-gray-500">Accepted formats: PDF, DOC, DOCX (Max 10MB)</p>
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Payment Link (Optional)
-                                    </label>
-                                    <input
-                                        type="url"
-                                        value={quoteForm.data.payment_link}
-                                        onChange={(e) => quoteForm.setData('payment_link', e.target.value)}
-                                        placeholder="https://payment-link.com"
-                                        className="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold"
-                                    />
-                                    {quoteForm.errors.payment_link && (
-                                        <p className="mt-1 text-sm text-red-600">{quoteForm.errors.payment_link}</p>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                        Admin Notes (Optional)
-                                    </label>
-                                    <textarea
-                                        value={quoteForm.data.admin_notes}
-                                        onChange={(e) => quoteForm.setData('admin_notes', e.target.value)}
-                                        rows="4"
-                                        placeholder="Add any notes for the client..."
-                                        className="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-gold focus:border-gold"
-                                    />
-                                    {quoteForm.errors.admin_notes && (
-                                        <p className="mt-1 text-sm text-red-600">{quoteForm.errors.admin_notes}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="flex gap-3 mt-6">
-                                <button
-                                    type="submit"
-                                    disabled={quoteForm.processing}
-                                    className="flex-1 px-6 py-2.5 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {quoteForm.processing ? 'Uploading...' : 'Submit Quote'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setShowQuoteModal(false)}
-                                    className="px-6 py-2.5 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            <SubmitQuoteModal 
+                isOpen={showQuoteModal}
+                onClose={() => setShowQuoteModal(false)}
+                requestId={request.id}
+            />
 
             {/* Submit Policy Modal */}
             {showPolicyModal && (

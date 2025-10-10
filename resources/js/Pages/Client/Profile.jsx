@@ -4,6 +4,7 @@ import DashboardHeader from '@/Components/DashboardHeader';
 import DashboardAside from '@/Components/DashboardAside';
 import EidInput from '@/Components/EidInput';
 import FileUpload from '@/Components/FileUpload';
+import PhoneInput from '@/Components/PhoneInput';
 
 export default function Profile() {
     const { props } = usePage();
@@ -31,17 +32,6 @@ export default function Profile() {
         profile_picture: null,
         _method: 'PUT',
     });
-
-    const handlePhoneChange = (e) => {
-        let value = e.target.value;
-        value = value.replace(/\D/g, '');
-
-        if (value.startsWith('971')) {
-            value = value.substring(3);
-        }
-
-        setData('phone', value);
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -152,21 +142,14 @@ export default function Profile() {
                                 </div>
 
                                 <div className="sm:col-span-2">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                                    <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                                            <img src="/images/uae-flag.svg" alt="UAE" className="w-6 h-4 object-contain" />
-                                            <span className="text-gray-700 font-medium">+971-</span>
-                                        </div>
-                                        <input
-                                            type="tel"
-                                            value={data.phone}
-                                            onChange={handlePhoneChange}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all pl-24"
-                                            placeholder="XXXXXXXXX"
-                                        />
-                                    </div>
-                                    {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+                                    <PhoneInput
+                                        label="Phone Number"
+                                        value={data.phone}
+                                        onChange={(value) => setData('phone', value)}
+                                        error={errors.phone}
+                                        disabled={processing}
+                                        helperText="UAE mobile number"
+                                    />
                                 </div>
 
                                 <div>

@@ -3,6 +3,7 @@ import { router, useForm, usePage } from "@inertiajs/react";
 import DashboardAside from '@/Components/DashboardAside';
 import DashboardHeader from '@/Components/DashboardHeader';
 import EidInput from '@/Components/EidInput';
+import PhoneInput from '@/Components/PhoneInput';
 
 export default function RequestEdit() {
     const { props } = usePage();
@@ -10,9 +11,17 @@ export default function RequestEdit() {
     const dependents = request?.dependents || [];
     const emirates = props?.emirates || [];
 
+    // Format phone number for input (remove +971 prefix if present)
+    const formatPhoneForInput = (phone) => {
+        if (!phone) return '';
+        const digitsOnly = phone.replace(/\D/g, '');
+        return digitsOnly.startsWith('971') ? digitsOnly.substring(3) : digitsOnly;
+    };
+
     const { data, setData, post, processing, errors } = useForm({
         application_type: request.application_type || 'self',
         sponsor_name: request.sponsor_name || '',
+        phone_number: formatPhoneForInput(request.phone_number || ''),
         sponsor_id: request.sponsor_id || '',
         dob: request.dob || '',
         emirate_of_residency: request.emirate_of_residency || '',
@@ -71,6 +80,7 @@ export default function RequestEdit() {
         // Add principal fields if applicable
         if (data.application_type === 'self' || data.application_type === 'self_dependents') {
             formData.append('sponsor_name', data.sponsor_name);
+            formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
             formData.append('sponsor_id', data.sponsor_id);
             formData.append('dob', data.dob);
             formData.append('emirate_of_residency', data.emirate_of_residency);
@@ -292,6 +302,18 @@ export default function RequestEdit() {
                                         {errors.sponsor_name && (
                                             <p className="text-red-500 text-sm mt-1">{errors.sponsor_name}</p>
                                         )}
+                                    </div>
+
+                                    <div>
+                                        <PhoneInput
+                                            label="Phone Number"
+                                            value={data.phone_number}
+                                            onChange={(value) => setData('phone_number', value)}
+                                            error={errors.phone_number}
+                                            required
+                                            disabled={processing}
+                                            helperText="UAE mobile number"
+                                        />
                                     </div>
 
                                     <div>

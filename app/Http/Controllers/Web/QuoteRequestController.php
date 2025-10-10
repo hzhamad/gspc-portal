@@ -58,6 +58,7 @@ class QuoteRequestController extends Controller
 
             // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'phone_number' => 'required_if:application_type,self,self_dependents|string|regex:/^\+971[0-9]{9}$/',
             'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
@@ -89,6 +90,7 @@ class QuoteRequestController extends Controller
             // Add principal details if applicable
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
                 $quoteRequest->sponsor_name = $validated['sponsor_name'];
+                $quoteRequest->phone_number = $validated['phone_number'];
                 $quoteRequest->sponsor_id = $validated['sponsor_id'];
                 $quoteRequest->dob = $validated['dob'];
                 $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
@@ -282,6 +284,7 @@ class QuoteRequestController extends Controller
 
             // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'phone_number' => 'required_if:application_type,self,self_dependents|string|regex:/^\+971[0-9]{9}$/',
             'sponsor_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
@@ -311,6 +314,7 @@ class QuoteRequestController extends Controller
             // Update principal details if applicable
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
                 $quoteRequest->sponsor_name = $validated['sponsor_name'];
+                $quoteRequest->phone_number = $validated['phone_number'];
                 $quoteRequest->sponsor_id = $validated['sponsor_id'];
                 $quoteRequest->dob = $validated['dob'];
                 $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
@@ -348,6 +352,7 @@ class QuoteRequestController extends Controller
             } else {
                 // Clear principal data if not applicable
                 $quoteRequest->sponsor_name = null;
+                $quoteRequest->phone_number = null;
                 $quoteRequest->sponsor_id = null;
                 $quoteRequest->dob = null;
                 $quoteRequest->emirate_of_residency = null;

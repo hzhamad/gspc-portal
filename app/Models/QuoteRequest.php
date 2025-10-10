@@ -15,6 +15,7 @@ class QuoteRequest extends Model
         'user_id',
         'application_type',
         'sponsor_name',
+        'phone_number',
         'sponsor_id',
         'dob',
         'emirate_of_residency',

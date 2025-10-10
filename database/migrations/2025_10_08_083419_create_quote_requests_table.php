@@ -18,6 +18,7 @@ return new class extends Migration
 
             // Principal applicant details (nullable for dependents-only applications)
             $table->string('sponsor_name')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('sponsor_id')->nullable();
             $table->date('dob')->nullable();
             $table->string('emirate_of_residency')->nullable();
