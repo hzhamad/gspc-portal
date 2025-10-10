@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('eid_file')->nullable();
 
             // Status and workflow
-            $table->enum('status', ['pending', 'quote_sent', 'payment_pending', 'completed', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'quote_sent', 'completed', 'rejected'])->default('pending');
 
             // Team response files
             $table->string('quote_file')->nullable();

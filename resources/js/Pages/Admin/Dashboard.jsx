@@ -21,7 +21,6 @@ export default function AdminDashboard() {
         const statusConfig = {
             pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending" },
             quote_sent: { bg: "bg-blue-100", text: "text-blue-800", label: "Quote Sent" },
-            payment_pending: { bg: "bg-orange-100", text: "text-orange-800", label: "Payment Pending" },
             completed: { bg: "bg-green-100", text: "text-green-800", label: "Completed" },
             rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
         };

@@ -42,7 +42,6 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
         const statusConfig = {
             pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending Review" },
             quote_sent: { bg: "bg-blue-100", text: "text-blue-800", label: "Quote Sent" },
-            payment_pending: { bg: "bg-orange-100", text: "text-orange-800", label: "Payment Pending" },
             completed: { bg: "bg-green-100", text: "text-green-800", label: "Completed" },
             rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected" },
         };
@@ -189,7 +188,7 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
                         {/* Status Filters */}
                         <div className="mt-4 flex flex-wrap gap-2">
                             <span className="text-sm font-medium text-gray-600 mr-2">Filter by Status:</span>
-                            {['pending', 'quote_sent', 'payment_pending', 'completed', 'rejected'].map((status) => (
+                            {['pending', 'quote_sent', 'completed', 'rejected'].map((status) => (
                                 <button
                                     key={status}
                                     onClick={() => handleStatusFilter(status === statusFilter ? '' : status)}

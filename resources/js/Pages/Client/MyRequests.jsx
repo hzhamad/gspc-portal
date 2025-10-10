@@ -15,7 +15,6 @@ export default function MyRequests() {
         const statusConfig = {
             pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending Review", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
             quote_sent: { bg: "bg-blue-100", text: "text-blue-800", label: "Quote Sent", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
-            payment_pending: { bg: "bg-orange-100", text: "text-orange-800", label: "Payment Pending", icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" },
             completed: { bg: "bg-green-100", text: "text-green-800", label: "Completed", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
             rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected", icon: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" },
         };
@@ -75,14 +74,6 @@ export default function MyRequests() {
                                 }`}
                             >
                                 Quote Sent
-                            </button>
-                            <button
-                                onClick={() => setFilterStatus('payment_pending')}
-                                className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                                    filterStatus === 'payment_pending' ? 'bg-orange-600 text-white' : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                            >
-                                Payment Pending
                             </button>
                             <button
                                 onClick={() => setFilterStatus('completed')}
@@ -189,30 +180,6 @@ export default function MyRequests() {
                                                         className="px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
                                                     >
                                                         Download Policy
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {request.payment_link && request.status === 'payment_pending' && (
-                                            <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-3">
-                                                        <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                        </svg>
-                                                        <div>
-                                                            <p className="font-semibold text-gray-800">Payment Required</p>
-                                                            <p className="text-sm text-gray-600">Complete your payment to activate the policy</p>
-                                                        </div>
-                                                    </div>
-                                                    <a
-                                                        href={request.payment_link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="px-4 py-2 bg-orange-600 text-white font-medium rounded-lg hover:bg-orange-700 transition-colors"
-                                                    >
-                                                        Pay Now
                                                     </a>
                                                 </div>
                                             </div>

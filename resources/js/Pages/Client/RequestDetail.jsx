@@ -12,7 +12,6 @@ export default function RequestDetail() {
         const statusConfig = {
             pending: { bg: "bg-yellow-100", text: "text-yellow-800", label: "Pending Review", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
             quote_sent: { bg: "bg-blue-100", text: "text-blue-800", label: "Quote Sent", icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
-            payment_pending: { bg: "bg-orange-100", text: "text-orange-800", label: "Payment Pending", icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" },
             completed: { bg: "bg-green-100", text: "text-green-800", label: "Completed", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
             rejected: { bg: "bg-red-100", text: "text-red-800", label: "Rejected", icon: "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" },
         };

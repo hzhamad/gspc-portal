@@ -171,7 +171,7 @@ class AdminQuoteRequestController extends Controller
     public function updateStatus(Request $request, QuoteRequest $quoteRequest)
     {
         $validated = $request->validate([
-            'status' => 'required|in:pending,quote_sent,payment_pending,completed,rejected',
+            'status' => 'required|in:pending,quote_sent,completed,rejected',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
