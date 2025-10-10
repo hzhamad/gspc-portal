@@ -21,9 +21,10 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('uid_number')->nullable();
             $table->string('eid_number')->nullable();
-            $table->enum('marital_status', ['single', 'married']);
+            $table->enum('marital_status', ['single', 'married', 'divorced', 'widowed']);
             $table->date('dob');
             $table->enum('relationship', ['spouse', 'child', 'parent', 'sibling']);
+            $table->string('emirate_of_residency')->nullable();
 
             // Documents
             $table->string('profile_picture')->nullable();

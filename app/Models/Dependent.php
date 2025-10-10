@@ -18,6 +18,7 @@ class Dependent extends Model
         'uid_number',
         'eid_number',
         'marital_status',
+        'emirate_of_residency',
         'dob',
         'relationship',
         'profile_picture',

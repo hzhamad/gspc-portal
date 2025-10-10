@@ -54,7 +54,7 @@ class QuoteRequestController extends Controller
         }
 
         $validated = $request->validate([
-            'application_type' => 'required|in:self,dependents_only,self_dependents',
+            'application_type' => 'required|in:self,dependents,self_dependents',
 
             // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
@@ -65,12 +65,16 @@ class QuoteRequestController extends Controller
             // 'eid_file' => ['required_if:application_type,self,self_dependents', new ValidatedFile('document')],
 
             // Dependents
-            'dependents' => 'required_if:application_type,dependents_only,self_dependents|array|min:1',
+            'dependents' => 'required_if:application_type,dependents,self_dependents|array|min:1',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
             'dependents.*.first_name' => 'required|string|max:255',
             'dependents.*.middle_name' => 'nullable|string|max:255',
             'dependents.*.last_name' => 'required|string|max:255',
+            'dependents.*.uid_number' => 'nullable|string|max:100',
+            'dependents.*.eid_number' => 'nullable|string|max:100',
+            'dependents.*.marital_status' => 'required|in:single,married,divorced,widowed',
+            'dependents.*.emirate_of_residency' => 'nullable|string|max:100',
             'dependents.*.profile_picture' => ['required', new ValidatedFile('image')],
             'dependents.*.eid_file' => ['required', new ValidatedFile('document')],
         ]);
@@ -140,6 +144,7 @@ class QuoteRequestController extends Controller
                     $dependent->uid_number = $dependentData['uid_number'] ?? null;
                     $dependent->eid_number = $dependentData['eid_number'] ?? null;
                     $dependent->marital_status = $dependentData['marital_status'];
+                    $dependent->emirate_of_residency = $dependentData['emirate_of_residency'] ?? null;
                     $dependent->dob = $dependentData['dob'];
                     $dependent->relationship = $dependentData['relationship'];
                     $dependent->first_name = $dependentData['first_name'];
@@ -273,7 +278,7 @@ class QuoteRequestController extends Controller
         }
 
         $validated = $request->validate([
-            'application_type' => 'required|in:self,dependents_only,self_dependents',
+            'application_type' => 'required|in:self,dependents,self_dependents',
 
             // Principal details
             'sponsor_name' => 'required_if:application_type,self,self_dependents|string|max:255',
@@ -284,7 +289,7 @@ class QuoteRequestController extends Controller
             'eid_file' => ['nullable', new ValidatedFile('document')],
 
             // Dependents
-            'dependents' => 'required_if:application_type,dependents_only,self_dependents|array',
+            'dependents' => 'required_if:application_type,dependents,self_dependents|array',
             'dependents.*.id' => 'nullable|exists:dependents,id',
             'dependents.*.dob' => 'required|date',
             'dependents.*.relationship' => 'required|in:spouse,child,parent,sibling',
@@ -374,6 +379,7 @@ class QuoteRequestController extends Controller
                             $dependent->uid_number = $dependentData['uid_number'] ?? null;
                             $dependent->eid_number = $dependentData['eid_number'] ?? null;
                             $dependent->marital_status = $dependentData['marital_status'];
+                            $dependent->emirate_of_residency = $dependentData['emirate_of_residency'] ?? null;
                             $dependent->dob = $dependentData['dob'];
                             $dependent->relationship = $dependentData['relationship'];
                             $dependent->first_name = $dependentData['first_name'];
@@ -407,6 +413,7 @@ class QuoteRequestController extends Controller
                         $dependent->uid_number = $dependentData['uid_number'] ?? null;
                         $dependent->eid_number = $dependentData['eid_number'] ?? null;
                         $dependent->marital_status = $dependentData['marital_status'];
+                        $dependent->emirate_of_residency = $dependentData['emirate_of_residency'] ?? null;
                         $dependent->dob = $dependentData['dob'];
                         $dependent->relationship = $dependentData['relationship'];
                         $dependent->first_name = $dependentData['first_name'];
