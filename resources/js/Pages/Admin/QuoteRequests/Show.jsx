@@ -21,7 +21,7 @@ export default function QuoteRequestShow() {
     const handleSubmitPolicy = (e) => {
         e.preventDefault();
         const files = policyFiles.map(pf => pf.file).filter(f => f !== null);
-        
+
         // Update the form data with the files
         policyForm.transform((data) => ({
             ...data,
@@ -120,7 +120,7 @@ export default function QuoteRequestShow() {
             <DashboardAside currentPath="/admin/quote-requests" />
 
             <div className="lg:ml-64 min-h-screen">
-                <DashboardHeader 
+                <DashboardHeader
                     title={`Quote Request #${request.id}`}
                     subtitle="View and manage quote request details"
                 />
@@ -156,7 +156,7 @@ export default function QuoteRequestShow() {
                                     </p>
                                 )}
                             </div>
-                            
+
                             <div className="flex flex-col sm:flex-row gap-3">
                                 {request.status !== 'quote_sent' && request.status !== 'completed' && (
                                     <button
@@ -208,8 +208,8 @@ export default function QuoteRequestShow() {
                                 <p className="text-base text-gray-900 mt-1">{request.phone_number || 'N/A'}</p>
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-gray-600">Nationality</label>
-                                <p className="text-base text-gray-900 mt-1">{request.user?.nationality || 'N/A'}</p>
+                                <label className="text-sm font-medium text-gray-600">Emirate of Residency</label>
+                                <p className="text-base text-gray-900 mt-1">{request.user?.residency || 'N/A'}</p>
                             </div>
                         </div>
                     </div>
@@ -526,7 +526,7 @@ export default function QuoteRequestShow() {
             </div>
 
             {/* Submit Quote Modal */}
-            <SubmitQuoteModal 
+            <SubmitQuoteModal
                 isOpen={showQuoteModal}
                 onClose={() => setShowQuoteModal(false)}
                 requestId={request.id}
@@ -583,7 +583,7 @@ export default function QuoteRequestShow() {
                                         <p className="mt-1 text-sm text-red-600">{policyForm.errors.policy_files}</p>
                                     )}
                                     <p className="mt-2 text-xs text-gray-500">Accepted formats: PDF, DOC, DOCX (Max 10MB each)</p>
-                                    
+
                                     {policyFiles.length < 10 && (
                                         <button
                                             type="button"
