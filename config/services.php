@@ -47,7 +47,7 @@ return [
 
     'quote_request' => [
         'notification_email' => env('QUOTE_REQUEST_NOTIFICATION_EMAIL', 'admin@example.com'),
-        'notification_recipients' => array_filter(array_map('trim', explode(',', env('QUOTE_REQUEST_NOTIFICATION_RECIPIENTS', 'bellel@payd.ae,reham@click2secure.me,juby@click2secure.me,shibila@click2secure.me,hasan@click2secure.me')))),
+        'notification_recipients' => array_filter(array_map('trim', explode(',', env('QUOTE_REQUEST_NOTIFICATION_RECIPIENTS', 'bellel@payd.ae,reham@click2secure.me,juby@click2secure.me,shibila@click2secure.me,hasan@click2secure.me,individualmedical@seguroinsurance.ae')))),
     ],
 
 ];
