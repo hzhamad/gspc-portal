@@ -63,7 +63,8 @@ class QuoteRequestController extends Controller
             'dob' => 'required_if:application_type,self,self_dependents|date',
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
             'profile_picture' => $profilePictureRules,
-            // 'eid_file' => ['required_if:application_type,self,self_dependents', new ValidatedFile('document')],
+            'eid_file' => ['nullable', new ValidatedFile('document')],
+            'passport_copy' => ['nullable', new ValidatedFile('document')],
 
             // Dependents
             'dependents' => 'required_if:application_type,dependents,self_dependents|array|min:1',
@@ -78,6 +79,7 @@ class QuoteRequestController extends Controller
             'dependents.*.emirate_of_residency' => 'nullable|string|max:100',
             'dependents.*.profile_picture' => ['required', new ValidatedFile('image')],
             'dependents.*.eid_file' => ['required', new ValidatedFile('document')],
+            'dependents.*.passport_copy' => ['required', new ValidatedFile('document')],
         ]);
 
         DB::beginTransaction();
@@ -107,28 +109,28 @@ class QuoteRequestController extends Controller
                     $quoteRequest->profile_picture = $destination;
                 }
 
-                // if ($request->hasFile('eid_file')) {
-                //     $quoteRequest->eid_file = $request->file('eid_file')
-                //         ->store('quote-requests/eids', 'public');
-                // } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
-                //     $source = $request->user()->eid_file;
-                //     $extension = pathinfo($source, PATHINFO_EXTENSION);
-                //     $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
-                //     Storage::disk('public')->copy($source, $destination);
-                //     $quoteRequest->eid_file = $destination;
-                // }
-
-                if ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
+                // Handle EID file - copy from user or upload new
+                if ($request->hasFile('eid_file')) {
+                    $quoteRequest->eid_file = $request->file('eid_file')
+                        ->store('quote-requests/eids', 'public');
+                } elseif ($request->user()->eid_file && Storage::disk('public')->exists($request->user()->eid_file)) {
                     $source = $request->user()->eid_file;
                     $extension = pathinfo($source, PATHINFO_EXTENSION);
                     $destination = 'quote-requests/eids/' . Str::uuid() . ($extension ? '.' . $extension : '');
                     Storage::disk('public')->copy($source, $destination);
                     $quoteRequest->eid_file = $destination;
-                } else {
-                    // If no existing eid_file, validation error
-                    return back()
-                        ->withInput()
-                        ->withErrors(["eid_file" => "The eid file field is required when application type is self."]);
+                }
+
+                // Handle passport copy - copy from user or upload new
+                if ($request->hasFile('passport_copy')) {
+                    $quoteRequest->passport_copy = $request->file('passport_copy')
+                        ->store('quote-requests/passports', 'public');
+                } elseif ($request->user()->passport_copy && Storage::disk('public')->exists($request->user()->passport_copy)) {
+                    $source = $request->user()->passport_copy;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/passports/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->passport_copy = $destination;
                 }
             }
 
@@ -162,6 +164,11 @@ class QuoteRequestController extends Controller
                     if ($request->hasFile("dependents.{$index}.eid_file")) {
                         $dependent->eid_file = $request->file("dependents.{$index}.eid_file")
                             ->store('dependents/eids', 'public');
+                    }
+
+                    if ($request->hasFile("dependents.{$index}.passport_copy")) {
+                        $dependent->passport_copy = $request->file("dependents.{$index}.passport_copy")
+                            ->store('dependents/passports', 'public');
                     }
 
                     $dependent->save();
@@ -290,6 +297,7 @@ class QuoteRequestController extends Controller
             'emirate_of_residency' => 'required_if:application_type,self,self_dependents|string|max:100',
             'profile_picture' => ['nullable', new ValidatedFile('image')],
             'eid_file' => ['nullable', new ValidatedFile('document')],
+            'passport_copy' => ['nullable', new ValidatedFile('document')],
 
             // Dependents
             'dependents' => 'required_if:application_type,dependents,self_dependents|array',
@@ -304,6 +312,7 @@ class QuoteRequestController extends Controller
             'dependents.*.marital_status' => 'required|in:single,married,divorced,widowed',
             'dependents.*.profile_picture' => ['nullable', new ValidatedFile('image')],
             'dependents.*.eid_file' => ['nullable', new ValidatedFile('document')],
+            'dependents.*.passport_copy' => ['nullable', new ValidatedFile('document')],
         ]);
 
         DB::beginTransaction();
@@ -349,6 +358,21 @@ class QuoteRequestController extends Controller
                     Storage::disk('public')->copy($source, $destination);
                     $quoteRequest->eid_file = $destination;
                 }
+
+                if ($request->hasFile('passport_copy')) {
+                    // Delete old file if exists
+                    if ($quoteRequest->passport_copy) {
+                        Storage::disk('public')->delete($quoteRequest->passport_copy);
+                    }
+                    $quoteRequest->passport_copy = $request->file('passport_copy')
+                        ->store('quote-requests/passports', 'public');
+                } elseif ($request->user()->passport_copy && Storage::disk('public')->exists($request->user()->passport_copy)) {
+                    $source = $request->user()->passport_copy;
+                    $extension = pathinfo($source, PATHINFO_EXTENSION);
+                    $destination = 'quote-requests/passports/' . Str::uuid() . ($extension ? '.' . $extension : '');
+                    Storage::disk('public')->copy($source, $destination);
+                    $quoteRequest->passport_copy = $destination;
+                }
             } else {
                 // Clear principal data if not applicable
                 $quoteRequest->principal_name = null;
@@ -364,6 +388,10 @@ class QuoteRequestController extends Controller
                 if ($quoteRequest->eid_file) {
                     Storage::disk('public')->delete($quoteRequest->eid_file);
                     $quoteRequest->eid_file = null;
+                }
+                if ($quoteRequest->passport_copy) {
+                    Storage::disk('public')->delete($quoteRequest->passport_copy);
+                    $quoteRequest->passport_copy = null;
                 }
             }
 
@@ -408,6 +436,14 @@ class QuoteRequestController extends Controller
                                     ->store('dependents/eids', 'public');
                             }
 
+                            if ($request->hasFile("dependents.{$index}.passport_copy")) {
+                                if ($dependent->passport_copy) {
+                                    Storage::disk('public')->delete($dependent->passport_copy);
+                                }
+                                $dependent->passport_copy = $request->file("dependents.{$index}.passport_copy")
+                                    ->store('dependents/passports', 'public');
+                            }
+
                             $dependent->save();
                             $existingDependentIds[] = $dependent->id;
                         }
@@ -436,6 +472,11 @@ class QuoteRequestController extends Controller
                                 ->store('dependents/eids', 'public');
                         }
 
+                        if ($request->hasFile("dependents.{$index}.passport_copy")) {
+                            $dependent->passport_copy = $request->file("dependents.{$index}.passport_copy")
+                                ->store('dependents/passports', 'public');
+                        }
+
                         $dependent->save();
                         $existingDependentIds[] = $dependent->id;
                     }
@@ -453,6 +494,9 @@ class QuoteRequestController extends Controller
                     if ($dependent->eid_file) {
                         Storage::disk('public')->delete($dependent->eid_file);
                     }
+                    if ($dependent->passport_copy) {
+                        Storage::disk('public')->delete($dependent->passport_copy);
+                    }
                     $dependent->delete();
                 }
             } else {
@@ -464,6 +508,9 @@ class QuoteRequestController extends Controller
                     }
                     if ($dependent->eid_file) {
                         Storage::disk('public')->delete($dependent->eid_file);
+                    }
+                    if ($dependent->passport_copy) {
+                        Storage::disk('public')->delete($dependent->passport_copy);
                     }
                     $dependent->delete();
                 }

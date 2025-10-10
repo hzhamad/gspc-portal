@@ -29,6 +29,7 @@ return new class extends Migration
             // Documents
             $table->string('profile_picture')->nullable();
             $table->string('eid_file')->nullable();
+            $table->string('passport_copy')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

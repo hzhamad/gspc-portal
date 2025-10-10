@@ -23,6 +23,7 @@ class Dependent extends Model
         'relationship',
         'profile_picture',
         'eid_file',
+        'passport_copy',
     ];
 
     protected $casts = [

@@ -44,6 +44,7 @@ class ProfileController extends Controller
                 'residency' => $user->residency,
                 'eid_number' => $user->eid_number,
                 'eid_file' => $user->eid_file,
+                'passport_copy' => $user->passport_copy,
                 'profile_picture' => $user->profile_picture,
                 'email_verified_at' => $user->email_verified_at,
                 'roles' => $user->roles->pluck('name')->toArray(),
@@ -84,6 +85,15 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->eid_file);
             }
             $updateData['eid_file'] = $request->file('eid_file')->store('eid_files', 'public');
+        }
+
+        // Handle passport copy upload
+        if ($request->hasFile('passport_copy')) {
+            // Delete old file if exists
+            if ($user->passport_copy && Storage::disk('public')->exists($user->passport_copy)) {
+                Storage::disk('public')->delete($user->passport_copy);
+            }
+            $updateData['passport_copy'] = $request->file('passport_copy')->store('passport_copies', 'public');
         }
 
         // Handle profile image upload
@@ -129,5 +139,20 @@ class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'EID file deleted successfully!');
+    }
+
+    /**
+     * Delete the user's passport copy.
+     */
+    public function deletePassportCopy(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if ($user->passport_copy && Storage::disk('public')->exists($user->passport_copy)) {
+            Storage::disk('public')->delete($user->passport_copy);
+            $user->update(['passport_copy' => null]);
+        }
+
+        return redirect()->back()->with('success', 'Passport copy deleted successfully!');
     }
 }

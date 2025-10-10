@@ -21,6 +21,7 @@ export default function QuoteRequest() {
 
     const existingProfilePicture = user?.profile_picture || null;
     const existingEidCopy = user?.eid_file || null;
+    const existingPassportCopy = user?.passport_copy || null;
     const [profilePicturePreview, setProfilePicturePreview] = useState(() => (
         existingProfilePicture ? `/storage/${existingProfilePicture}` : null
     ));
@@ -42,7 +43,8 @@ export default function QuoteRequest() {
         dob: user?.dob?.split('T')[0] || '',
         emirate_of_residency: user?.residency || '',
         profile_picture: existingProfilePicture || null,
-        // eid_file: user?.eid_file || null,
+        eid_file: existingEidCopy || null,
+        passport_copy: existingPassportCopy || null,
         // Dependents
         dependents: [],
     });
@@ -94,6 +96,7 @@ export default function QuoteRequest() {
             emirate_of_residency: '',
             profile_picture: null,
             eid_file: null,
+            passport_copy: null,
         };
         setDependents(prev => [...prev, newDependent]);
     };
@@ -209,9 +212,12 @@ export default function QuoteRequest() {
             if (data.profile_picture) {
                 formData.append('profile_picture', data.profile_picture);
             }
-            // if (data.eid_file) {
-            //     formData.append('eid_file', data.eid_file);
-            // }
+            if (data.eid_file) {
+                formData.append('eid_file', data.eid_file);
+            }
+            if (data.passport_copy) {
+                formData.append('passport_copy', data.passport_copy);
+            }
         }
         
         // Add dependents data
@@ -233,6 +239,9 @@ export default function QuoteRequest() {
                 if (dep.eid_file) {
                     formData.append(`dependents[${index}][eid_file]`, dep.eid_file);
                 }
+                if (dep.passport_copy) {
+                    formData.append(`dependents[${index}][passport_copy]`, dep.passport_copy);
+                }
             });
         }
 
@@ -247,6 +256,8 @@ export default function QuoteRequest() {
                 }
                 setProfilePicturePreview(existingProfilePicture ? `/storage/${existingProfilePicture}` : null);
                 setData('profile_picture', existingProfilePicture || null);
+                setData('eid_file', existingEidCopy || null);
+                setData('passport_copy', existingPassportCopy || null);
             }
         });
     };
@@ -442,21 +453,41 @@ export default function QuoteRequest() {
                                         {errors.profile_picture && <p className="text-red-600 text-sm mt-1">{errors.profile_picture}</p>}
                                     </div>
 
-                                    { !existingEidCopy ? (
                                     <div className="md:col-span-2">
-                                            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                                <p className="text-sm text-yellow-800">
-                                                    No Emirates ID copy on file. You can upload it in your 
-                                                    <a 
-                                                        href="/profile"
-                                                        className="text-yellow-700 hover:text-yellow-900 underline font-medium ml-1"
-                                                    >
-                                                        profile settings
-                                                    </a>.
-                                                </p>
-                                            </div>
+                                        <FileUpload
+                                            label="Emirates ID Copy"
+                                            accept="image/jpeg,image/png,image/jpg,application/pdf,.pdf"
+                                            onChange={(e) => handleFileChange('eid_file', e.target.files[0])}
+                                            fileName={data.eid_file?.name}
+                                            placeholder="Click to upload Emirates ID copy"
+                                            required={!existingEidCopy}
+                                            fileType="document"
+                                        />
+                                        {existingEidCopy && !data.eid_file?.name && (
+                                            <p className="text-sm text-green-600 mt-1">
+                                                ✓ Emirates ID copy on file
+                                            </p>
+                                        )}
+                                        {errors.eid_file && <p className="text-red-600 text-sm mt-1">{errors.eid_file}</p>}
                                     </div>
-                                    ) : null}
+
+                                    <div className="md:col-span-2">
+                                        <FileUpload
+                                            label="Passport Copy"
+                                            accept="image/jpeg,image/png,image/jpg,application/pdf,.pdf"
+                                            onChange={(e) => handleFileChange('passport_copy', e.target.files[0])}
+                                            fileName={data.passport_copy?.name}
+                                            placeholder="Click to upload passport copy"
+                                            required={!existingPassportCopy}
+                                            fileType="document"
+                                        />
+                                        {existingPassportCopy && !data.passport_copy?.name && (
+                                            <p className="text-sm text-green-600 mt-1">
+                                                ✓ Passport copy on file
+                                            </p>
+                                        )}
+                                        {errors.passport_copy && <p className="text-red-600 text-sm mt-1">{errors.passport_copy}</p>}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -694,6 +725,18 @@ export default function QuoteRequest() {
                                                         onChange={(e) => handleDependentFileChange(dependent.id, 'eid_file', e.target.files[0])}
                                                         fileName={dependent.eid_file?.name}
                                                         placeholder="Upload Emirates ID copy"
+                                                        required
+                                                        fileType="document"
+                                                    />
+                                                </div>
+
+                                                <div className="md:col-span-2">
+                                                    <FileUpload
+                                                        label="Passport Copy *"
+                                                        accept="image/jpeg,image/png,image/jpg,application/pdf,.pdf"
+                                                        onChange={(e) => handleDependentFileChange(dependent.id, 'passport_copy', e.target.files[0])}
+                                                        fileName={dependent.passport_copy?.name}
+                                                        placeholder="Upload passport copy"
                                                         required
                                                         fileType="document"
                                                     />

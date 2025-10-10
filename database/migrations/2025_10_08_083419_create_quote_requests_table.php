@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('emirate_of_residency')->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('eid_file')->nullable();
+            $table->string('passport_copy')->nullable();
 
             // Status and workflow
             $table->enum('status', ['pending', 'quote_sent', 'completed', 'rejected'])->default('pending');

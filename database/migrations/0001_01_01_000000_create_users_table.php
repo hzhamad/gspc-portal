@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('residency')->nullable();
             $table->string('eid_number')->nullable();
             $table->string('eid_file')->nullable();
+            $table->string('passport_copy')->nullable();
             $table->string('profile_picture')->nullable();
             $table->string('password');
             $table->boolean('status')->default(true);

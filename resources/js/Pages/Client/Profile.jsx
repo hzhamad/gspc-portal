@@ -29,6 +29,7 @@ export default function Profile() {
         residency: user?.residency || '',
         eid_number: user?.eid_number || '',
         eid_file: null,
+        passport_copy: null,
         profile_picture: null,
         _method: 'PUT',
     });
@@ -181,7 +182,7 @@ export default function Profile() {
 
                             {/* Emirates ID Section */}
                             <div className="border-t border-gray-200 pt-6 mb-6">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile & Emirates ID Information</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Profile & Documents</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                     <div>
                                         <FileUpload
@@ -234,6 +235,32 @@ export default function Profile() {
                                                     className="text-sm text-gold hover:brightness-110 font-medium"
                                                 >
                                                     View current EID file
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="sm:col-span-2">
+                                        <FileUpload
+                                            label="Passport Copy"
+                                            accept="image/*,.pdf"
+                                            onChange={(e) => setData('passport_copy', e.target.files[0])}
+                                            fileName={data.passport_copy?.name}
+                                            placeholder={user?.passport_copy ? "Replace current passport file" : "Upload passport copy (PNG/JPG/PDF)"}
+                                            error={errors.passport_copy}
+                                        />
+                                        {user?.passport_copy && !data.passport_copy && (
+                                            <div className="mt-2 flex items-center gap-2">
+                                                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                                <a 
+                                                    href={`/storage/${user.passport_copy}`} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm text-gold hover:brightness-110 font-medium"
+                                                >
+                                                    View current passport file
                                                 </a>
                                             </div>
                                         )}

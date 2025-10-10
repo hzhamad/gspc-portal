@@ -27,6 +27,7 @@ export default function RequestEdit() {
         emirate_of_residency: request.emirate_of_residency || '',
         profile_picture: null,
         eid_file: null,
+        passport_copy: null,
         dependents: dependents.map(dep => ({
             id: dep.id,
             first_name: dep.first_name || '',
@@ -39,8 +40,10 @@ export default function RequestEdit() {
             relationship: dep.relationship || 'spouse',
             profile_picture: null,
             eid_file: null,
+            passport_copy: null,
             existing_profile_picture: dep.profile_picture,
             existing_eid_file: dep.eid_file,
+            existing_passport_copy: dep.passport_copy,
         })),
         _method: 'PUT'
     });
@@ -50,6 +53,9 @@ export default function RequestEdit() {
     );
     const [eidCopyPreview, setEidCopyPreview] = useState(
         request.eid_file ? `/storage/${request.eid_file}` : null
+    );
+    const [passportCopyPreview, setPassportCopyPreview] = useState(
+        request.passport_copy ? `/storage/${request.passport_copy}` : null
     );
 
     const updateDependentField = (index, field, value) => {
@@ -91,6 +97,9 @@ export default function RequestEdit() {
             if (data.eid_file) {
                 formData.append('eid_file', data.eid_file);
             }
+            if (data.passport_copy) {
+                formData.append('passport_copy', data.passport_copy);
+            }
         }
         
         // Add dependents if applicable
@@ -113,6 +122,9 @@ export default function RequestEdit() {
                 }
                 if (dependent.eid_file) {
                     formData.append(`dependents[${index}][eid_file]`, dependent.eid_file);
+                }
+                if (dependent.passport_copy) {
+                    formData.append(`dependents[${index}][passport_copy]`, dependent.passport_copy);
                 }
             });
         }
@@ -138,6 +150,8 @@ export default function RequestEdit() {
                     setProfilePicturePreview(reader.result);
                 } else if (field === 'eid_file') {
                     setEidCopyPreview(reader.result);
+                } else if (field === 'passport_copy') {
+                    setPassportCopyPreview(reader.result);
                 }
             };
             reader.readAsDataURL(file);
@@ -164,6 +178,7 @@ export default function RequestEdit() {
                 relationship: 'spouse',
                 profile_picture: null,
                 eid_file: null,
+                passport_copy: null,
             }
         ]);
     };
@@ -416,6 +431,34 @@ export default function RequestEdit() {
                                             <p className="text-red-500 text-sm mt-1">{errors.eid_file}</p>
                                         )}
                                     </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Passport Copy
+                                        </label>
+                                        {passportCopyPreview && (
+                                            <div className="mb-3">
+                                                <a 
+                                                    href={passportCopyPreview} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-600 hover:underline text-sm"
+                                                >
+                                                    View current file
+                                                </a>
+                                            </div>
+                                        )}
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                            onChange={(e) => handleFileChange(e, 'passport_copy')}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
+                                        {errors.passport_copy && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.passport_copy}</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -646,6 +689,31 @@ export default function RequestEdit() {
                                                                 type="file"
                                                                 accept="image/jpeg,image/png,image/jpg,application/pdf"
                                                                 onChange={(e) => handleDependentFileChange(index, 'eid_file', e.target.files[0])}
+                                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                                            />
+                                                            <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
+                                                        </div>
+
+                                                        <div className="md:col-span-2">
+                                                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Passport Copy
+                                                            </label>
+                                                            {dependent.existing_passport_copy && !dependent.passport_copy && (
+                                                                <div className="mb-2">
+                                                                    <a 
+                                                                        href={`/storage/${dependent.existing_passport_copy}`} 
+                                                                        target="_blank" 
+                                                                        rel="noopener noreferrer"
+                                                                        className="text-blue-600 hover:underline text-sm"
+                                                                    >
+                                                                        View current file
+                                                                    </a>
+                                                                </div>
+                                                            )}
+                                                            <input
+                                                                type="file"
+                                                                accept="image/jpeg,image/png,image/jpg,application/pdf"
+                                                                onChange={(e) => handleDependentFileChange(index, 'passport_copy', e.target.files[0])}
                                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
                                                             />
                                                             <p className="text-xs text-gray-500 mt-1">Max 5MB. JPG, JPEG, PNG, PDF</p>
