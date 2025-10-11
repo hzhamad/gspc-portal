@@ -55,7 +55,7 @@ export default function Profile() {
             {/* Main Content */}
             <div className="lg:ml-64 min-h-screen">
                 {/* Unified Header with Gold Background */}
-                <DashboardHeader 
+                <DashboardHeader
                     title="My Profile"
                     subtitle="Manage your personal information"
                 />
@@ -66,9 +66,9 @@ export default function Profile() {
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-6">
                             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                                 {user?.profile_picture ? (
-                                    <img 
-                                        src={`/storage/${user.profile_picture}`} 
-                                        alt="Profile" 
+                                    <img
+                                        src={`/storage/${user.profile_picture}`}
+                                        alt="Profile"
                                         className="w-24 h-24 rounded-full object-cover border-4 border-gold/20 shrink-0"
                                     />
                                 ) : (
@@ -93,7 +93,7 @@ export default function Profile() {
                         {/* Profile Form */}
                         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
                             <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">Personal Information</h3>
-                            
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
@@ -239,21 +239,33 @@ export default function Profile() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4">
+                            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => router.visit('/client/dashboard')}
-                                    className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                                    onClick={() => router.visit('/profile/password')}
+                                    className="w-full sm:w-auto px-6 py-3 border border-gold text-gold font-semibold rounded-lg hover:bg-gold/10 transition-colors flex items-center justify-center"
                                 >
-                                    Cancel
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                    Change Password
                                 </button>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="w-full sm:w-auto px-8 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {processing ? 'Saving...' : 'Save Changes'}
-                                </button>
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => router.visit('/client/dashboard')}
+                                        className="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full sm:w-auto px-8 py-3 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {processing ? 'Saving...' : 'Save Changes'}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

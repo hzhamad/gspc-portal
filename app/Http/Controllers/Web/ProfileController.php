@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -154,5 +156,38 @@ class ProfileController extends Controller
         }
 
         return redirect()->back()->with('success', 'Passport copy deleted successfully!');
+    }
+
+    /**
+     * Display the password change form.
+     */
+    public function editPassword(Request $request): Response
+    {
+        $user = $request->user()->load('roles');
+
+        return Inertia::render('Client/ChangePassword', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'profile_picture' => $user->profile_picture,
+                'roles' => $user->roles->pluck('name')->toArray(),
+            ],
+        ]);
+    }
+
+    /**
+     * Update the user's password.
+     */
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return redirect()->back()->with('success', 'Password changed successfully!');
     }
 }
