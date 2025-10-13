@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function UAEHeader() {
-  const CONTACT_NUMBER = "+971 4 123 4567";
+  const CONTACT_NUMBER = "+971 5 22514138";
 
   return (
     <div className="w-full bg-gold border-b-2 border-gold shadow-lg">
