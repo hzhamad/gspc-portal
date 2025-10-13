@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->string('google_id')->nullable()->unique();
             $table->string('phone')->nullable();
             $table->date('dob')->nullable();
             $table->string('residency')->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
             $table->string('eid_file')->nullable();
             $table->string('passport_copy')->nullable();
             $table->string('profile_picture')->nullable();
+            $table->string('avatar')->nullable();
             $table->string('password')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

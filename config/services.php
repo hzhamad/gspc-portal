@@ -50,4 +50,19 @@ return [
         'notification_recipients' => array_filter(array_map('trim', explode(',', env('QUOTE_REQUEST_NOTIFICATION_RECIPIENTS', 'hasan@click2secure.me,bellel@payd.ae,reham@click2secure.me,shibila@click2secure.me,juby@click2secure.me,individualmedical@seguroinsurance.ae')))), /*  */
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google OAuth Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Google OAuth authentication using Laravel Socialite.
+    |
+    */
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
 ];

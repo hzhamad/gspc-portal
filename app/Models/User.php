@@ -26,6 +26,8 @@ class User extends Authenticatable // implements MustVerifyEmail
         'eid_file',
         'passport_copy',
         'profile_picture',
+        'avatar',
+        'google_id',
         'password',
         'email_verified_at',
     ];

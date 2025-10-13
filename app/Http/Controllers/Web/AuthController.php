@@ -22,6 +22,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Socialite\Facades\Socialite;
+use Exception;
 
 class AuthController extends Controller
 {
@@ -394,5 +396,74 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', 'You have been logged out successfully.');
+    }
+
+    /**
+     * Redirect to Google OAuth
+     */
+    public function redirectToGoogle(): RedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Handle Google OAuth callback
+     */
+    public function handleGoogleCallback(Request $request): RedirectResponse
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            // Check if user already exists with this Google ID
+            $user = User::where('google_id', $googleUser->id)->first();
+
+            if ($user) {
+                // Update avatar if changed
+                if ($googleUser->avatar && $googleUser->avatar !== $user->avatar) {
+                    $user->update(['avatar' => $googleUser->avatar]);
+                }
+            } else {
+                // Check if user exists with this email
+                $user = User::where('email', $googleUser->email)->first();
+
+                if ($user) {
+                    // Link Google account to existing user
+                    $user->update([
+                        'google_id' => $googleUser->id,
+                        'avatar' => $googleUser->avatar,
+                    ]);
+                } else {
+                    // Create new user
+                    $nameParts = explode(' ', $googleUser->name, 3);
+                    $firstName = $nameParts[0] ?? '';
+                    $middleName = isset($nameParts[2]) ? $nameParts[1] : null;
+                    $lastName = isset($nameParts[2]) ? $nameParts[2] : ($nameParts[1] ?? '');
+
+                    $user = User::create([
+                        'first_name' => $firstName,
+                        'middle_name' => $middleName,
+                        'last_name' => $lastName,
+                        'email' => $googleUser->email,
+                        'google_id' => $googleUser->id,
+                        'avatar' => $googleUser->avatar,
+                    ]);
+
+                    // Assign default role (client)
+                    $user->assignRole(UserRoles::CLIENT->value);
+
+                    event(new Registered($user));
+                }
+            }
+
+            // Log in the user
+            Auth::login($user, true);
+            $request->session()->regenerate();
+
+            $dashboardRoute = $user->getDashboardRoute();
+            return redirect()->intended(route($dashboardRoute))->with('success', 'Successfully signed in with Google!');
+        } catch (Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Google OAuth Error: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Failed to sign in with Google. Please try again.');
+        }
     }
 }
