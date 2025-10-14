@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
     // Client Dashboard Route
     Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
 
-    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/email/verify', [AuthController::class, 'showVerifyEmail'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])

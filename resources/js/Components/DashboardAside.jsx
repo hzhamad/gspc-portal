@@ -8,13 +8,7 @@ export default function DashboardAside({ currentPath }) {
 
     const handleLogout = (e) => {
         e.preventDefault();
-        const token = document.head.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-        router.get("/logout", {}, {
-            headers: { "X-CSRF-TOKEN": token },
-            onFinish: () => {
-                localStorage.removeItem("token");
-            }
-        });
+        router.post("/logout");
     };
 
     const isActive = (path) => {
