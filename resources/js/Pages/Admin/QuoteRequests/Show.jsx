@@ -229,11 +229,11 @@ export default function QuoteRequestShow() {
                                 <label className="text-sm font-medium text-gray-600">Application Type</label>
                                 <p className="text-base text-gray-900 mt-1">{getApplicationTypeLabel(request.application_type)}</p>
                             </div>
-                            {request.principal_name && (
+                            {request.principal_fullname && (
                                 <>
                                     <div>
                                         <label className="text-sm font-medium text-gray-600">Principal Name</label>
-                                        <p className="text-base text-gray-900 mt-1">{request.principal_name}</p>
+                                        <p className="text-base text-gray-900 mt-1">{request.principal_fullname}</p>
                                     </div>
                                     <div>
                                         <label className="text-sm font-medium text-gray-600">Principal ID</label>

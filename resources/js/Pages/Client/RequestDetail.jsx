@@ -268,7 +268,7 @@ export default function RequestDetail() {
                                     <div>
                                         <label className="text-sm font-medium text-gray-600 block mb-1">Principal Name</label>
                                         <p className="text-base font-semibold text-gray-800 p-3 bg-gray-50 rounded-lg">
-                                            {request.principal_name || 'N/A'}
+                                            {request.principal_fullname || 'N/A'}
                                         </p>
                                     </div>
                                     <div>

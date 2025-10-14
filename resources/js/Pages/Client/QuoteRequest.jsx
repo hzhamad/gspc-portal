@@ -34,10 +34,27 @@ export default function QuoteRequest() {
         return digitsOnly.startsWith('971') ? digitsOnly.substring(3) : digitsOnly;
     };
 
+    // Split user's fullname into parts for initial values
+    const splitName = (fullname) => {
+        if (!fullname) return { first: '', middle: '', last: '' };
+        const parts = fullname.trim().split(' ');
+        if (parts.length === 1) return { first: parts[0], middle: '', last: '' };
+        if (parts.length === 2) return { first: parts[0], middle: '', last: parts[1] };
+        return {
+            first: parts[0],
+            middle: parts.slice(1, -1).join(' '),
+            last: parts[parts.length - 1]
+        };
+    };
+
+    const nameParts = splitName(user?.fullname || '');
+
     const { data, setData, post, processing, errors, reset } = useForm({
         application_type: '',
         // Principal Details
-        principal_name: user?.fullname || '',
+        principal_first_name: nameParts.first,
+        principal_middle_name: nameParts.middle,
+        principal_last_name: nameParts.last,
         phone_number: formatPhoneForInput(user?.phone_number || user?.phone || ''),
         principal_id: user?.eid_number || '',
         dob: user?.dob?.split('T')[0] || '',
@@ -203,7 +220,9 @@ export default function QuoteRequest() {
         
         // Add principal data if applying for self
         if (applicationType === 'self' || applicationType === 'self_dependents') {
-            formData.append('principal_name', data.principal_name);
+            formData.append('principal_first_name', data.principal_first_name);
+            formData.append('principal_middle_name', data.principal_middle_name || '');
+            formData.append('principal_last_name', data.principal_last_name);
             formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
             formData.append('principal_id', data.principal_id);
             formData.append('dob', data.dob);
@@ -357,21 +376,53 @@ export default function QuoteRequest() {
                                     {applicationType === 'self' ? 'Self Information' : 'Principal Information'}
                                 </h2>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            {applicationType === 'self' ? 'Your Name' : 'Principal Name'}
+                                            First Name <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={data.principal_name}
-                                            onChange={(e) => setData('principal_name', e.target.value)}
+                                            value={data.principal_first_name}
+                                            onChange={(e) => setData('principal_first_name', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
                                             required
+                                            placeholder="First name"
                                         />
-                                        {errors.principal_name && <p className="text-red-600 text-sm mt-1">{errors.principal_name}</p>}
+                                        {errors.principal_first_name && <p className="text-red-600 text-sm mt-1">{errors.principal_first_name}</p>}
                                     </div>
 
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Middle Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.principal_middle_name}
+                                            onChange={(e) => setData('principal_middle_name', e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                            placeholder="Middle name (optional)"
+                                        />
+                                        {errors.principal_middle_name && <p className="text-red-600 text-sm mt-1">{errors.principal_middle_name}</p>}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Last Name <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.principal_last_name}
+                                            onChange={(e) => setData('principal_last_name', e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-gold transition-all"
+                                            required
+                                            placeholder="Last name"
+                                        />
+                                        {errors.principal_last_name && <p className="text-red-600 text-sm mt-1">{errors.principal_last_name}</p>}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <PhoneInput
                                             label="Phone Number"

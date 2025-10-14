@@ -256,7 +256,7 @@ const QuoteRequestsIndex = ({ requests, filters }) => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {request.principal_name || 'N/A'}
+                                                    {request.principal_fullname || 'N/A'}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     {getApplicationTypeBadge(request.application_type)}

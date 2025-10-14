@@ -19,9 +19,26 @@ export default function RequestEdit() {
         return digitsOnly.startsWith('971') ? digitsOnly.substring(3) : digitsOnly;
     };
 
+    // Split principal name into parts
+    const splitName = (firstName = '', middleName = '', lastName = '') => {
+        return {
+            first: firstName || '',
+            middle: middleName || '',
+            last: lastName || ''
+        };
+    };
+
+    const nameParts = splitName(
+        request.principal_first_name,
+        request.principal_middle_name,
+        request.principal_last_name
+    );
+
     const { data, setData, post, processing, errors } = useForm({
         application_type: request.application_type || 'self',
-        principal_name: request.principal_name || '',
+        principal_first_name: nameParts.first,
+        principal_middle_name: nameParts.middle,
+        principal_last_name: nameParts.last,
         phone_number: formatPhoneForInput(request.phone_number || ''),
         principal_id: request.principal_id || '',
         dob: request.dob || '',
@@ -86,7 +103,9 @@ export default function RequestEdit() {
         
         // Add principal fields if applicable
         if (data.application_type === 'self' || data.application_type === 'self_dependents') {
-            formData.append('principal_name', data.principal_name);
+            formData.append('principal_first_name', data.principal_first_name);
+            formData.append('principal_middle_name', data.principal_middle_name || '');
+            formData.append('principal_last_name', data.principal_last_name);
             formData.append('phone_number', data.phone_number ? `+971${data.phone_number}` : '');
             formData.append('principal_id', data.principal_id);
             formData.append('dob', data.dob);
@@ -303,23 +322,59 @@ export default function RequestEdit() {
                                     <h3 className="text-xl font-bold text-gray-800">Principal Information</h3>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Principal Name <span className="text-red-500">*</span>
+                                            First Name <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={data.principal_name}
-                                            onChange={(e) => setData('principal_name', e.target.value)}
+                                            value={data.principal_first_name}
+                                            onChange={(e) => setData('principal_first_name', e.target.value)}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
-                                            placeholder="Full name as per Emirates ID"
+                                            placeholder="First name"
+                                            required
                                         />
-                                        {errors.principal_name && (
-                                            <p className="text-red-500 text-sm mt-1">{errors.principal_name}</p>
+                                        {errors.principal_first_name && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.principal_first_name}</p>
                                         )}
                                     </div>
 
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Middle Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.principal_middle_name}
+                                            onChange={(e) => setData('principal_middle_name', e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            placeholder="Middle name (optional)"
+                                        />
+                                        {errors.principal_middle_name && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.principal_middle_name}</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Last Name <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.principal_last_name}
+                                            onChange={(e) => setData('principal_last_name', e.target.value)}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gold focus:border-transparent"
+                                            placeholder="Last name"
+                                            required
+                                        />
+                                        {errors.principal_last_name && (
+                                            <p className="text-red-500 text-sm mt-1">{errors.principal_last_name}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <PhoneInput
                                             label="Phone Number"

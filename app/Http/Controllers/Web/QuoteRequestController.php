@@ -73,7 +73,9 @@ class QuoteRequestController extends Controller
             'application_type' => 'required|in:self,dependents,self_dependents',
 
             // Principal details
-            'principal_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'principal_first_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'principal_middle_name' => 'nullable|string|max:255',
+            'principal_last_name' => 'required_if:application_type,self,self_dependents|string|max:255',
             'phone_number' => 'required_if:application_type,self,self_dependents|string|regex:/^\+971[0-9]{9}$/',
             'principal_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
@@ -107,13 +109,13 @@ class QuoteRequestController extends Controller
 
             // Add principal details if applicable
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
-                $quoteRequest->principal_name = $validated['principal_name'];
+                $quoteRequest->principal_first_name = $validated['principal_first_name'];
+                $quoteRequest->principal_middle_name = $validated['principal_middle_name'] ?? null;
+                $quoteRequest->principal_last_name = $validated['principal_last_name'];
                 $quoteRequest->phone_number = $validated['phone_number'];
                 $quoteRequest->principal_id = $validated['principal_id'];
                 $quoteRequest->dob = $validated['dob'];
-                $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
-
-                // Handle file uploads for principal
+                $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];                // Handle file uploads for principal
                 if ($request->hasFile('profile_picture')) {
                     $quoteRequest->profile_picture = $request->file('profile_picture')
                         ->store('quote-requests/profiles', 'public');
@@ -220,6 +222,11 @@ class QuoteRequestController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
+            Log::error('Failed to submit application', [
+                'user_id' => $request->user()->id,
+                'error' => $e->getMessage()
+            ]);
+
             return back()
                 ->withInput()
                 ->with('error', 'Failed to submit application. Please try again.');
@@ -306,7 +313,9 @@ class QuoteRequestController extends Controller
             'application_type' => 'required|in:self,dependents,self_dependents',
 
             // Principal details
-            'principal_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'principal_first_name' => 'required_if:application_type,self,self_dependents|string|max:255',
+            'principal_middle_name' => 'nullable|string|max:255',
+            'principal_last_name' => 'required_if:application_type,self,self_dependents|string|max:255',
             'phone_number' => 'required_if:application_type,self,self_dependents|string|regex:/^\+971[0-9]{9}$/',
             'principal_id' => 'required_if:application_type,self,self_dependents|string|max:100',
             'dob' => 'required_if:application_type,self,self_dependents|date',
@@ -338,13 +347,13 @@ class QuoteRequestController extends Controller
 
             // Update principal details if applicable
             if (in_array($validated['application_type'], ['self', 'self_dependents'])) {
-                $quoteRequest->principal_name = $validated['principal_name'];
+                $quoteRequest->principal_first_name = $validated['principal_first_name'];
+                $quoteRequest->principal_middle_name = $validated['principal_middle_name'] ?? null;
+                $quoteRequest->principal_last_name = $validated['principal_last_name'];
                 $quoteRequest->phone_number = $validated['phone_number'];
                 $quoteRequest->principal_id = $validated['principal_id'];
                 $quoteRequest->dob = $validated['dob'];
-                $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];
-
-                // Handle file uploads for principal
+                $quoteRequest->emirate_of_residency = $validated['emirate_of_residency'];                // Handle file uploads for principal
                 if ($request->hasFile('profile_picture')) {
                     // Delete old file if exists
                     if ($quoteRequest->profile_picture) {
@@ -391,7 +400,9 @@ class QuoteRequestController extends Controller
                 }
             } else {
                 // Clear principal data if not applicable
-                $quoteRequest->principal_name = null;
+                $quoteRequest->principal_first_name = null;
+                $quoteRequest->principal_middle_name = null;
+                $quoteRequest->principal_last_name = null;
                 $quoteRequest->phone_number = null;
                 $quoteRequest->principal_id = null;
                 $quoteRequest->dob = null;
