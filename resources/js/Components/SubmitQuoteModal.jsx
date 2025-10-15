@@ -182,10 +182,11 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
                         {/* Payment Link Input */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Payment Link (Optional)
+                                Payment Link
                             </label>
                             <input
                                 type="url"
+                                required={true}
                                 value={form.data.payment_link}
                                 onChange={(e) => {
                                     form.setData('payment_link', e.target.value);
