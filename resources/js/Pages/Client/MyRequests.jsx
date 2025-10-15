@@ -122,7 +122,7 @@ export default function MyRequests() {
                                         </div>
 
                                         {/* Additional Info Based on Status */}
-                                        {request.quote_file && (
+                                        {request.quote_file && request.status !== 'completed' && (
                                             <div className="mt-4 p-4 bg-gold/5 border border-gold/20 rounded-lg">
                                                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                                     <div className="flex items-center gap-3">
