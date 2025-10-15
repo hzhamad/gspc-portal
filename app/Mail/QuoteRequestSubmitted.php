@@ -78,12 +78,14 @@ class QuoteRequestSubmitted extends Mailable implements ShouldQueue
         // Principal documents
         $this->attachIfExists($attachments, $this->quoteRequest->profile_picture, 'principal_profile_picture');
         $this->attachIfExists($attachments, $this->quoteRequest->eid_file, 'principal_eid_file');
+        $this->attachIfExists($attachments, $this->quoteRequest->passport_copy, 'principal_passport_copy');
 
         // Dependent documents
         foreach ($this->quoteRequest->dependents as $index => $dependent) {
             $number = $index + 1;
             $this->attachIfExists($attachments, $dependent->profile_picture, "dependent_{$number}_profile_picture");
             $this->attachIfExists($attachments, $dependent->eid_file, "dependent_{$number}_eid_file");
+            $this->attachIfExists($attachments, $dependent->passport_copy, "dependent_{$number}_passport_copy");
         }
 
         return $attachments;

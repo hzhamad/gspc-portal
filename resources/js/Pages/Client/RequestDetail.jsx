@@ -137,7 +137,7 @@ export default function RequestDetail() {
                         {/* Documents Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Quote File */}
-                            {request.quote_file && (
+                            {request.status !== 'completed' && request.quote_file && (
                                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-8 h-8 bg-gold/10 rounded-lg flex items-center justify-center">
@@ -196,7 +196,7 @@ export default function RequestDetail() {
                             )}
 
                             {/* Payment Link */}
-                            {request.payment_link && (
+                            {request.status !== 'completed' && request.payment_link && (
                                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
                                     <div className="flex items-center gap-2 mb-3">
                                         <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
