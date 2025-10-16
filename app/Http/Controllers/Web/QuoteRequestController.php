@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\QuoteRequestSubmitted;
 use App\Models\QuoteRequest;
 use App\Models\Dependent;
+use App\Models\QuoteRequestRecipient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -199,9 +200,12 @@ class QuoteRequestController extends Controller
             try {
                 $notificationRecipients = config('services.quote_request.notification_recipients');
 
-                if (empty($notificationRecipients)) {
-                    $fallbackEmail = config('services.quote_request.notification_email');
-                    $notificationRecipients = $fallbackEmail ? [$fallbackEmail] : [];
+                $recipientsFromDb = QuoteRequestRecipient::where('is_active', true)->pluck('email')->toArray();
+
+                if (! empty($recipientsFromDb)) {
+                    $notificationRecipients = $recipientsFromDb;
+                } else {
+                    $notificationRecipients = config('services.quote_request.notification_recipients', []);
                 }
 
                 if (! empty($notificationRecipients)) {

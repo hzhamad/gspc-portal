@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\Web\AdminQuoteRequestController;
-use App\Http\Controllers\Web\ClientDashboardController;
-use App\Http\Controllers\Web\AuthController;
-use App\Http\Controllers\Web\DashboardController;
-use App\Http\Controllers\Web\ProfileController;
-use App\Http\Controllers\Web\QuoteRequestController;
-use App\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\QuoteRequestController;
+use App\Http\Controllers\Web\ClientDashboardController;
+use App\Http\Controllers\Web\AdminQuoteRequestController;
+use App\Http\Controllers\Web\AdminQuoteRequestRecipientsController;
 
 
 Route::get('/', [DashboardController::class, 'index'])->name('home');
@@ -90,4 +91,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/quote-requests/{quoteRequest}/upload-quote', [AdminQuoteRequestController::class, 'uploadQuote'])->name('quote-requests.upload-quote');
     Route::post('/quote-requests/{quoteRequest}/upload-policy', [AdminQuoteRequestController::class, 'uploadPolicy'])->name('quote-requests.upload-policy');
     Route::patch('/quote-requests/{quoteRequest}/status', [AdminQuoteRequestController::class, 'updateStatus'])->name('quote-requests.update-status');
+});
+
+// Super Admin Routes - Require authentication and super-admin role
+Route::middleware(['auth', 'super-admin'])->group(function () {
+    Route::get('/admin/quote-recipients', [AdminQuoteRequestRecipientsController::class, 'index'])->name('admin.quote-recipients.index');
+    Route::post('/admin/quote-recipients', [AdminQuoteRequestRecipientsController::class, 'store'])->name('admin.quote-recipients.store');
+    Route::patch('/admin/quote-recipients/{recipient}', [AdminQuoteRequestRecipientsController::class, 'update'])->name('admin.quote-recipients.update');
+    Route::delete('/admin/quote-recipients/{recipient}', [AdminQuoteRequestRecipientsController::class, 'destroy'])->name('admin.quote-recipients.destroy');
 });
