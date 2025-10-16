@@ -5,6 +5,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createInertiaApp } from "@inertiajs/react";
 import Toast from "./Components/Toast";
+import FormLoader from './Components/FormLoader';
 
 createInertiaApp({
     resolve: (name) => {
@@ -14,6 +15,7 @@ createInertiaApp({
             <>
                 {page}
                 <Toast />
+                <FormLoader />
             </>
         ));
         
