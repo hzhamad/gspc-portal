@@ -11,10 +11,13 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class QuoteRequestSubmitted extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+    private const MAX_ATTACHMENT_BYTES = 20 * 1024 * 1024; // 20MB
 
     /**
      * Create a new message instance.
@@ -46,6 +49,7 @@ class QuoteRequestSubmitted extends Mailable implements ShouldQueue
                 'user'         => $this->quoteRequest->user,
                 'dependents'   => $this->quoteRequest->dependents,
                 'logoUrl'      => $this->getLogoUrl(),
+                'attachments_skipped' => $this->attachmentsTotalBytes() >= self::MAX_ATTACHMENT_BYTES,
             ],
         );
     }
@@ -75,6 +79,22 @@ class QuoteRequestSubmitted extends Mailable implements ShouldQueue
     {
         $attachments = [];
 
+        $totalBytes = $this->attachmentsTotalBytes();
+
+        if ($totalBytes >= self::MAX_ATTACHMENT_BYTES) {
+            try {
+                Log::info('QuoteRequestSubmitted: skipping attachments because total size >= 20MB', [
+                    'quote_request_id' => $this->quoteRequest->id,
+                    'total_bytes' => $totalBytes,
+                ]);
+            } catch (\Exception $_) {
+                // ignore logging failures
+            }
+
+            return [];
+        }
+
+        // Attach files as usual
         // Principal documents
         $this->attachIfExists($attachments, $this->quoteRequest->profile_picture, 'principal_profile_picture');
         $this->attachIfExists($attachments, $this->quoteRequest->eid_file, 'principal_eid_file');
@@ -89,6 +109,35 @@ class QuoteRequestSubmitted extends Mailable implements ShouldQueue
         }
 
         return $attachments;
+    }
+
+    /**
+     * Compute total bytes for all candidate attachments (principal + dependents).
+     */
+    protected function attachmentsTotalBytes(): int
+    {
+        $totalBytes = 0;
+        $addIfExistsSize = function (?string $path) use (&$totalBytes) {
+            if ($path && Storage::disk('public')->exists($path)) {
+                try {
+                    $totalBytes += Storage::disk('public')->size($path);
+                } catch (\Exception $e) {
+                    // ignore size failures
+                }
+            }
+        };
+
+        $addIfExistsSize($this->quoteRequest->profile_picture);
+        $addIfExistsSize($this->quoteRequest->eid_file);
+        $addIfExistsSize($this->quoteRequest->passport_copy);
+
+        foreach ($this->quoteRequest->dependents as $dependent) {
+            $addIfExistsSize($dependent->profile_picture);
+            $addIfExistsSize($dependent->eid_file);
+            $addIfExistsSize($dependent->passport_copy);
+        }
+
+        return $totalBytes;
     }
 
     /**

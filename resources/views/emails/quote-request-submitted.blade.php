@@ -105,7 +105,12 @@ View Application Details
 
 ---
 
+@if(!empty($attachments_skipped) && $attachments_skipped)
+> **Important:** The uploaded documents were not attached to this email because their combined size exceeds the allowed limit (20MB). You can view and download all uploaded documents from the application details in the portal.
+@else
+
 **Note:** All uploaded documents are attached to this email for your convenience. This is an **automated message** from the GSPC Portal. Please do not reply to this email.
+@endif
 
 Warm regards,<br>
 **The {{ config('app.name') }} Team**
