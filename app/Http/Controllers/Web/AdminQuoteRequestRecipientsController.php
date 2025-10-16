@@ -30,8 +30,24 @@ class AdminQuoteRequestRecipientsController extends Controller
 
     public function update(Request $request, QuoteRequestRecipient $recipient)
     {
-        $request->validate(['email' => 'required|email|unique:quote_request_recipients,email,' . $recipient->id]);
-        $recipient->update($request->only('email', 'is_active'));
+        // validate only the fields that were sent (allows toggling is_active without sending email)
+        $rules = [];
+
+        if ($request->has('email')) {
+            $rules['email'] = 'required|email|unique:quote_request_recipients,email,' . $recipient->id;
+        }
+
+        if ($request->has('is_active')) {
+            $rules['is_active'] = 'required|boolean';
+        }
+
+        if (!empty($rules)) {
+            $request->validate($rules);
+        }
+
+        // Only update the provided fields
+        $recipient->update($request->only(array_keys($rules)));
+
         return redirect()->back()->with('success', 'Recipient updated.');
     }
 
