@@ -26,6 +26,7 @@ class QuoteRequest extends Model
         'passport_copy',
         'status',
         'quote_file',
+        'premium_file',
         'payment_link',
         'policy_file',
         'admin_notes',

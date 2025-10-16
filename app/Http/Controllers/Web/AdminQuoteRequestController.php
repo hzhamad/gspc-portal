@@ -68,6 +68,7 @@ class AdminQuoteRequestController extends Controller
     {
         $validated = $request->validate([
             'quote_file' => ['required', new ValidatedFile('document')],
+            'premium_file' => ['nullable', new ValidatedFile('document')],
             'payment_link' => 'nullable|url|max:500',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
@@ -78,9 +79,20 @@ class AdminQuoteRequestController extends Controller
                 Storage::disk('public')->delete($quoteRequest->quote_file);
             }
 
+            // Delete old premium file if exists and a new one provided
+            if ($request->hasFile('premium_file') && $quoteRequest->premium_file) {
+                Storage::disk('public')->delete($quoteRequest->premium_file);
+            }
+
             // Upload new quote file
             $quoteRequest->quote_file = $request->file('quote_file')
                 ->store('quote-files', 'public');
+
+            // Upload premium file (optional)
+            if ($request->hasFile('premium_file')) {
+                $quoteRequest->premium_file = $request->file('premium_file')
+                    ->store('premium-files', 'public');
+            }
 
             $quoteRequest->payment_link = $validated['payment_link'] ?? $quoteRequest->payment_link;
 

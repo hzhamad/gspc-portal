@@ -4,13 +4,16 @@ import { useForm } from '@inertiajs/react';
 export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
     const form = useForm({
         quote_file: null,
+            premium_file: null,
         payment_link: '',
         admin_notes: '',
     });
 
     const [validationErrors, setValidationErrors] = useState({});
     const [selectedFileName, setSelectedFileName] = useState('');
+    const [selectedPremiumFileName, setSelectedPremiumFileName] = useState('');
     const fileInputRef = useRef(null);
+    const premiumFileInputRef = useRef(null);
 
     // Reset form when modal closes
     React.useEffect(() => {
@@ -18,9 +21,13 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
             form.reset();
             setValidationErrors({});
             setSelectedFileName('');
+                setSelectedPremiumFileName('');
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
             }
+                if (premiumFileInputRef.current) {
+                    premiumFileInputRef.current.value = '';
+                }
         }
     }, [isOpen]);
 
@@ -39,6 +46,19 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
                 errors.quote_file = 'File must be PDF, DOC, or DOCX format';
             } else if (file.size > maxSize) {
                 errors.quote_file = 'File size must not exceed 10MB';
+            }
+        }
+
+        // Validate premium file (optional)
+        if (form.data.premium_file) {
+            const pfile = form.data.premium_file;
+            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            if (!validTypes.includes(pfile.type)) {
+                errors.premium_file = 'Premium file must be PDF, DOC, or DOCX format';
+            } else if (pfile.size > maxSize) {
+                errors.premium_file = 'Premium file size must not exceed 10MB';
             }
         }
 
@@ -75,6 +95,22 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
         }
     };
 
+    const handlePremiumFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            form.setData('premium_file', file);
+            setSelectedPremiumFileName(file.name);
+            // Clear the premium_file error when a new file is selected
+            if (validationErrors.premium_file) {
+                setValidationErrors(prev => {
+                    const newErrors = { ...prev };
+                    delete newErrors.premium_file;
+                    return newErrors;
+                });
+            }
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -92,6 +128,9 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
             file_name: form.data.quote_file?.name,
             file_size: form.data.quote_file?.size,
             file_type: form.data.quote_file?.type,
+            premium_file_name: form.data.premium_file?.name,
+            premium_file_size: form.data.premium_file?.size,
+            premium_file_type: form.data.premium_file?.type,
             payment_link: form.data.payment_link,
             admin_notes: form.data.admin_notes,
             requestId: requestId
@@ -117,8 +156,12 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
         form.reset();
         setValidationErrors({});
         setSelectedFileName('');
+        setSelectedPremiumFileName('');
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
+        }
+        if (premiumFileInputRef.current) {
+            premiumFileInputRef.current.value = '';
         }
         onClose();
     };
@@ -172,6 +215,40 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
                             {(validationErrors.quote_file || form.errors.quote_file) && (
                                 <p className="mt-1 text-sm text-red-600">
                                     {validationErrors.quote_file || form.errors.quote_file}
+                                </p>
+                            )}
+                            <p className="mt-1 text-xs text-gray-500">
+                                Accepted formats: PDF, DOC, DOCX (Max 10MB)
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500 italic">Tip: This is the Benefits</p>
+                        </div>
+
+                        {/* Premium File Input */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                Premium File <span className="text-red-500">*</span>
+                            </label>
+                            <div className="relative">
+                                <input
+                                    ref={premiumFileInputRef}
+                                    type="file"
+                                    accept=".pdf,.doc,.docx"
+                                    onChange={handlePremiumFileChange}
+                                    disabled={form.processing}
+                                    required={true}
+                                    className={`block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:border-gold disabled:opacity-50 disabled:cursor-not-allowed ${
+                                        validationErrors.premium_file || form.errors.premium_file
+                                            ? 'border-red-300'
+                                            : 'border-gray-300'
+                                    }`}
+                                />
+                                {selectedPremiumFileName && (
+                                    <p className="mt-1 text-xs text-green-600">Selected: {selectedPremiumFileName}</p>
+                                )}
+                            </div>
+                            {(validationErrors.premium_file || form.errors.premium_file) && (
+                                <p className="mt-1 text-sm text-red-600">
+                                    {validationErrors.premium_file || form.errors.premium_file}
                                 </p>
                             )}
                             <p className="mt-1 text-xs text-gray-500">

@@ -162,6 +162,32 @@ export default function RequestDetail() {
                                 </div>
                             )}
 
+                            {/* Premium File */}
+                            {request.status !== 'completed' && request.premium_file && (
+                                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v8m0 0l-3-3m3 3l3-3M7 21h10a2 2 0 002-2V7l-5-5H7a2 2 0 00-2 2v15a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <h4 className="font-semibold text-gray-800">Premium Document</h4>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mb-3">Your premium/invoice document is available for download.</p>
+                                    <a
+                                        href={`/storage/${request.premium_file}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all text-sm"
+                                    >
+                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h10" />
+                                        </svg>
+                                        Download Premium
+                                    </a>
+                                </div>
+                            )}
+
                             {/* Policy Files */}
                             {request.policy_file && Array.isArray(request.policy_file) && request.policy_file.length > 0 && (
                                 <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
