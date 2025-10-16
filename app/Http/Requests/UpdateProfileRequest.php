@@ -69,9 +69,9 @@ class UpdateProfileRequest extends FormRequest
             'phone.regex' => 'Phone number must be in the format +971XXXXXXXXX (9 digits after +971).',
             'dob.before' => 'The date of birth must be a date before today.',
             'eid_file.mimes' => 'The Emirates ID file must be a file of type: jpg, jpeg, png, pdf.',
-            'eid_file.max' => 'The Emirates ID file must not be larger than 2MB.',
+            'eid_file.max' => 'The Emirates ID file must not be larger than 50MB.',
             'profile_picture.mimes' => 'The profile image must be a file of type: jpg, jpeg, png.',
-            'profile_picture.max' => 'The profile image must not be larger than 2MB.',
+            'profile_picture.max' => 'The profile image must not be larger than 50MB.',
         ];
     }
 }

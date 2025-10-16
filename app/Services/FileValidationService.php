@@ -27,8 +27,8 @@ class FileValidationService
 
     // Maximum file sizes in bytes
     private const MAX_SIZES = [
-        'image' => 5 * 1024 * 1024, // 5MB for images
-        'document' => 10 * 1024 * 1024, // 10MB for documents
+        'image' => 50 * 1024 * 1024, // 50MB for images
+        'document' => 50 * 1024 * 1024, // 50MB for documents
     ];
 
     // Error messages
@@ -67,7 +67,7 @@ class FileValidationService
 
         // Validate file size
         if (!$this->validateFileSize($file, $type)) {
-            $maxSize = $type === 'image' ? 5 : 10;
+            $maxSize = $type === 'image' ? 50 : 50;
             $errors[] = str_replace(':max', $maxSize, self::ERROR_MESSAGES['FILE_TOO_LARGE']);
         }
 

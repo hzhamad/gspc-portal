@@ -8,10 +8,10 @@ export default function FileUpload({
     placeholder = "Click to upload PNG/JPG/PDF",
     error = null,
     required = false,
-    maxSize = 10, // MB
+    maxSize = 50, // MB (changed from 10)
     fileType = 'document', // 'image' or 'document'
-    currentFileUrl = null, // URL to existing file
-    currentFileName = null // Name of existing file
+    currentFileUrl = null,
+    currentFileName = null
 }) {
     const [validationError, setValidationError] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(currentFileUrl);
@@ -32,9 +32,9 @@ export default function FileUpload({
         const errors = [];
 
         // File size validation
-        const maxBytes = (fileType === 'image' ? 5 : 10) * 1024 * 1024;
+        const maxBytes = (fileType === 'image' ? 50 : 50) * 1024 * 1024; // 50 MB
         if (file.size > maxBytes) {
-            errors.push(`File size must not exceed ${fileType === 'image' ? 5 : 10} MB`);
+            errors.push(`File size must not exceed ${fileType === 'image' ? 50 : 50} MB`);
         }
 
         if (file.size === 0) {
@@ -224,7 +224,7 @@ export default function FileUpload({
                 <p className="mt-2 text-sm text-red-600">{error || validationError}</p>
             )}
             <p className="mt-1 text-xs text-gray-500">
-                Max size: {fileType === 'image' ? '5' : '10'}MB. Allowed: PDF, DOC, DOCX, JPG, PNG
+                Max size: {fileType === 'image' ? '50' : '50'}MB. Allowed: PDF, DOC, DOCX, JPG, PNG
             </p>
         </div>
     );

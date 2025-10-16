@@ -582,7 +582,7 @@ export default function QuoteRequestShow() {
                                     {policyForm.errors.policy_files && (
                                         <p className="mt-1 text-sm text-red-600">{policyForm.errors.policy_files}</p>
                                     )}
-                                    <p className="mt-2 text-xs text-gray-500">Accepted formats: PDF, DOC, DOCX (Max 10MB each)</p>
+                                    <p className="mt-2 text-xs text-gray-500">Accepted formats: PDF, DOC, DOCX (Max 50MB each)</p>
 
                                     {policyFiles.length < 10 && (
                                         <button
