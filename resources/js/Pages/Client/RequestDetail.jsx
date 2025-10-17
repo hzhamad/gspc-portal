@@ -148,17 +148,36 @@ export default function RequestDetail() {
                                         <h4 className="font-semibold text-gray-800">Insurance Quote</h4>
                                     </div>
                                     <p className="text-sm text-gray-600 mb-3">Your personalized insurance quote is ready for review.</p>
-                                    <a
-                                        href={`/storage/${request.quote_file}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all text-sm"
-                                    >
-                                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Download Quote
-                                    </a>
+                                    {Array.isArray(request.quote_file) ? (
+                                        <div className="space-y-2">
+                                            {request.quote_file.map((file, idx) => (
+                                                <a
+                                                    key={idx}
+                                                    href={`/storage/${file}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full inline-flex items-center justify-center px-4 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all text-sm"
+                                                >
+                                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                    </svg>
+                                                    Download Quote {request.quote_file.length > 1 ? ` ${idx + 1}` : ''}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <a
+                                            href={`/storage/${request.quote_file}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full inline-flex items-center justify-center px-4 py-2 bg-gold text-white font-semibold rounded-lg hover:brightness-110 transition-all text-sm"
+                                        >
+                                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Download Quote
+                                        </a>
+                                    )}
                                 </div>
                             )}
 

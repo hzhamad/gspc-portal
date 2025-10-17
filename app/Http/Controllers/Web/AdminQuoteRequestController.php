@@ -66,32 +66,52 @@ class AdminQuoteRequestController extends Controller
      */
     public function uploadQuote(Request $request, QuoteRequest $quoteRequest)
     {
+        // Support both new multi-file 'quote_files' and legacy 'quote_file' + 'premium_file'
         $validated = $request->validate([
-            'quote_file' => ['required', new ValidatedFile('document')],
-            'premium_file' => ['nullable', new ValidatedFile('document')],
+            'quote_files' => 'sometimes|array|min:1|max:10',
+            'quote_files.*' => ['sometimes', new ValidatedFile('document')],
+            'quote_file' => ['sometimes', new ValidatedFile('document')],
+            'premium_file' => ['sometimes', new ValidatedFile('document')],
             'payment_link' => 'nullable|url|max:500',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 
         try {
-            // Delete old quote file if exists
-            if ($quoteRequest->quote_file) {
-                Storage::disk('public')->delete($quoteRequest->quote_file);
-            }
+            // New behavior: accept multiple quote files
+            $uploadedFiles = [];
+            if ($request->hasFile('quote_files')) {
+                // Delete existing quote_file single string if present
+                if ($quoteRequest->quote_file) {
+                    Storage::disk('public')->delete($quoteRequest->quote_file);
+                    $quoteRequest->quote_file = null;
+                }
 
-            // Delete old premium file if exists and a new one provided
-            if ($request->hasFile('premium_file') && $quoteRequest->premium_file) {
-                Storage::disk('public')->delete($quoteRequest->premium_file);
-            }
+                foreach ($request->file('quote_files') as $file) {
+                    $path = $file->store('quote-files', 'public');
+                    $uploadedFiles[] = $path;
+                }
 
-            // Upload new quote file
-            $quoteRequest->quote_file = $request->file('quote_file')
-                ->store('quote-files', 'public');
+                // Store as policy_file style array but on policy_file would be confusing; use quote_file as array by casting
+                $existing = is_array($quoteRequest->quote_file) ? $quoteRequest->quote_file : ($quoteRequest->quote_file ? [$quoteRequest->quote_file] : []);
+                $quoteRequest->quote_file = array_merge($existing, $uploadedFiles);
+            } else {
+                // Backwards-compatible single quote_file + optional premium_file
+                if ($quoteRequest->quote_file && $request->hasFile('quote_file')) {
+                    Storage::disk('public')->delete($quoteRequest->quote_file);
+                }
 
-            // Upload premium file (optional)
-            if ($request->hasFile('premium_file')) {
-                $quoteRequest->premium_file = $request->file('premium_file')
-                    ->store('premium-files', 'public');
+                if ($request->hasFile('quote_file')) {
+                    $quoteRequest->quote_file = $request->file('quote_file')
+                        ->store('quote-files', 'public');
+                }
+
+                if ($request->hasFile('premium_file')) {
+                    if ($quoteRequest->premium_file) {
+                        Storage::disk('public')->delete($quoteRequest->premium_file);
+                    }
+                    $quoteRequest->premium_file = $request->file('premium_file')
+                        ->store('premium-files', 'public');
+                }
             }
 
             $quoteRequest->payment_link = $validated['payment_link'] ?? $quoteRequest->payment_link;

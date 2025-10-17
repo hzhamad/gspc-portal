@@ -3,64 +3,44 @@ import { useForm } from '@inertiajs/react';
 
 export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
     const form = useForm({
-        quote_file: null,
-            premium_file: null,
+        quote_files: [],
         payment_link: '',
         admin_notes: '',
     });
 
     const [validationErrors, setValidationErrors] = useState({});
-    const [selectedFileName, setSelectedFileName] = useState('');
-    const [selectedPremiumFileName, setSelectedPremiumFileName] = useState('');
-    const fileInputRef = useRef(null);
-    const premiumFileInputRef = useRef(null);
+    const [quoteFiles, setQuoteFiles] = useState([{ file: null }]);
 
     // Reset form when modal closes
     React.useEffect(() => {
         if (!isOpen) {
             form.reset();
             setValidationErrors({});
-            setSelectedFileName('');
-                setSelectedPremiumFileName('');
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
-                if (premiumFileInputRef.current) {
-                    premiumFileInputRef.current.value = '';
-                }
+            setQuoteFiles([{ file: null }]);
         }
     }, [isOpen]);
 
     const validateForm = () => {
         const errors = {};
 
-        // Validate quote file
-        if (!form.data.quote_file) {
-            errors.quote_file = 'Quote file is required';
+        // Validate quote files (at least one)
+        const files = quoteFiles.map(q => q.file).filter(f => f !== null);
+        if (files.length === 0) {
+            errors.quote_files = 'At least one quote file is required';
         } else {
-            const file = form.data.quote_file;
             const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(file.type)) {
-                errors.quote_file = 'File must be PDF, DOC, or DOCX format';
-            } else if (file.size > maxSize) {
-                errors.quote_file = 'File size must not exceed 10MB';
-            }
+            const maxSize = 50 * 1024 * 1024; // 50MB (match policy files)
+            files.forEach((file, idx) => {
+                if (!file) return;
+                if (!validTypes.includes(file.type)) {
+                    errors[`quote_files.${idx}`] = 'File must be PDF, DOC, or DOCX format';
+                } else if (file.size > maxSize) {
+                    errors[`quote_files.${idx}`] = 'File size must not exceed 50MB';
+                }
+            });
         }
 
-        // Validate premium file (optional)
-        if (form.data.premium_file) {
-            const pfile = form.data.premium_file;
-            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(pfile.type)) {
-                errors.premium_file = 'Premium file must be PDF, DOC, or DOCX format';
-            } else if (pfile.size > maxSize) {
-                errors.premium_file = 'Premium file size must not exceed 10MB';
-            }
-        }
+        // No premium file anymore; quote_files replaces quote & premium
 
         // Validate payment link (if provided)
         if (form.data.payment_link && form.data.payment_link.trim() !== '') {
@@ -79,35 +59,28 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
         return Object.keys(errors).length === 0;
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            form.setData('quote_file', file);
-            setSelectedFileName(file.name);
-            // Clear the quote_file error when a new file is selected
-            if (validationErrors.quote_file) {
-                setValidationErrors(prev => {
-                    const newErrors = { ...prev };
-                    delete newErrors.quote_file;
-                    return newErrors;
-                });
-            }
-        }
+    const addQuoteFile = () => {
+        setQuoteFiles([...quoteFiles, { file: null }]);
     };
 
-    const handlePremiumFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            form.setData('premium_file', file);
-            setSelectedPremiumFileName(file.name);
-            // Clear the premium_file error when a new file is selected
-            if (validationErrors.premium_file) {
-                setValidationErrors(prev => {
-                    const newErrors = { ...prev };
-                    delete newErrors.premium_file;
-                    return newErrors;
-                });
-            }
+    const removeQuoteFile = (index) => {
+        const newFiles = quoteFiles.filter((_, i) => i !== index);
+        setQuoteFiles(newFiles.length > 0 ? newFiles : [{ file: null }]);
+    };
+
+    const updateQuoteFile = (index, file) => {
+        const newFiles = [...quoteFiles];
+        newFiles[index] = { file };
+        setQuoteFiles(newFiles);
+
+        // Clear per-file validation error if present
+        if (validationErrors[`quote_files.${index}`] || validationErrors.quote_files) {
+            setValidationErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[`quote_files.${index}`];
+                delete newErrors.quote_files;
+                return newErrors;
+            });
         }
     };
 
@@ -123,18 +96,13 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
             return;
         }
 
-        console.log('Submitting quote with data:', {
-            has_file: !!form.data.quote_file,
-            file_name: form.data.quote_file?.name,
-            file_size: form.data.quote_file?.size,
-            file_type: form.data.quote_file?.type,
-            premium_file_name: form.data.premium_file?.name,
-            premium_file_size: form.data.premium_file?.size,
-            premium_file_type: form.data.premium_file?.type,
-            payment_link: form.data.payment_link,
-            admin_notes: form.data.admin_notes,
-            requestId: requestId
-        });
+        const files = quoteFiles.map(q => q.file).filter(f => f !== null);
+
+        // Transform form to include files array
+        form.transform((data) => ({
+            ...data,
+            quote_files: files,
+        }));
 
         // Submit the form
         form.post(`/admin/quote-requests/${requestId}/upload-quote`, {
@@ -155,14 +123,7 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
     const handleClose = () => {
         form.reset();
         setValidationErrors({});
-        setSelectedFileName('');
-        setSelectedPremiumFileName('');
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-        if (premiumFileInputRef.current) {
-            premiumFileInputRef.current.value = '';
-        }
+        setQuoteFiles([{ file: null }]);
         onClose();
     };
 
@@ -190,70 +151,53 @@ export default function SubmitQuoteModal({ isOpen, onClose, requestId }) {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-6">
                     <div className="space-y-4">
-                        {/* Quote File Input */}
+                        {/* Quote Files Input (multiple) */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Quote File <span className="text-red-500">*</span>
+                                Quote Files <span className="text-red-500">*</span>
                             </label>
-                            <div className="relative">
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept=".pdf,.doc,.docx"
-                                    onChange={handleFileChange}
-                                    disabled={form.processing}
-                                    className={`block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:border-gold disabled:opacity-50 disabled:cursor-not-allowed ${
-                                        validationErrors.quote_file || form.errors.quote_file
-                                            ? 'border-red-300'
-                                            : 'border-gray-300'
-                                    }`}
-                                />
-                                {selectedFileName && (
-                                    <p className="mt-1 text-xs text-green-600">Selected: {selectedFileName}</p>
-                                )}
+                            <div className="space-y-3">
+                                {quoteFiles.map((qf, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <input
+                                            type="file"
+                                            accept=".pdf,.doc,.docx"
+                                            onChange={(e) => updateQuoteFile(index, e.target.files[0])}
+                                            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:border-gold"
+                                        />
+                                        {quoteFiles.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeQuoteFile(index)}
+                                                className="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                                            >
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                            {(validationErrors.quote_file || form.errors.quote_file) && (
+                            {(validationErrors.quote_files || form.errors.quote_files) && (
                                 <p className="mt-1 text-sm text-red-600">
-                                    {validationErrors.quote_file || form.errors.quote_file}
+                                    {validationErrors.quote_files || form.errors.quote_files}
                                 </p>
                             )}
-                            <p className="mt-1 text-xs text-gray-500">
-                                Accepted formats: PDF, DOC, DOCX (Max 10MB)
-                            </p>
-                            <p className="mt-1 text-xs text-gray-500 italic">Tip: This is the Benefits</p>
-                        </div>
+                            <p className="mt-2 text-xs text-gray-500">Accepted formats: PDF, DOC, DOCX (Max 50MB each)</p>
 
-                        {/* Premium File Input */}
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Premium File <span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative">
-                                <input
-                                    ref={premiumFileInputRef}
-                                    type="file"
-                                    accept=".pdf,.doc,.docx"
-                                    onChange={handlePremiumFileChange}
-                                    disabled={form.processing}
-                                    required={true}
-                                    className={`block w-full text-sm text-gray-900 border rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:border-gold disabled:opacity-50 disabled:cursor-not-allowed ${
-                                        validationErrors.premium_file || form.errors.premium_file
-                                            ? 'border-red-300'
-                                            : 'border-gray-300'
-                                    }`}
-                                />
-                                {selectedPremiumFileName && (
-                                    <p className="mt-1 text-xs text-green-600">Selected: {selectedPremiumFileName}</p>
-                                )}
-                            </div>
-                            {(validationErrors.premium_file || form.errors.premium_file) && (
-                                <p className="mt-1 text-sm text-red-600">
-                                    {validationErrors.premium_file || form.errors.premium_file}
-                                </p>
+                            {quoteFiles.length < 10 && (
+                                <button
+                                    type="button"
+                                    onClick={addQuoteFile}
+                                    className="mt-3 inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                >
+                                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    Add Another File
+                                </button>
                             )}
-                            <p className="mt-1 text-xs text-gray-500">
-                                Accepted formats: PDF, DOC, DOCX (Max 10MB)
-                            </p>
                         </div>
 
                         {/* Payment Link Input */}
