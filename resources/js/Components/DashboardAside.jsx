@@ -119,6 +119,26 @@ export default function DashboardAside({ currentPath }) {
                 </svg>
             )
         },
+        {
+            name: 'Get Support',
+            path: '/client/get-support',
+            icon: (
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a9 9 0 00-9 9v3a3 3 0 003 3h1a1 1 0 001-1v-5a1 1 0 00-1-1H6v-1a6 6 0 0112 0v1h-1a1 1 0 00-1 1v5a1 1 0 001 1h1a3 3 0 003-3v-3a9 9 0 00-9-9zM7 16v3a1 1 0 001 1h.5" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16v3a1 1 0 01-1 1h-.5" />
+                </svg>
+            )
+        },
+        {
+            name: 'User Guide',
+            path: '/client/user-guide',
+            icon: (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6.5A2.5 2.5 0 016.5 4H20v16H6.5A2.5 2.5 0 014 17.5V6.5z" />
+                </svg>
+            )
+        },
     ];
 
     const menuItems = isAdmin ? adminMenuItems : clientMenuItems;

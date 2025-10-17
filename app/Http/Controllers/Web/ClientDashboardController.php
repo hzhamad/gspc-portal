@@ -35,4 +35,14 @@ class ClientDashboardController extends Controller
             'recentRequests' => $recentRequests,
         ]);
     }
+
+    public function getSupport()
+    {
+        return Inertia::render('Client/GetSupport');
+    }
+
+    public function userGuide()
+    {
+        return Inertia::render('Client/UserGuide');
+    }
 }

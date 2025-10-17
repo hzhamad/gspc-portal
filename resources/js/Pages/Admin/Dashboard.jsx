@@ -88,7 +88,7 @@ export default function AdminDashboard() {
                         <div className="bg-gradient-to-r from-white to-gold/15 border border-gold rounded-2xl shadow-lg p-8 text-gold">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h2 className="text-2xl font-bold mb-2">Quote Requests</h2>
+                                    <h2 className="text-2xl font-bold mb-2">Quote Requests ({stats.pending_requests})</h2>
                                     <p className="text-gold/90 mb-4">Review pending insurance applications</p>
                                     <button
                                         onClick={() => router.visit('/admin/quote-requests')}

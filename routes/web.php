@@ -39,6 +39,8 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     // Client Dashboard Route
     Route::get('/client/dashboard', [ClientDashboardController::class, 'index'])->name('client.dashboard');
+    Route::get('/client/get-support', [ClientDashboardController::class, 'getSupport'])->name('client.get-support');
+    Route::get('/client/user-guide', [ClientDashboardController::class, 'userGuide'])->name('client.user-guide');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -53,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     // Quote Request Routes (for clients)
     Route::get('/quote-request', [QuoteRequestController::class, 'create'])->name('quote-request.create');
     Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
+
 
     // My Requests Routes
     Route::get('/my-requests', [QuoteRequestController::class, 'index'])->name('my-requests.index');
